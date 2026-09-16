@@ -1,0 +1,88 @@
+{% load static %}
+<header id="main-navbar" x-data="{ mobileOpen: false }" 
+        class="fixed top-0 left-0 w-full z-50 transition-all duration-300 py-4 glass-nav border-b border-white/10">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+    
+    <!-- Logo & Bengali Brand -->
+    <a href="{% url 'core:home' %}" class="flex items-center space-x-3 group">
+      <div class="w-10 h-10 flex-shrink-0 animate-kite-hover">
+        <img src="{% static 'images/favicon.svg' %}" alt="Bhromonghuri Kite" class="w-full h-full object-contain">
+      </div>
+      <div class="flex flex-col">
+        <span class="font-bengali text-2xl font-bold tracking-tight text-white group-hover:text-sky-400 transition-colors">
+          ভ্রমণ<span class="text-sky-400">ঘুড়ি</span>
+        </span>
+        <span class="text-[9px] font-bold tracking-widest text-slate-400 uppercase">
+          Explore • Experience
+        </span>
+      </div>
+    </a>
+
+    <!-- Desktop Navigation Links -->
+    <nav class="hidden md:flex items-center space-x-8 text-sm font-medium text-slate-200">
+      <a href="{% url 'core:home' %}" class="hover:text-sky-400 transition-colors py-1">হোম (Home)</a>
+      <a href="{% url 'tours:list' %}" class="hover:text-sky-400 transition-colors py-1 flex items-center space-x-1">
+        <span>ট্যুরস (Tours)</span>
+      </a>
+      <a href="/#destinations" class="hover:text-sky-400 transition-colors py-1">গন্তব্য (Destinations)</a>
+      <a href="{% url 'stories:list' %}" class="hover:text-sky-400 transition-colors py-1">গল্প (Stories)</a>
+      <a href="{% url 'gallery:index' %}" class="hover:text-sky-400 transition-colors py-1">গ্যালারি (Gallery)</a>
+      <a href="{% url 'core:about' %}" class="hover:text-sky-400 transition-colors py-1">আমাদের কথা (About)</a>
+      <a href="{% url 'core:contact' %}" class="hover:text-sky-400 transition-colors py-1">যোগাযোগ (Contact)</a>
+    </nav>
+
+    <!-- Header Actions -->
+    <div class="hidden md:flex items-center space-x-4">
+      <a href="{% url 'bookings:lookup' %}" class="text-xs text-slate-300 hover:text-white px-2 py-1 flex items-center space-x-1" title="Find Booking">
+        <i data-lucide="search" class="w-3.5 h-3.5"></i>
+        <span>বুকিং চেক</span>
+      </a>
+      
+      <a href="{% url 'tours:list' %}" 
+         class="magnetic-btn px-5 py-2.5 rounded-full bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-400 hover:to-cyan-400 text-white text-sm font-semibold shadow-lg shadow-sky-500/25 transition-all duration-300 flex items-center space-x-2">
+        <i data-lucide="compass" class="w-4 h-4"></i>
+        <span class="font-bengali">ট্যুর বুক করুন</span>
+      </a>
+    </div>
+
+    <!-- Mobile Menu Button -->
+    <div class="flex items-center md:hidden">
+      <button @click="mobileOpen = !mobileOpen" 
+              type="button" 
+              class="p-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/60 focus:outline-none"
+              aria-label="Toggle Navigation">
+        <i x-show="!mobileOpen" data-lucide="menu" class="w-6 h-6"></i>
+        <i x-show="mobileOpen" data-lucide="x" class="w-6 h-6" style="display: none;"></i>
+      </button>
+    </div>
+
+  </div>
+
+  <!-- Mobile Drawer Menu (Alpine.js) -->
+  <div x-show="mobileOpen" 
+       x-transition:enter="transition ease-out duration-200"
+       x-transition:enter-start="opacity-0 -translate-y-4"
+       x-transition:enter-end="opacity-100 translate-y-0"
+       x-transition:leave="transition ease-in duration-150"
+       x-transition:leave-start="opacity-100 translate-y-0"
+       x-transition:leave-end="opacity-0 -translate-y-4"
+       class="md:hidden bg-slate-900/98 border-b border-slate-800 px-6 pt-4 pb-6 space-y-4 shadow-2xl"
+       style="display: none;">
+    <div class="flex flex-col space-y-3 font-bengali text-base text-slate-200">
+      <a @click="mobileOpen = false" href="{% url 'core:home' %}" class="py-2 hover:text-sky-400 border-b border-slate-800/60">হোম (Home)</a>
+      <a @click="mobileOpen = false" href="{% url 'tours:list' %}" class="py-2 hover:text-sky-400 border-b border-slate-800/60">ট্যুর প্যাকেজ (All Tours)</a>
+      <a @click="mobileOpen = false" href="/#destinations" class="py-2 hover:text-sky-400 border-b border-slate-800/60">দর্শনীয় স্থান (Destinations)</a>
+      <a @click="mobileOpen = false" href="{% url 'stories:list' %}" class="py-2 hover:text-sky-400 border-b border-slate-800/60">ভ্রমণ কাহিনী (Travel Stories)</a>
+      <a @click="mobileOpen = false" href="{% url 'gallery:index' %}" class="py-2 hover:text-sky-400 border-b border-slate-800/60">ফটো গ্যালারি (Gallery)</a>
+      <a @click="mobileOpen = false" href="{% url 'core:about' %}" class="py-2 hover:text-sky-400 border-b border-slate-800/60">আমাদের কথা (About Us)</a>
+      <a @click="mobileOpen = false" href="{% url 'core:contact' %}" class="py-2 hover:text-sky-400 border-b border-slate-800/60">যোগাযোগ (Contact)</a>
+      <a @click="mobileOpen = false" href="{% url 'bookings:lookup' %}" class="py-2 hover:text-sky-400">বুকিং স্ট্যাটাস চেক (Check Booking)</a>
+    </div>
+    <div class="pt-2">
+      <a href="{% url 'tours:list' %}" class="w-full text-center py-3 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-semibold flex items-center justify-center space-x-2 font-bengali">
+        <i data-lucide="calendar" class="w-4 h-4"></i>
+        <span>ট্যুর নির্বাচন করুন</span>
+      </a>
+    </div>
+  </div>
+</header>

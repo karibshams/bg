@@ -1,0 +1,21 @@
+{% if tours %}
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+  {% for tour in tours %}
+    {% include 'components/tour_card.html' with tour=tour %}
+  {% endfor %}
+</div>
+{% else %}
+<div class="py-16 text-center bg-white rounded-3xl border border-slate-200/80 p-8 shadow-sm">
+  <div class="w-16 h-16 mx-auto mb-4 text-slate-300">
+    <i data-lucide="compass" class="w-full h-full"></i>
+  </div>
+  <h3 class="font-bengali text-xl font-bold text-slate-800 mb-2">কোনো ট্যুর প্যাকেজ পাওয়া যায়নি</h3>
+  <p class="font-bengali text-sm text-slate-500 max-w-md mx-auto mb-6">
+    আপনার বর্তমান ফিল্টারের সাথে মিলে এমন কোনো ট্যুর এই মুহূর্তে নেই। ফিল্টার পরিবর্তন করে পুনরায় চেষ্টা করুন।
+  </p>
+  <a href="{% url 'tours:list' %}" class="inline-flex items-center space-x-2 px-5 py-2.5 rounded-full bg-sky-500 hover:bg-sky-600 text-white text-xs font-semibold transition-colors font-bengali">
+    <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+    <span>সব ফিল্টার ক্লিয়ার করুন</span>
+  </a>
+</div>
+{% endif %}

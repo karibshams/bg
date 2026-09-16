@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ destination.bangla_name|default:destination.name }} — ভ্রমণঘুড়ি{% endblock %}
+
+{% block content %}
+<section class="bg-slate-900 text-white pt-32 pb-16 relative overflow-hidden">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(14,165,233,0.3),transparent_70%)]"></div>
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4">
+    <span class="text-xs font-bold tracking-widest text-sky-400 uppercase">DESTINATION GUIDE</span>
+    <h1 class="font-bengali text-4xl sm:text-5xl font-extrabold text-white">
+      {{ destination.bangla_name|default:destination.name }}
+    </h1>
+    <p class="font-bengali text-sm text-slate-300 max-w-2xl mx-auto">
+      {{ destination.tagline|default:destination.description }}
+    </p>
+  </div>
+</section>
+
+<section class="py-16 bg-slate-50 min-h-screen">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+    <div class="flex items-center justify-between border-b border-slate-200 pb-4">
+      <h2 class="font-bengali text-2xl font-bold text-slate-900">
+        {{ destination.name }}-এর সকল ট্যুর প্যাকেজ ({{ tours.count }})
+      </h2>
+      <a href="{% url 'tours:list' %}" class="text-sm font-bold text-sky-600 hover:text-sky-700 font-bengali">
+        সব ট্যুর দেখুন →
+      </a>
+    </div>
+
+    {% include 'components/tour_grid.html' with tours=tours %}
+  </div>
+</section>
+{% endblock %}

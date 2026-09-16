@@ -1,0 +1,9 @@
+{% load static %}
+<div id="loading-indicator" class="htmx-indicator py-12 flex flex-col items-center justify-center space-y-3 w-full">
+  <div class="w-12 h-12 animate-kite-hover">
+    <img src="{% static 'images/favicon.svg' %}" alt="Loading" class="w-full h-full object-contain">
+  </div>
+  <p class="font-bengali text-sm font-semibold text-sky-700 animate-pulse">
+    ট্যুর তথ্য লোড হচ্ছে...
+  </p>
+</div>

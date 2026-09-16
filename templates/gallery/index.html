@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}ফটোগ্রাফি ও ভ্রমণ স্মৃতি — ভ্রমণঘুড়ি{% endblock %}
+
+{% block content %}
+<section class="bg-slate-900 text-white pt-32 pb-16 relative overflow-hidden">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(14,165,233,0.3),transparent_70%)]"></div>
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-3">
+    <span class="text-xs font-bold tracking-widest text-sky-400 uppercase">VISUAL EXPEDITIONS</span>
+    <h1 class="font-bengali text-4xl sm:text-5xl font-extrabold text-white">
+      স্মৃতির ক্যানভাসে ভ্রমণঘুড়ি
+    </h1>
+    <p class="font-bengali text-sm text-slate-300 max-w-xl mx-auto">
+      আমাদের বিভিন্ন ট্যুরের রোমাঞ্চকর ও সুন্দর মুহূর্তগুলোর স্থিরচিত্র।
+    </p>
+  </div>
+</section>
+
+<section class="py-12 bg-slate-50 min-h-screen" 
+         x-data="{
+           lightbox: false,
+           activeTitle: '',
+           activeCaption: '',
+           activeSrc: '',
+           open(title, caption, src) {
+             this.activeTitle = title;
+             this.activeCaption = caption;
+             this.activeSrc = src;
+             this.lightbox = true;
+           }
+         }">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+    
+    <!-- Category Tabs -->
+    <div class="flex flex-wrap items-center justify-center gap-2 font-bengali">
+      {% for code, label in categories %}
+      <a href="?category={{ code }}" 
+         class="px-4 py-2 rounded-full text-xs font-bold transition-colors {% if selected_category == code %}bg-sky-500 text-white shadow-md{% else %}bg-white border border-slate-200 text-slate-700 hover:bg-slate-100{% endif %}">
+        {{ label }}
+      </a>
+      {% endfor %}
+    </div>
+
+    <!-- Masonry Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {% for item in items %}
+      <div @click="open('{{ item.title }}', '{{ item.caption }}', '{% if item.image %}{{ item.image.url }}{% endif %}')"
+           class="cursor-pointer group relative rounded-3xl overflow-hidden bg-slate-900 shadow-sm hover:shadow-2xl transition-all duration-300 h-72">
+        {% if item.image %}
+        <img src="{{ item.image.url }}" alt="{{ item.title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+        {% else %}
+        <div class="w-full h-full bg-gradient-to-tr from-slate-900 via-sky-950 to-slate-800 flex items-center justify-center p-6 text-center">
+          <div class="space-y-2">
+            <i data-lucide="image" class="w-8 h-8 text-sky-400/40 mx-auto"></i>
+            <p class="text-xs font-bengali text-slate-300 font-bold">{{ item.title }}</p>
+          </div>
+        </div>
+        {% endif %}
+
+        <!-- Hover Overlay -->
+        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity p-6 flex flex-col justify-end text-white font-bengali">
+          <span class="text-[11px] text-sky-400 font-bold uppercase tracking-wider mb-1">{{ item.get_category_display }}</span>
+          <h3 class="text-base font-bold">{{ item.title }}</h3>
+          {% if item.caption %}
+          <p class="text-xs text-slate-300 mt-1 line-clamp-2">{{ item.caption }}</p>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+  </div>
+
+  <!-- Full-Screen Lightbox Modal (Alpine.js) -->
+  <div x-show="lightbox" 
+       x-transition:enter="transition ease-out duration-300"
+       x-transition:enter-start="opacity-0"
+       x-transition:enter-end="opacity-100"
+       x-transition:leave="transition ease-in duration-200"
+       x-transition:leave-start="opacity-100"
+       x-transition:leave-end="opacity-0"
+       @keydown.escape.window="lightbox = false"
+       class="fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-xl flex items-center justify-center p-4 sm:p-8"
+       style="display: none;">
+    
+    <!-- Close Button -->
+    <button @click="lightbox = false" 
+            class="absolute top-6 right-6 text-slate-400 hover:text-white p-2 rounded-full bg-slate-900 border border-slate-800 focus:outline-none">
+      <i data-lucide="x" class="w-6 h-6"></i>
+    </button>
+
+    <div class="max-w-4xl w-full flex flex-col items-center space-y-4" @click.away="lightbox = false">
+      <template x-if="activeSrc">
+        <img :src="activeSrc" :alt="activeTitle" class="max-h-[75vh] w-auto rounded-2xl shadow-2xl object-contain border border-slate-800">
+      </template>
+
+      <div class="text-center font-bengali text-white space-y-1">
+        <h3 class="text-xl font-bold" x-text="activeTitle"></h3>
+        <p class="text-xs text-slate-400" x-text="activeCaption"></p>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

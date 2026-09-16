@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}পৃষ্ঠাটি পাওয়া যায়নি (404) — ভ্রমণঘুড়ি{% endblock %}
+
+{% block content %}
+<div class="min-h-[75vh] flex items-center justify-center pt-28 pb-16 bg-slate-50 text-center px-4">
+  <div class="max-w-md space-y-6">
+    <div class="w-20 h-20 mx-auto animate-kite-hover">
+      <img src="{% static 'images/favicon.svg' %}" alt="404 Kite" class="w-full h-full object-contain">
+    </div>
+    <span class="text-xs font-bold tracking-widest text-sky-600 uppercase font-sans">ERROR 404</span>
+    <h1 class="font-bengali text-3xl font-extrabold text-slate-900">
+      এই পথটি খুঁজে পাওয়া যায়নি!
+    </h1>
+    <p class="font-bengali text-sm text-slate-600">
+      আপনি যে পৃষ্ঠাটি খুঁজছেন তা হয়তো সরানো হয়েছে অথবা লিংকটি সঠিক নয়।
+    </p>
+    <div>
+      <a href="{% url 'core:home' %}" class="inline-flex items-center space-x-2 px-6 py-3 rounded-full bg-sky-500 hover:bg-sky-400 text-white font-bold text-xs font-bengali shadow-md">
+        <i data-lucide="home" class="w-4 h-4"></i>
+        <span>হোম পেজে ফিরে যান</span>
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}

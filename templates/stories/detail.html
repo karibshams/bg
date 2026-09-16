@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ story.title }} — ভ্রমণ কাহিনী — ভ্রমণঘুড়ি{% endblock %}
+
+{% block content %}
+<article class="bg-slate-50 min-h-screen pt-32 pb-20">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+    
+    <!-- Breadcrumb & Tag -->
+    <div class="flex items-center space-x-2 text-xs font-semibold text-slate-500 font-bengali">
+      <a href="{% url 'stories:list' %}" class="hover:text-sky-600">ভ্রমণ গল্প</a>
+      <span>/</span>
+      <span class="text-slate-400">{{ story.destination.name|default:"অভিযান" }}</span>
+    </div>
+
+    <!-- Title & Metadata -->
+    <div class="space-y-4">
+      <h1 class="font-bengali text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 leading-tight">
+        {{ story.title }}
+      </h1>
+
+      <div class="flex items-center space-x-4 text-xs sm:text-sm text-slate-500 font-medium border-y border-slate-200 py-3">
+        <div class="flex items-center space-x-2">
+          <div class="w-7 h-7 rounded-full bg-sky-500 text-white flex items-center justify-center font-bold text-xs">
+            {{ story.author_name|slice:":1" }}
+          </div>
+          <span class="font-bold text-slate-800">{{ story.author_name }}</span>
+        </div>
+        <span>•</span>
+        <span>{{ story.read_time }}</span>
+        <span>•</span>
+        <span>{{ story.published_at|date:"d F Y" }}</span>
+      </div>
+    </div>
+
+    <!-- Hero Image -->
+    {% if story.cover_image %}
+    <div class="rounded-3xl overflow-hidden shadow-lg h-80 sm:h-96 w-full bg-slate-900">
+      <img src="{{ story.cover_image.url }}" alt="{{ story.title }}" class="w-full h-full object-cover">
+    </div>
+    {% endif %}
+
+    <!-- Article Body -->
+    <div class="bg-white p-8 sm:p-12 rounded-3xl shadow-sm border border-slate-200/80 font-bengali text-slate-800 text-base sm:text-lg leading-relaxed whitespace-pre-line space-y-4">
+      {{ story.content }}
+    </div>
+
+    <!-- Back and Social Share -->
+    <div class="flex items-center justify-between pt-6 border-t border-slate-200 font-bengali">
+      <a href="{% url 'stories:list' %}" class="inline-flex items-center space-x-2 text-sm font-bold text-sky-600 hover:text-sky-700">
+        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+        <span>অন্যান্য গল্পে ফিরে যান</span>
+      </a>
+      
+      <span class="text-xs text-slate-400">ভ্রমণঘুড়ি জার্নাল • ২০২৬</span>
+    </div>
+
+  </div>
+</article>
+{% endblock %}

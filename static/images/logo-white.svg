@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 64" fill="none">
+  <defs>
+    <linearGradient id="whiteLogoKite" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38BDF8" />
+      <stop offset="60%" stop-color="#0284C7" />
+      <stop offset="100%" stop-color="#0369A1" />
+    </linearGradient>
+    <linearGradient id="tailGradW" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34D399" />
+      <stop offset="100%" stop-color="#10B981" />
+    </linearGradient>
+  </defs>
+
+  <!-- Kite Symbol -->
+  <g transform="translate(4, 4)">
+    <polygon points="28,6 48,27 28,50 8,27" fill="url(#whiteLogoKite)" />
+    <polygon points="28,6 48,27 28,27" fill="#BAE6FD" opacity="0.6" />
+    <polygon points="28,27 48,27 28,50" fill="#0369A1" opacity="0.85" />
+    <polygon points="8,27 28,27 28,50" fill="#0284C7" opacity="0.95" />
+    <polygon points="8,27 28,6 28,27" fill="#38BDF8" opacity="0.75" />
+    
+    <line x1="28" y1="6" x2="28" y2="50" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round" />
+    <path d="M 8,27 Q 28,32 48,27" stroke="#FFFFFF" stroke-width="1.4" fill="none" />
+    
+    <path d="M 28,50 Q 34,56 26,60" stroke="#34D399" stroke-width="1.8" fill="none" />
+    <polygon points="28,50 24,54 32,54" fill="url(#tailGradW)" />
+    <polygon points="26,60 22,63 30,63" fill="url(#tailGradW)" />
+  </g>
+
+  <!-- Brand Typography for Dark/Hero Header -->
+  <g transform="translate(64, 12)">
+    <text x="0" y="26" font-family="'Hind Siliguri', 'Noto Sans Bengali', system-ui, sans-serif" font-size="26" font-weight="800" fill="#FFFFFF" letter-spacing="0.5">
+      ভ্রমণ<tspan fill="#38BDF8">ঘুড়ি</tspan>
+    </text>
+    
+    <text x="2" y="42" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="9" font-weight="700" fill="#94A3B8" letter-spacing="2.2">
+      BHROMONGHURI • TRAVEL
+    </text>
+  </g>
+</svg>

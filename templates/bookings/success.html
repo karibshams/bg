@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}বুকিং সফল হয়েছে! — ভ্রমণঘুড়ি{% endblock %}
+
+{% block content %}
+<div class="bg-slate-900 text-white pt-32 pb-12 print:hidden">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-2">
+    <div class="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-400/30 flex items-center justify-center mx-auto mb-4">
+      <i data-lucide="check" class="w-8 h-8"></i>
+    </div>
+    <span class="text-xs font-bold tracking-widest text-emerald-400 uppercase">BOOKING CONFIRMED</span>
+    <h1 class="font-bengali text-3xl sm:text-4xl font-extrabold text-white">
+      অভিনন্দন! আপনার বুকিং নিশ্চিত হয়েছে
+    </h1>
+    <p class="font-bengali text-sm text-slate-300">
+      বুকিং সংক্রান্ত সকল তথ্য আপনার ইমেইলে পাঠিয়ে দেওয়া হয়েছে।
+    </p>
+  </div>
+</div>
+
+<div class="py-12 bg-slate-50 min-h-screen">
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+    
+    <!-- Printable Voucher Ticket Card -->
+    <div id="booking-voucher" class="bg-white rounded-3xl shadow-xl border border-slate-200/80 overflow-hidden font-bengali">
+      
+      <!-- Voucher Header -->
+      <div class="bg-gradient-to-r from-sky-600 to-cyan-600 p-8 text-white flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 animate-kite-hover">
+            <img src="{% static 'images/favicon.svg' %}" alt="Bhromonghuri Kite" class="w-full h-full object-contain">
+          </div>
+          <div>
+            <h2 class="text-2xl font-black">ভ্রমণঘুড়ি ভাউচার</h2>
+            <p class="text-xs text-sky-100 uppercase tracking-wider font-sans font-bold">Official Travel Confirmation</p>
+          </div>
+        </div>
+
+        <div class="text-center sm:text-right bg-white/10 px-4 py-2 rounded-2xl backdrop-blur-md">
+          <span class="text-[11px] text-sky-200 block">বুকিং রেফারেন্স আইডি</span>
+          <span class="text-lg font-mono font-black tracking-wider text-white">{{ booking.booking_reference }}</span>
+        </div>
+      </div>
+
+      <!-- Voucher Body -->
+      <div class="p-8 space-y-6">
+        
+        <!-- Status & Tour Title -->
+        <div class="border-b border-slate-100 pb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <span class="text-xs text-slate-400">ট্যুর প্যাকেজ</span>
+            <h3 class="text-xl font-bold text-slate-900">{{ booking.tour.bangla_title|default:booking.tour.title }}</h3>
+            <p class="text-xs text-slate-500">{{ booking.tour.destination.name }} • {{ booking.tour.duration }}</p>
+          </div>
+
+          <span class="px-4 py-1.5 rounded-full text-xs font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-300 self-start sm:self-auto">
+            ✓ বুকিং কনফার্মড
+          </span>
+        </div>
+
+        <!-- Details Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm text-slate-600">
+          <div>
+            <span class="text-xs text-slate-400 block mb-1">গ্রাহকের নাম:</span>
+            <span class="font-bold text-slate-900">{{ booking.customer_name }}</span>
+          </div>
+
+          <div>
+            <span class="text-xs text-slate-400 block mb-1">মোবাইল নম্বর:</span>
+            <span class="font-bold text-slate-900">{{ booking.customer_phone }}</span>
+          </div>
+
+          <div>
+            <span class="text-xs text-slate-400 block mb-1">ইমেইল:</span>
+            <span class="font-bold text-slate-900">{{ booking.customer_email }}</span>
+          </div>
+
+          <div>
+            <span class="text-xs text-slate-400 block mb-1">ভ্রমণকারীর সংখ্যা:</span>
+            <span class="font-bold text-slate-900">{{ booking.num_travelers }} জন</span>
+          </div>
+
+          <div>
+            <span class="text-xs text-slate-400 block mb-1">যাত্রার তারিখ:</span>
+            <span class="font-bold text-sky-600">
+              {% if booking.tour_date %}
+                {{ booking.tour_date.start_date|date:"d M Y" }}
+              {% else %}
+                ওপেন / ফ্লেক্সিবল
+              {% endif %}
+            </span>
+          </div>
+
+          <div>
+            <span class="text-xs text-slate-400 block mb-1">পরিশোধিত মোট টাকা:</span>
+            <span class="font-extrabold text-slate-900 text-base">৳{{ booking.total_amount|floatformat:0 }} (Paid)</span>
+          </div>
+        </div>
+
+        <!-- Barcode / Security strip -->
+        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-2">
+          <div class="flex items-center space-x-2">
+            <i data-lucide="shield-check" class="w-4 h-4 text-emerald-500"></i>
+            <span>ভ্রমণ শুরুর দিন এই ভাউচারটি বা রেফারেন্স নম্বরটি প্রদর্শন করুন।</span>
+          </div>
+          <span class="font-mono text-[11px] text-slate-400 tracking-widest uppercase">VERIFIED SECURE TICKET</span>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Actions -->
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-4 print:hidden pt-4 font-bengali">
+      <button onclick="window.print()" 
+              class="w-full sm:w-auto px-6 py-3 rounded-full bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs flex items-center justify-center space-x-2 shadow-md">
+        <i data-lucide="printer" class="w-4 h-4"></i>
+        <span>ভাউচার প্রিন্ট করুন (Print Voucher)</span>
+      </button>
+
+      <a href="{% url 'core:home' %}" 
+         class="w-full sm:w-auto px-6 py-3 rounded-full bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs flex items-center justify-center space-x-2 shadow-sm">
+        <i data-lucide="home" class="w-4 h-4"></i>
+        <span>হোম পেজে ফিরুন</span>
+      </a>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

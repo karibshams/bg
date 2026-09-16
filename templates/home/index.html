@@ -1,0 +1,432 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}ভ্রমণঘুড়ি (Bhromonghuri) — Explore • Experience • Discover{% endblock %}
+
+{% block content %}
+
+<!-- ========================================== -->
+<!-- 1. HERO SECTION                            -->
+<!-- ========================================== -->
+<section class="relative min-h-[92vh] flex items-center justify-center overflow-hidden bg-slate-950 text-white pt-24 pb-16">
+  
+  <!-- Atmospheric Deep Background with Ambient Glows -->
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(14,165,233,0.3),rgba(255,255,255,0))]"></div>
+  <div class="absolute -top-40 -right-40 w-96 h-96 bg-sky-500/20 rounded-full blur-3xl pointer-events-none"></div>
+  <div class="absolute -bottom-40 -left-40 w-96 h-96 bg-emerald-500/15 rounded-full blur-3xl pointer-events-none"></div>
+
+  <!-- Background Grid Texture -->
+  <div class="absolute inset-0 bg-[linear-gradient(to_right,#1e293b15_1px,transparent_1px),linear-gradient(to_bottom,#1e293b15_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] pointer-events-none"></div>
+
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full z-10">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+      
+      <!-- Hero Left: Typography & CTAs -->
+      <div class="lg:col-span-7 space-y-8 text-center lg:text-left">
+        
+        <!-- Brand Pill -->
+        <div id="hero-badge" class="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-sky-500/10 border border-sky-400/20 backdrop-blur-md">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span class="text-xs font-bold tracking-widest text-sky-300 uppercase">
+            {{ site_setting.site_tagline_en|default:"EXPLORE • EXPERIENCE • DISCOVER" }}
+          </span>
+        </div>
+
+        <!-- Main Bengali Headline -->
+        <h1 id="hero-title" class="font-bengali text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-[1.2]">
+          {{ site_setting.hero_headline|default:"অদেখা বাংলাকে নতুন চোখে দেখা" }}
+        </h1>
+
+        <!-- Subtitle -->
+        <p id="hero-subtitle" class="font-bengali text-base sm:text-lg text-slate-300 max-w-2xl mx-auto lg:mx-0 leading-relaxed font-normal">
+          {{ site_setting.hero_subheadline|default:"ভ্রমণঘুড়ির সাথে আবিষ্কার করুন পাহাড়, মেঘের উপত্যকা, সুন্দরবনের ম্যানগ্রোভ আর সেন্টমার্টিনের প্রবাল দ্বীপ। প্রতিটি পদক্ষেপে নিরাপদ ও রোমাঞ্চকর ভ্রমণ।" }}
+        </p>
+
+        <!-- CTAs -->
+        <div id="hero-cta-group" class="flex flex-col sm:flex-row items-center justify-center lg:justify-start space-y-4 sm:space-y-0 sm:space-x-4 pt-2">
+          <a href="{% url 'tours:list' %}" 
+             class="magnetic-btn w-full sm:w-auto px-8 py-4 rounded-full bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-400 hover:to-cyan-400 text-white font-bold text-sm shadow-xl shadow-sky-500/30 transition-all duration-300 flex items-center justify-center space-x-3 font-bengali">
+            <i data-lucide="compass" class="w-5 h-5"></i>
+            <span>ট্যুর প্যাকেজগুলো দেখুন</span>
+          </a>
+          <a href="{% url 'stories:list' %}" 
+             class="w-full sm:w-auto px-8 py-4 rounded-full bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 text-slate-200 hover:text-white font-semibold text-sm transition-all duration-300 flex items-center justify-center space-x-2 font-bengali">
+            <i data-lucide="book-open" class="w-4 h-4 text-sky-400"></i>
+            <span>ভ্রমণ গল্প পড়ুন</span>
+          </a>
+        </div>
+
+        <!-- Quick Search Bar (HTMX ready) -->
+        <div class="pt-4 max-w-xl mx-auto lg:mx-0">
+          <form action="{% url 'tours:list' %}" method="GET" class="glass-dark p-2 rounded-2xl flex items-center space-x-2 border border-slate-700/80 shadow-2xl">
+            <div class="pl-3 text-sky-400">
+              <i data-lucide="search" class="w-5 h-5"></i>
+            </div>
+            <input type="text" name="q" placeholder="কোথায় ভ্রমণ করতে চান? যেমন: সাজেক, বান্দরবান..." 
+                   class="bg-transparent text-sm text-white placeholder-slate-400 w-full focus:outline-none font-bengali px-2 py-1">
+            <button type="submit" class="px-5 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-bold text-xs transition-colors font-bengali flex-shrink-0">
+              খুঁজুন
+            </button>
+          </form>
+        </div>
+
+      </div>
+
+      <!-- Hero Right: Dynamic Aerodynamic Floating Kite Visual -->
+      <div id="hero-kite-mascot" class="lg:col-span-5 flex items-center justify-center relative">
+        <div class="relative w-72 sm:w-88 lg:w-96 aspect-square flex items-center justify-center">
+          
+          <!-- Outer glowing rings -->
+          <div class="absolute inset-0 rounded-full border border-sky-500/20 animate-spin" style="animation-duration: 35s;"></div>
+          <div class="absolute inset-8 rounded-full border border-dashed border-cyan-400/20 animate-spin" style="animation-duration: 25s; animation-direction: reverse;"></div>
+          
+          <!-- Atmospheric backdrop glass disk -->
+          <div class="w-64 h-64 sm:w-76 sm:h-76 rounded-full bg-gradient-to-tr from-sky-900/40 via-cyan-900/20 to-slate-900/60 backdrop-blur-2xl border border-sky-400/20 shadow-2xl flex items-center justify-center relative overflow-hidden">
+            
+            <!-- Mountain silhouettes inside portal -->
+            <svg class="absolute bottom-0 w-full h-28 text-slate-950/80 fill-current" viewBox="0 0 400 150">
+              <polygon points="0,150 70,60 140,150 200,90 280,150 350,40 400,150" />
+            </svg>
+            
+            <!-- Floating Hero Kite with Aerodynamic Movement -->
+            <div class="relative z-10 w-44 h-44 animate-kite-hover filter drop-shadow-[0_15px_30px_rgba(14,165,233,0.5)]">
+              <img src="{% static 'images/favicon.svg' %}" alt="Bhromonghuri Master Kite" class="w-full h-full object-contain">
+            </div>
+
+          </div>
+
+          <!-- Floating badge indicators -->
+          <div class="absolute -top-2 right-4 px-3.5 py-2 rounded-xl glass-dark border border-white/10 text-xs font-semibold text-white shadow-xl flex items-center space-x-2 animate-float">
+            <span class="text-amber-400">★ 4.9</span>
+            <span class="font-bengali text-slate-300">ভ্রমণকারীদের রেটিং</span>
+          </div>
+
+          <div class="absolute -bottom-4 left-4 px-4 py-2.5 rounded-xl glass-dark border border-white/10 text-xs font-semibold text-white shadow-xl flex items-center space-x-2 animate-float" style="animation-delay: 1.5s;">
+            <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i>
+            <span class="font-bengali text-slate-300">১০০% নিরাপদ ভ্রমণ</span>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Scroll down indicator -->
+  <div class="absolute bottom-4 left-1/2 -translate-x-1/2 text-slate-500 flex flex-col items-center space-y-1">
+    <span class="text-[10px] tracking-widest uppercase font-semibold text-slate-400">SCROLL</span>
+    <i data-lucide="chevron-down" class="w-4 h-4 animate-bounce text-sky-400"></i>
+  </div>
+</section>
+
+
+<!-- ========================================== -->
+<!-- 2. TRUST STATS (Why Travel With Us)        -->
+<!-- ========================================== -->
+<section class="py-12 bg-white border-y border-slate-200/80">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center divide-y sm:divide-y-0 sm:divide-x divide-slate-100">
+      
+      <div class="pt-4 sm:pt-0">
+        <p class="text-3xl sm:text-4xl font-extrabold text-sky-600 tracking-tight">{{ site_setting.total_tours_count|default:"60+" }}</p>
+        <p class="font-bengali text-xs sm:text-sm text-slate-500 font-semibold mt-1">সফল ট্যুর প্যাকেজ</p>
+      </div>
+
+      <div class="pt-4 sm:pt-0">
+        <p class="text-3xl sm:text-4xl font-extrabold text-emerald-600 tracking-tight">{{ site_setting.total_travelers_count|default:"2,400+" }}</p>
+        <p class="font-bengali text-xs sm:text-sm text-slate-500 font-semibold mt-1">সন্তুষ্ট ভ্রমণকারী</p>
+      </div>
+
+      <div class="pt-4 sm:pt-0">
+        <p class="text-3xl sm:text-4xl font-extrabold text-amber-500 tracking-tight">{{ site_setting.average_rating|default:"4.9" }}★</p>
+        <p class="font-bengali text-xs sm:text-sm text-slate-500 font-semibold mt-1">গড় রেটিং রিভিউ</p>
+      </div>
+
+      <div class="pt-4 sm:pt-0">
+        <p class="text-3xl sm:text-4xl font-extrabold text-indigo-600 tracking-tight">{{ site_setting.destinations_count|default:"28+" }}</p>
+        <p class="font-bengali text-xs sm:text-sm text-slate-500 font-semibold mt-1">রোমাঞ্চকর গন্তব্য</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ========================================== -->
+<!-- 3. FEATURED TOURS                          -->
+<!-- ========================================== -->
+<section class="py-20 bg-slate-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    
+    <div class="flex flex-col md:flex-row md:items-end justify-between mb-12">
+      <div class="space-y-2">
+        <span class="text-xs font-bold tracking-widest text-sky-600 uppercase">
+          EXPLORE OUR JOURNEYS
+        </span>
+        <h2 class="font-bengali text-3xl sm:text-4xl font-extrabold text-slate-900">
+          আমাদের সেরা ট্যুর প্যাকেজসমূহ
+        </h2>
+      </div>
+      <a href="{% url 'tours:list' %}" 
+         class="mt-4 md:mt-0 inline-flex items-center space-x-2 text-sm font-bold text-sky-600 hover:text-sky-700 font-bengali group">
+        <span>সবগুলো ট্যুর দেখুন</span>
+        <i data-lucide="arrow-right" class="w-4 h-4 transform group-hover:translate-x-1 transition-transform"></i>
+      </a>
+    </div>
+
+    <!-- Tours Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {% for tour in featured_tours %}
+        {% include 'components/tour_card.html' with tour=tour %}
+      {% empty %}
+        <p class="text-slate-500 text-center col-span-3 py-10 font-bengali">এখনো কোনো ফিচার্ড ট্যুর যুক্ত করা হয়নি।</p>
+      {% endfor %}
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ========================================== -->
+<!-- 4. POPULAR DESTINATIONS                    -->
+<!-- ========================================== -->
+<section id="destinations" class="py-20 bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    
+    <div class="text-center max-w-3xl mx-auto mb-16 space-y-3">
+      <span class="text-xs font-bold tracking-widest text-sky-600 uppercase">
+        WHERE DO YOU WANT TO GO?
+      </span>
+      <h2 class="font-bengali text-3xl sm:text-4xl font-extrabold text-slate-900">
+        জনপ্রিয় দর্শনীয় স্থান ও গন্তব্য
+      </h2>
+      <p class="font-bengali text-sm text-slate-600">
+        পাহাড়ের চূড়া, নীল সমুদ্র, ম্যানগ্রোভ অরণ্য কিংবা শান্ত জলরাশি—আপনার পছন্দের স্থানে ঘুরে আসুন নিরাপদে।
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {% for dest in destinations %}
+        {% include 'components/destination_card.html' with destination=dest %}
+      {% endfor %}
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ========================================== -->
+<!-- 5. UPCOMING JOURNEYS TIMELINE              -->
+<!-- ========================================== -->
+<section class="py-20 bg-slate-900 text-white relative overflow-hidden">
+  <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(14,165,233,0.15),transparent_50%)]"></div>
+
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    
+    <div class="flex flex-col md:flex-row md:items-end justify-between mb-12">
+      <div class="space-y-2">
+        <span class="text-xs font-bold tracking-widest text-sky-400 uppercase">
+          UPCOMING JOURNEYS
+        </span>
+        <h2 class="font-bengali text-3xl sm:text-4xl font-extrabold text-white">
+          আসন্ন যাত্রার সূচি ও আসন সংখ্যা
+        </h2>
+      </div>
+      <a href="{% url 'tours:list' %}" class="mt-4 md:mt-0 text-sm font-bold text-sky-400 hover:text-white font-bengali">
+        সব তারিখ দেখুন →
+      </a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      {% for dt in upcoming_dates %}
+      <div class="glass-dark p-6 rounded-2xl border border-slate-800 flex flex-col justify-between space-y-4 hover:border-sky-500/50 transition-colors">
+        <div class="space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="px-2.5 py-1 rounded-md text-[11px] font-bold bg-sky-500/20 text-sky-300 border border-sky-400/30">
+              {{ dt.start_date|date:"d M Y" }}
+            </span>
+            <span class="text-xs font-semibold text-emerald-400 flex items-center space-x-1">
+              <i data-lucide="users" class="w-3.5 h-3.5"></i>
+              <span>{{ dt.available_seats }}টি বাকি</span>
+            </span>
+          </div>
+          <h4 class="font-bengali text-base font-bold text-white line-clamp-1">
+            {{ dt.tour.bangla_title|default:dt.tour.title }}
+          </h4>
+          <p class="text-xs text-slate-400 flex items-center space-x-1">
+            <i data-lucide="map-pin" class="w-3.5 h-3.5 text-sky-400"></i>
+            <span>{{ dt.tour.destination.name }}</span>
+          </p>
+        </div>
+
+        <div class="pt-3 border-t border-slate-800 flex items-center justify-between">
+          <span class="text-lg font-bold text-sky-400">৳{{ dt.effective_price|floatformat:0 }}</span>
+          <a href="{% url 'bookings:create' %}?tour={{ dt.tour.slug }}&date={{ dt.id }}" 
+             class="px-3.5 py-1.5 rounded-lg bg-sky-500 hover:bg-sky-400 text-white text-xs font-bold font-bengali transition-colors">
+            বুক করুন
+          </a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ========================================== -->
+<!-- 6. TRAVEL STORIES HIGHLIGHT                -->
+<!-- ========================================== -->
+<section class="py-20 bg-slate-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    
+    <div class="flex flex-col md:flex-row md:items-end justify-between mb-12">
+      <div class="space-y-2">
+        <span class="text-xs font-bold tracking-widest text-sky-600 uppercase">
+          AUTHENTIC TRAVEL LOGS
+        </span>
+        <h2 class="font-bengali text-3xl sm:text-4xl font-extrabold text-slate-900">
+          ভ্রমণের গল্প ও বাস্তব অভিজ্ঞতা
+        </h2>
+      </div>
+      <a href="{% url 'stories:list' %}" class="mt-4 md:mt-0 text-sm font-bold text-sky-600 hover:text-sky-700 font-bengali">
+        সব গল্প পড়ুন →
+      </a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      {% for story in stories %}
+        {% include 'components/story_card.html' with story=story %}
+      {% endfor %}
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ========================================== -->
+<!-- 7. PHOTO GALLERY PREVIEW                   -->
+<!-- ========================================== -->
+<section class="py-20 bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    
+    <div class="text-center max-w-2xl mx-auto mb-12 space-y-2">
+      <span class="text-xs font-bold tracking-widest text-sky-600 uppercase">
+        PHOTO & VIDEO GALLERY
+      </span>
+      <h2 class="font-bengali text-3xl font-extrabold text-slate-900">
+        স্মৃতির ফ্রেমে বাঁধা বাংলাদেশের সৌন্দর্য
+      </h2>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+      {% for item in gallery_items %}
+      <div class="relative group rounded-2xl overflow-hidden h-56 bg-slate-900 shadow-sm hover:shadow-xl transition-all">
+        {% if item.image %}
+        <img src="{{ item.image.url }}" alt="{{ item.title }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+        {% else %}
+        <div class="w-full h-full bg-gradient-to-tr from-slate-900 via-sky-950 to-slate-800 flex items-center justify-center">
+          <i data-lucide="camera" class="w-8 h-8 text-sky-400/40"></i>
+        </div>
+        {% endif %}
+        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity p-4 flex flex-col justify-end text-white">
+          <p class="font-bengali text-xs font-bold">{{ item.title }}</p>
+          <p class="text-[10px] text-slate-300">{{ item.destination.name }}</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <div class="mt-8 text-center">
+      <a href="{% url 'gallery:index' %}" class="inline-flex items-center space-x-2 px-6 py-3 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs font-bengali transition-colors">
+        <i data-lucide="grid" class="w-4 h-4"></i>
+        <span>পুরো গ্যালারি এক্সপ্লোর করুন</span>
+      </a>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ========================================== -->
+<!-- 8. CUSTOMER REVIEWS / TESTIMONIALS         -->
+<!-- ========================================== -->
+<section class="py-20 bg-slate-50 border-t border-slate-200/80">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    
+    <div class="text-center max-w-2xl mx-auto mb-14 space-y-2">
+      <span class="text-xs font-bold tracking-widest text-sky-600 uppercase">
+        TESTIMONIALS
+      </span>
+      <h2 class="font-bengali text-3xl font-extrabold text-slate-900">
+        ভ্রমণকারীদের ভালোলাগার কথা
+      </h2>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      {% for t in testimonials %}
+      <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 flex flex-col justify-between space-y-6">
+        <div class="space-y-4">
+          <div class="flex items-center space-x-1 text-amber-500">
+            {% for i in "12345" %}
+            <i data-lucide="star" class="w-4 h-4 fill-amber-500"></i>
+            {% endfor %}
+          </div>
+          <p class="font-bengali text-sm text-slate-700 leading-relaxed italic">
+            "{{ t.review }}"
+          </p>
+        </div>
+
+        <div class="flex items-center space-x-3 pt-4 border-t border-slate-100">
+          <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-sky-400 to-cyan-500 flex items-center justify-center text-white font-bold text-sm">
+            {{ t.customer_name|slice:":1" }}
+          </div>
+          <div>
+            <h4 class="font-bengali font-bold text-sm text-slate-900">{{ t.customer_name }}</h4>
+            <p class="font-bengali text-xs text-slate-500">{{ t.tour_name }}</p>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ========================================== -->
+<!-- 9. FAQ ACCORDION                           -->
+<!-- ========================================== -->
+<section id="faqs" class="py-20 bg-white" x-data="{ activeAccordion: 1 }">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    
+    <div class="text-center mb-12 space-y-2">
+      <span class="text-xs font-bold tracking-widest text-sky-600 uppercase">
+        HAVE QUESTIONS?
+      </span>
+      <h2 class="font-bengali text-3xl font-extrabold text-slate-900">
+        সচরাচর জিজ্ঞাসিত প্রশ্নসমূহ (FAQ)
+      </h2>
+    </div>
+
+    <div class="space-y-4">
+      {% for faq in faqs %}
+      <div class="border border-slate-200 rounded-2xl overflow-hidden transition-colors"
+           :class="activeAccordion === {{ forloop.counter }} ? 'border-sky-500 bg-sky-50/20' : 'hover:border-slate-300'">
+        <button @click="activeAccordion = (activeAccordion === {{ forloop.counter }} ? null : {{ forloop.counter }})" 
+                class="w-full p-5 text-left font-bengali font-bold text-base text-slate-900 flex items-center justify-between focus:outline-none">
+          <span>{{ faq.question }}</span>
+          <i data-lucide="chevron-down" class="w-5 h-5 text-sky-600 transform transition-transform" 
+             :class="activeAccordion === {{ forloop.counter }} ? 'rotate-180' : ''"></i>
+        </button>
+        <div x-show="activeAccordion === {{ forloop.counter }}" x-collapse class="px-5 pb-5 font-bengali text-sm text-slate-600 leading-relaxed">
+          {{ faq.answer }}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+  </div>
+</section>
+
+{% endblock %}

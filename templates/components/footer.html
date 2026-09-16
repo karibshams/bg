@@ -1,0 +1,93 @@
+{% load static %}
+<footer class="bg-slate-900 text-slate-300 border-t border-slate-800 pt-16 pb-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-12">
+      
+      <!-- Brand column -->
+      <div class="lg:col-span-2 space-y-4">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 animate-kite-hover">
+            <img src="{% static 'images/favicon.svg' %}" alt="Bhromonghuri Kite" class="w-full h-full object-contain">
+          </div>
+          <span class="font-bengali text-2xl font-bold tracking-tight text-white">
+            ভ্রমণ<span class="text-sky-400">ঘুড়ি</span>
+          </span>
+        </div>
+        <p class="font-bengali text-sm text-slate-400 leading-relaxed max-w-sm">
+          {{ site_setting.hero_subheadline|default:"ভ্রমণঘুড়ির সাথে আবিষ্কার করুন পাহাড়, সমুদ্র, মেঘের দেশ আর সবুজ বনানীর অপূর্ব সৌন্দর্য। প্রতিটি পদক্ষেপে নিরাপদ ও রোমাঞ্চকর ভ্রমণ।" }}
+        </p>
+        <div class="flex items-center space-x-4 pt-2">
+          {% if site_setting.facebook_url %}
+          <a href="{{ site_setting.facebook_url }}" target="_blank" rel="noopener" class="w-9 h-9 rounded-full bg-slate-800 hover:bg-sky-500 hover:text-white flex items-center justify-center transition-colors text-slate-400">
+            <i data-lucide="facebook" class="w-4 h-4"></i>
+          </a>
+          {% endif %}
+          {% if site_setting.instagram_url %}
+          <a href="{{ site_setting.instagram_url }}" target="_blank" rel="noopener" class="w-9 h-9 rounded-full bg-slate-800 hover:bg-pink-500 hover:text-white flex items-center justify-center transition-colors text-slate-400">
+            <i data-lucide="instagram" class="w-4 h-4"></i>
+          </a>
+          {% endif %}
+          {% if site_setting.youtube_url %}
+          <a href="{{ site_setting.youtube_url }}" target="_blank" rel="noopener" class="w-9 h-9 rounded-full bg-slate-800 hover:bg-red-500 hover:text-white flex items-center justify-center transition-colors text-slate-400">
+            <i data-lucide="youtube" class="w-4 h-4"></i>
+          </a>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Quick Links -->
+      <div class="space-y-3 font-bengali">
+        <h4 class="text-white font-semibold text-base mb-4 tracking-wide">দ্রুত লিঙ্ক</h4>
+        <ul class="space-y-2.5 text-sm text-slate-400">
+          <li><a href="{% url 'tours:list' %}" class="hover:text-sky-400 transition-colors">সকল ট্যুর প্যাকেজ</a></li>
+          <li><a href="/#destinations" class="hover:text-sky-400 transition-colors">জনপ্রিয় গন্তব্যসমূহ</a></li>
+          <li><a href="{% url 'stories:list' %}" class="hover:text-sky-400 transition-colors">ভ্রমণ গল্প ও টিপস</a></li>
+          <li><a href="{% url 'gallery:index' %}" class="hover:text-sky-400 transition-colors">ফটো গ্যালারি</a></li>
+          <li><a href="{% url 'bookings:lookup' %}" class="hover:text-sky-400 transition-colors">বুকিং স্ট্যাটাস চেক</a></li>
+        </ul>
+      </div>
+
+      <!-- Company & Support -->
+      <div class="space-y-3 font-bengali">
+        <h4 class="text-white font-semibold text-base mb-4 tracking-wide">তথ্য ও সহায়তা</h4>
+        <ul class="space-y-2.5 text-sm text-slate-400">
+          <li><a href="{% url 'core:about' %}" class="hover:text-sky-400 transition-colors">আমাদের সম্পর্কে</a></li>
+          <li><a href="/#faqs" class="hover:text-sky-400 transition-colors">সচরাচর জিজ্ঞাসা (FAQ)</a></li>
+          <li><a href="{% url 'core:contact' %}" class="hover:text-sky-400 transition-colors">যোগাযোগ করুন</a></li>
+          <li><a href="/admin/" class="hover:text-sky-400 transition-colors flex items-center space-x-1">
+            <i data-lucide="lock" class="w-3.5 h-3.5"></i>
+            <span>অ্যাডমিন প্যানেল</span>
+          </a></li>
+        </ul>
+      </div>
+
+      <!-- Contact Details -->
+      <div class="space-y-3 font-bengali">
+        <h4 class="text-white font-semibold text-base mb-4 tracking-wide">যোগাযোগ</h4>
+        <ul class="space-y-3 text-sm text-slate-400">
+          <li class="flex items-start space-x-2.5">
+            <i data-lucide="phone" class="w-4 h-4 text-sky-400 flex-shrink-0 mt-1"></i>
+            <span>{{ site_setting.phone|default:"+880 1712-345678" }}</span>
+          </li>
+          <li class="flex items-start space-x-2.5">
+            <i data-lucide="mail" class="w-4 h-4 text-sky-400 flex-shrink-0 mt-1"></i>
+            <span>{{ site_setting.email|default:"explore@bhromonghuri.com" }}</span>
+          </li>
+          <li class="flex items-start space-x-2.5">
+            <i data-lucide="map-pin" class="w-4 h-4 text-sky-400 flex-shrink-0 mt-1"></i>
+            <span>{{ site_setting.address|default:"House 42, Road 11, Banani, Dhaka" }}</span>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- Bottom copyright -->
+    <div class="border-t border-slate-800 pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 font-bengali">
+      <p>© 2026 ভ্রমণঘুড়ি (Bhromonghuri). সর্বস্বত্ব সংরক্ষিত।</p>
+      <div class="flex items-center space-x-4 mt-3 sm:mt-0 text-slate-400">
+        <span>নিরাপদ ভ্রমণ • আধুনিক অভিজ্ঞতা • দায়িত্বশীল পর্যটন</span>
+      </div>
+    </div>
+  </div>
+</footer>

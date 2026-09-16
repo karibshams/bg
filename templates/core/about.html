@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}আমাদের কথা — ভ্রমণঘুড়ি{% endblock %}
+
+{% block content %}
+<section class="bg-slate-900 text-white pt-32 pb-16 relative overflow-hidden">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(14,165,233,0.3),transparent_70%)]"></div>
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-3">
+    <span class="text-xs font-bold tracking-widest text-sky-400 uppercase">ABOUT US</span>
+    <h1 class="font-bengali text-4xl sm:text-5xl font-extrabold text-white">
+      ভ্রমণঘুড়ির পথচলা ও দর্শন
+    </h1>
+  </div>
+</section>
+
+<section class="py-16 bg-slate-50 min-h-screen">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10 font-bengali text-slate-800">
+    <div class="bg-white p-8 sm:p-12 rounded-3xl shadow-sm border border-slate-200/80 space-y-6 text-base sm:text-lg leading-relaxed">
+      <h2 class="text-2xl font-bold text-sky-600">আমাদের স্বপ্ন: আকাশে ডানা মেলা এক ঘুড়ির মতো স্বাধীন ভ্রমণ</h2>
+      <p>
+        ভ্রমণঘুড়ি শুধুই একটি ট্রাভেল এজেন্সি নয়; এটি প্রকৃতিপ্রেমী, রোমাঞ্চপ্রিয় মানুষদের একটি উন্মুক্ত পরিবার। আমাদের লক্ষ্য বাংলাদেশের আনাচে-কানাচে লুকিয়ে থাকা অদেখা প্রাকৃতিক রূপকে আধুনিক, নিরাপদ ও দায়িত্বশীল উপায়ে আপনাদের সামনে উপস্থাপন করা।
+      </p>
+      <p>
+        সাজেকের কুয়াশাচ্ছন্ন পাহাড় থেকে শুরু করে সুন্দরবনের গহীনে ক্যানেল ক্রুজিং কিংবা সেন্টমার্টিনের প্রবাল দ্বীপে তাঁবুবাস—প্রতিটি ট্যুরেই আমরা নিশ্চিত করি সর্বোচ্চ আরাম, মানসম্মত খাবার এবং অভিজ্ঞ হোস্টের সার্বক্ষণিক সাহচর্য।
+      </p>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-6 border-t border-slate-100 text-center">
+        <div class="p-4 rounded-2xl bg-sky-50">
+          <i data-lucide="shield-check" class="w-8 h-8 text-sky-600 mx-auto mb-2"></i>
+          <h3 class="font-bold text-base text-slate-900">নিরাপত্তা প্রথম</h3>
+          <p class="text-xs text-slate-600 mt-1">নারী ও পরিবারের জন্য শতভাগ সুরক্ষিত পরিবেশ</p>
+        </div>
+        <div class="p-4 rounded-2xl bg-emerald-50">
+          <i data-lucide="heart" class="w-8 h-8 text-emerald-600 mx-auto mb-2"></i>
+          <h3 class="font-bold text-base text-slate-900">দায়িত্বশীল পর্যটন</h3>
+          <p class="text-xs text-slate-600 mt-1">স্থানীয় সংস্কৃতি ও পরিবেশের প্রতি গভীর শ্রদ্ধা</p>
+        </div>
+        <div class="p-4 rounded-2xl bg-amber-50">
+          <i data-lucide="award" class="w-8 h-8 text-amber-600 mx-auto mb-2"></i>
+          <h3 class="font-bold text-base text-slate-900">বিশ্বস্ত সেবা</h3>
+          <p class="text-xs text-slate-600 mt-1">স্বচ্ছ মূল্য তালিকা ও হিডেন চার্জবিহীন প্যাকেজ</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

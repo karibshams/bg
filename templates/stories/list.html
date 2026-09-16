@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}ভ্রমণ গল্প ও অভিজ্ঞতা — ভ্রমণঘুড়ি{% endblock %}
+
+{% block content %}
+<section class="bg-slate-900 text-white pt-32 pb-16 relative overflow-hidden">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(14,165,233,0.3),transparent_70%)]"></div>
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-3">
+    <span class="text-xs font-bold tracking-widest text-sky-400 uppercase">TRAVEL CHRONICLES</span>
+    <h1 class="font-bengali text-4xl sm:text-5xl font-extrabold text-white">
+      ভ্রমণের বাস্তব গল্প ও রোমাঞ্চকর কাহিনী
+    </h1>
+    <p class="font-bengali text-sm text-slate-300 max-w-2xl mx-auto">
+      পাহাড়ের বাঁকে মেঘের সাথে আলিঙ্গন, হাওরের বুকে জোছনা রাত কিংবা ম্যানগ্রোভের রোমাঞ্চকর ট্রেইল—ভ্রমণকারীদের কলমে আঁকা অনুভূতি।
+    </p>
+  </div>
+</section>
+
+<section class="py-16 bg-slate-50 min-h-screen">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+    
+    <!-- Featured Story Hero Card -->
+    {% if featured_story %}
+    <div class="bg-white rounded-3xl overflow-hidden shadow-sm border border-slate-200/80 grid grid-cols-1 lg:grid-cols-12 group">
+      <div class="lg:col-span-7 relative h-72 lg:h-auto min-h-[320px] bg-slate-900 overflow-hidden">
+        {% if featured_story.cover_image %}
+        <img src="{{ featured_story.cover_image.url }}" alt="{{ featured_story.title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+        {% else %}
+        <div class="w-full h-full bg-gradient-to-tr from-slate-950 via-sky-950 to-slate-900 flex items-center justify-center">
+          <i data-lucide="feather" class="w-16 h-16 text-sky-400/30"></i>
+        </div>
+        {% endif %}
+        <span class="absolute top-4 left-4 px-3.5 py-1 rounded-full text-xs font-bold bg-sky-500 text-white shadow-md">
+          ফিচার্ড গল্প
+        </span>
+      </div>
+
+      <div class="lg:col-span-5 p-8 sm:p-10 flex flex-col justify-between space-y-6">
+        <div class="space-y-3">
+          <div class="flex items-center space-x-2 text-xs text-slate-400 font-semibold">
+            <span>{{ featured_story.author_name }}</span>
+            <span>•</span>
+            <span>{{ featured_story.read_time }}</span>
+          </div>
+
+          <h2 class="font-bengali text-2xl sm:text-3xl font-bold text-slate-900 group-hover:text-sky-600 transition-colors leading-snug">
+            <a href="{% url 'stories:detail' featured_story.slug %}">{{ featured_story.title }}</a>
+          </h2>
+
+          <p class="font-bengali text-sm text-slate-600 leading-relaxed line-clamp-4">
+            {{ featured_story.excerpt }}
+          </p>
+        </div>
+
+        <div>
+          <a href="{% url 'stories:detail' featured_story.slug %}" 
+             class="inline-flex items-center space-x-2 px-6 py-3 rounded-full bg-slate-900 hover:bg-sky-600 text-white font-bold text-xs transition-colors font-bengali">
+            <span>পুরো গল্পটি পড়ুন</span>
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Other Stories Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {% for story in stories %}
+        {% include 'components/story_card.html' with story=story %}
+      {% endfor %}
+    </div>
+
+  </div>
+</section>
+{% endblock %}
