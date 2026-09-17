@@ -4,15 +4,13 @@
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
     
     <!-- Logo & Bengali Brand -->
-    <a href="{% url 'core:home' %}" class="flex items-center space-x-3 group">
-      <div class="w-10 h-10 flex-shrink-0 animate-kite-hover">
-        <img src="{% static 'images/favicon.svg' %}" alt="Bhromonghuri Kite" class="w-full h-full object-contain">
-      </div>
-      <div class="flex flex-col">
-        <span class="font-bengali text-2xl font-bold tracking-tight text-white group-hover:text-sky-400 transition-colors">
-          ভ্রমণ<span class="text-sky-400">ঘুড়ি</span>
+    <a href="{% url 'core:home' %}" class="flex items-center space-x-2.5 group py-0.5" aria-label="ভ্রমণঘুড়ি">
+      <img src="{% static 'images/logo.png' %}" alt="ভ্রমণঘুড়ি" class="h-11 sm:h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-[0_2px_10px_rgba(56,189,248,0.3)]">
+      <div class="hidden sm:flex flex-col justify-center border-l border-white/15 pl-2.5">
+        <span class="text-[10px] font-bold tracking-widest text-sky-400 uppercase font-sans">
+          ভ্রমণঘুড়ি
         </span>
-        <span class="text-[9px] font-bold tracking-widest text-slate-400 uppercase">
+        <span class="text-[8px] font-semibold tracking-wider text-slate-400 uppercase font-sans">
           Explore • Experience
         </span>
       </div>

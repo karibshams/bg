@@ -1,0 +1,107 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}{% if subtitle %}{{ subtitle }} | {% endif %}{{ title }} | {{ site_title|default:"ভ্রমণঘুড়ি অ্যাডমিন" }}{% endblock %}
+
+{% block branding %}
+<div id="site-name" style="display: flex; align-items: center; gap: 14px; padding: 4px 0;">
+    <a href="{% url 'admin:index' %}" style="display: flex; align-items: center; gap: 14px; text-decoration: none;">
+        <img src="{% static 'images/logo.png' %}" alt="ভ্রমণঘুড়ি" style="height: 44px; width: auto; object-fit: contain; filter: drop-shadow(0 2px 6px rgba(14, 165, 233, 0.3));">
+        <span style="display: flex; flex-direction: column; line-height: 1.1;">
+            <span style="font-family: 'Hind Siliguri', sans-serif; font-weight: 700; font-size: 1.3rem; color: #f8fafc; letter-spacing: -0.01em;">
+                ভ্রমণঘুড়ি
+            </span>
+            <span style="font-size: 0.7rem; font-weight: 600; color: #38bdf8; text-transform: uppercase; letter-spacing: 0.1em;">
+                Control Center
+            </span>
+        </span>
+    </a>
+</div>
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
+<link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favicon-32x32.png' %}">
+<link rel="icon" type="image/png" href="{% static 'images/favicon.png' %}">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap">
+<style>
+  :root {
+    --primary: #0284c7;
+    --secondary: #0369a1;
+    --accent: #38bdf8;
+    --header-bg: #0f172a;
+    --header-color: #f8fafc;
+    --breadcrumbs-bg: #1e293b;
+    --link-fg: #0284c7;
+    --link-hover-color: #0369a1;
+    --border-color: #e2e8f0;
+  }
+  body {
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  }
+  #header {
+    background: #0f172a !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+    padding: 12px 24px !important;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  #user-tools {
+    color: #94a3b8 !important;
+    font-size: 0.85rem;
+  }
+  #user-tools a {
+    color: #38bdf8 !important;
+    border-bottom: 1px solid transparent;
+    transition: color 0.2s;
+  }
+  #user-tools a:hover {
+    color: #7dd3fc !important;
+    border-bottom-color: #7dd3fc;
+  }
+  div.breadcrumbs {
+    background: #1e293b !important;
+    color: #94a3b8 !important;
+    padding: 10px 24px !important;
+    font-size: 0.85rem;
+  }
+  div.breadcrumbs a {
+    color: #38bdf8 !important;
+  }
+  .module h2, .module caption, .inline-group h2 {
+    background: #0284c7 !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.02em;
+    padding: 10px 14px !important;
+  }
+  .button, input[type=submit], input[type=button], .submit-row input, a.button {
+    background: #0284c7 !important;
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 8px 16px !important;
+    font-weight: 600 !important;
+    color: #ffffff !important;
+    transition: all 0.2s;
+  }
+  .button:hover, input[type=submit]:hover, input[type=button]:hover, .submit-row input:hover {
+    background: #0369a1 !important;
+  }
+  .button.default, input[type=submit].default, .submit-row input.default {
+    background: #0ea5e9 !important;
+  }
+  .button.default:hover, input[type=submit].default:hover {
+    background: #0284c7 !important;
+  }
+</style>
+{% endblock %}
+
+{% block nav-global %}
+<div style="margin-left: auto; display: flex; align-items: center; gap: 12px;">
+  <a href="{% url 'core:home' %}" target="_blank" style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 6px; color: #38bdf8; text-decoration: none; font-size: 0.8rem; font-weight: 600;">
+    <span>🌐 ওয়েবসাইট দেখুন</span>
+  </a>
+</div>
+{% endblock %}

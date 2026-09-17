@@ -5,14 +5,13 @@
       
       <!-- Brand column -->
       <div class="lg:col-span-2 space-y-4">
-        <div class="flex items-center space-x-3">
-          <div class="w-10 h-10 animate-kite-hover">
-            <img src="{% static 'images/favicon.svg' %}" alt="Bhromonghuri Kite" class="w-full h-full object-contain">
+        <a href="{% url 'core:home' %}" class="inline-flex items-center space-x-3 group">
+          <img src="{% static 'images/logo.png' %}" alt="ভ্রমণঘুড়ি" class="h-14 w-auto object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-[0_2px_12px_rgba(56,189,248,0.2)]">
+          <div class="flex flex-col justify-center border-l border-slate-700 pl-3">
+            <span class="font-bengali text-lg font-bold text-white tracking-tight">ভ্রমণঘুড়ি</span>
+            <span class="text-[9px] font-bold tracking-widest text-sky-400 uppercase font-sans">Explore • Experience</span>
           </div>
-          <span class="font-bengali text-2xl font-bold tracking-tight text-white">
-            ভ্রমণ<span class="text-sky-400">ঘুড়ি</span>
-          </span>
-        </div>
+        </a>
         <p class="font-bengali text-sm text-slate-400 leading-relaxed max-w-sm">
           {{ site_setting.hero_subheadline|default:"ভ্রমণঘুড়ির সাথে আবিষ্কার করুন পাহাড়, সমুদ্র, মেঘের দেশ আর সবুজ বনানীর অপূর্ব সৌন্দর্য। প্রতিটি পদক্ষেপে নিরাপদ ও রোমাঞ্চকর ভ্রমণ।" }}
         </p>
