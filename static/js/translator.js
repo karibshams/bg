@@ -230,21 +230,6 @@
     });
   }
 
-  function triggerGoogleTranslate(lang) {
-    try {
-      const cookieVal = lang === 'en' ? '/auto/en' : '/auto/bn';
-      setCookie(COOKIE_NAME, cookieVal, 30);
-
-      const select = document.querySelector('.goog-te-combo');
-      if (select) {
-        select.value = lang;
-        select.dispatchEvent(new Event('change'));
-      }
-    } catch (e) {
-      console.warn('Google translate bridge note:', e);
-    }
-  }
-
   function updateNavbarUI(lang) {
     const currentCodeElements = document.querySelectorAll('.current-lang-code');
     const checkElements = document.querySelectorAll('.lang-check');
@@ -265,32 +250,30 @@
     document.documentElement.lang = lang;
   }
 
+  // Clear any lingering Google Translate cookies so Chrome never shows the translator banner
+  function clearGoogleTranslateArtifacts() {
+    document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+    document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=' + window.location.hostname + ';';
+  }
+
   window.setSiteLanguage = function (targetLang) {
     if (targetLang !== 'en' && targetLang !== 'bn') return;
 
     localStorage.setItem(STORAGE_KEY, targetLang);
     updateNavbarUI(targetLang);
 
-    // Apply instantaneous pure bilingual translation
+    // Apply instantaneous pure bilingual translation without external widgets
     applyPureBilingualTranslation(targetLang);
-
-    // Also trigger Google Translate for any large dynamic body text paragraphs
-    triggerGoogleTranslate(targetLang);
+    clearGoogleTranslateArtifacts();
 
     window.dispatchEvent(new CustomEvent('languageChanged', { detail: { lang: targetLang } }));
   };
 
   document.addEventListener('DOMContentLoaded', () => {
+    clearGoogleTranslateArtifacts();
     const preferredLang = getStoredLanguage();
     updateNavbarUI(preferredLang);
-    if (preferredLang === 'en') {
-      applyPureBilingualTranslation('en');
-      setTimeout(() => {
-        triggerGoogleTranslate('en');
-      }, 400);
-    } else {
-      applyPureBilingualTranslation('bn');
-    }
+    applyPureBilingualTranslation(preferredLang);
   });
 
   document.body.addEventListener('htmx:afterSwap', () => {
