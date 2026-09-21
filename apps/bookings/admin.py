@@ -46,7 +46,8 @@ class BookingAdmin(admin.ModelAdmin):
     travel_date.short_description = "তারিখ (Date)"
 
     def formatted_total(self, obj):
-        return format_html('<span style="font-weight: bold; color: #0284c7;">৳{:,.0f}</span>', obj.total_amount)
+        amount_str = f"৳{float(obj.total_amount):,.0f}" if obj.total_amount is not None else "৳0"
+        return format_html('<span style="font-weight: bold; color: #0284c7;">{}</span>', amount_str)
     formatted_total.short_description = "মোট টাকা (Total)"
 
     def payment_info(self, obj):

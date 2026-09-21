@@ -71,7 +71,8 @@ class PaymentAdmin(admin.ModelAdmin):
     seats_count.short_description = "Seats"
 
     def formatted_amount(self, obj):
-        return format_html('<span style="font-weight: bold; color: #0284c7;">৳{:,.0f}</span>', obj.amount)
+        amount_str = f"৳{float(obj.amount):,.0f}" if obj.amount is not None else "৳0"
+        return format_html('<span style="font-weight: bold; color: #0284c7;">{}</span>', amount_str)
     formatted_amount.short_description = "Amount"
 
     def status_badge(self, obj):

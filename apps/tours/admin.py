@@ -59,12 +59,15 @@ class TourAdmin(admin.ModelAdmin):
 
     def formatted_price(self, obj):
         if obj.discount_price:
+            disc = f"৳{float(obj.discount_price):,.0f}"
+            orig = f"৳{float(obj.price):,.0f}"
             return format_html(
-                '<span style="color: #0284c7; font-weight: bold;">৳{:,.0f}</span> '
-                '<span style="text-decoration: line-through; color: #94a3b8; font-size: 11px;">৳{:,.0f}</span>',
-                obj.discount_price, obj.price
+                '<span style="color: #0284c7; font-weight: bold;">{}</span> '
+                '<span style="text-decoration: line-through; color: #94a3b8; font-size: 11px;">{}</span>',
+                disc, orig
             )
-        return format_html('<span style="color: #0284c7; font-weight: bold;">৳{:,.0f}</span>', obj.price)
+        price_val = f"৳{float(obj.price):,.0f}" if obj.price is not None else "৳0"
+        return format_html('<span style="color: #0284c7; font-weight: bold;">{}</span>', price_val)
     formatted_price.short_description = "Price"
 
     def rating_stars(self, obj):
