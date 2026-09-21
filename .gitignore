@@ -28,7 +28,6 @@ wheels/
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
-media/
 
 # Environment variables
 .env
@@ -40,9 +39,5 @@ powershell.bat
 .idea/
 *.swp
 *.swo
-
-
-# Scratch
-scratch/
 
 
