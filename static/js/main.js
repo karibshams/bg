@@ -12,17 +12,24 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Sticky Navbar Glass effect on scroll
+  // Sticky Navbar Glass effect on scroll (Passive listener + RAF for 60fps/120fps performance)
   const navbar = document.getElementById('main-navbar');
   if (navbar) {
+    let ticking = false;
     window.addEventListener('scroll', () => {
-      if (window.scrollY > 40) {
-        navbar.classList.add('bg-slate-900/95', 'shadow-xl', 'py-3');
-        navbar.classList.remove('bg-transparent', 'py-5');
-      } else {
-        navbar.classList.remove('bg-slate-900/95', 'shadow-xl', 'py-3');
-        navbar.classList.add('bg-transparent', 'py-5');
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          if (window.scrollY > 40) {
+            navbar.classList.add('bg-slate-900/95', 'shadow-xl', 'py-3');
+            navbar.classList.remove('bg-transparent', 'py-5');
+          } else {
+            navbar.classList.remove('bg-slate-900/95', 'shadow-xl', 'py-3');
+            navbar.classList.add('bg-transparent', 'py-5');
+          }
+          ticking = false;
+        });
+        ticking = true;
       }
-    });
+    }, { passive: true });
   }
 });
