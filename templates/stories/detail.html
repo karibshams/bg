@@ -41,10 +41,55 @@
     </div>
     {% endif %}
 
+    <!-- Admin Moderation Banner for Pending Stories -->
+    {% if user.is_staff and story.status != 'approved' %}
+    <div class="p-4 rounded-2xl bg-amber-50 border border-amber-300 flex flex-col sm:flex-row items-center justify-between gap-3 text-amber-900 font-bengali">
+      <div class="flex items-center space-x-2">
+        <i data-lucide="alert-circle" class="w-5 h-5 text-amber-600"></i>
+        <span class="text-sm font-bold">
+          স্ট্যাটাস: 
+          {% if story.status == 'pending' %}⏳ পর্যালোচনায় অপেক্ষমাণ (Pending Approval){% else %}✕ বাতিল (Rejected){% endif %}
+        </span>
+      </div>
+      <div class="flex items-center space-x-2">
+        <a href="{% url 'stories:moderate' story.id 'approve' %}?next={{ request.path }}" 
+           class="px-4 py-1.5 rounded-full bg-emerald-600 text-white font-bold text-xs hover:bg-emerald-700 transition-colors">
+          ✓ অনুমোদন করুন (Approve)
+        </a>
+        <a href="{% url 'stories:moderate' story.id 'reject' %}?next={{ request.path }}" 
+           class="px-4 py-1.5 rounded-full bg-rose-600 text-white font-bold text-xs hover:bg-rose-700 transition-colors">
+          ✕ বাতিল করুন (Reject)
+        </a>
+      </div>
+    </div>
+    {% endif %}
+
     <!-- Article Body -->
     <div class="bg-white p-8 sm:p-12 rounded-3xl shadow-sm border border-slate-200/80 font-bengali text-slate-800 text-base sm:text-lg leading-relaxed whitespace-pre-line space-y-4">
       {{ story.content }}
     </div>
+
+    <!-- Story Photo Gallery (if multiple photos uploaded) -->
+    {% if photos %}
+    <div class="space-y-4 pt-4">
+      <h3 class="font-bengali text-xl font-bold text-slate-900 flex items-center space-x-2">
+        <i data-lucide="camera" class="w-5 h-5 text-sky-600"></i>
+        <span>গল্পের আলোকচিত্র অ্যালবাম ({{ photos.count }}টি ছবি)</span>
+      </h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        {% for p in photos %}
+        <div class="group relative rounded-2xl overflow-hidden bg-slate-900 aspect-video shadow-sm border border-slate-200">
+          <img src="{{ p.image.url }}" alt="{{ p.caption|default:story.title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+          {% if p.caption %}
+          <div class="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-slate-950/80 to-transparent text-white text-xs font-bengali">
+            {{ p.caption }}
+          </div>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
 
     <!-- Back and Social Share -->
     <div class="flex items-center justify-between pt-6 border-t border-slate-200 font-bengali">

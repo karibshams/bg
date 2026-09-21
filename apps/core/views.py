@@ -16,7 +16,7 @@ def get_home_context():
         is_active=True, 
         tour__is_published=True
     ).select_related('tour', 'tour__destination')[:4]
-    stories = Story.objects.filter(is_featured=True).select_related('destination')[:3]
+    stories = Story.objects.filter(status=Story.STATUS_APPROVED, is_featured=True).select_related('destination')[:3]
     gallery_items = GalleryItem.objects.filter(is_featured=True)[:6]
     testimonials = Testimonial.objects.filter(is_featured=True)[:5]
     faqs = FAQ.objects.filter(is_published=True)[:6]
