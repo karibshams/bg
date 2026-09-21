@@ -6,28 +6,22 @@
       <!-- Brand column -->
       <div class="lg:col-span-2 space-y-4">
         <a href="{% url 'core:home' %}" class="inline-flex items-center space-x-3 group">
-          <img src="{% static 'images/logo.png' %}" alt="ভ্রমণঘুড়ি" class="h-14 w-auto object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-[0_2px_12px_rgba(56,189,248,0.2)]">
-          <div class="flex flex-col justify-center border-l border-slate-700 pl-3">
-            <span class="font-bengali text-lg font-bold text-white tracking-tight">ভ্রমণঘুড়ি</span>
-            <span class="text-[9px] font-bold tracking-widest text-sky-400 uppercase font-sans">Explore • Experience</span>
-          </div>
+          <img src="{% static 'images/logo-navbar.png' %}" alt="ভ্রমণঘুড়ি" class="h-12 sm:h-14 w-auto object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-[0_2px_12px_rgba(56,189,248,0.25)]">
         </a>
         <p class="font-bengali text-sm text-slate-400 leading-relaxed max-w-sm">
           {{ site_setting.hero_subheadline|default:"ভ্রমণঘুড়ির সাথে আবিষ্কার করুন পাহাড়, সমুদ্র, মেঘের দেশ আর সবুজ বনানীর অপূর্ব সৌন্দর্য। প্রতিটি পদক্ষেপে নিরাপদ ও রোমাঞ্চকর ভ্রমণ।" }}
         </p>
         <div class="flex items-center space-x-4 pt-2">
-          {% if site_setting.facebook_url %}
-          <a href="{{ site_setting.facebook_url }}" target="_blank" rel="noopener" class="w-9 h-9 rounded-full bg-slate-800 hover:bg-sky-500 hover:text-white flex items-center justify-center transition-colors text-slate-400">
+          <a href="{{ site_setting.facebook_url|default:'https://www.facebook.com/share/g/19km9RqB1g/' }}" target="_blank" rel="noopener" class="w-9 h-9 rounded-full bg-slate-800 hover:bg-sky-500 hover:text-white flex items-center justify-center transition-colors text-slate-400" title="Facebook Group">
             <i data-lucide="facebook" class="w-4 h-4"></i>
           </a>
-          {% endif %}
           {% if site_setting.instagram_url %}
-          <a href="{{ site_setting.instagram_url }}" target="_blank" rel="noopener" class="w-9 h-9 rounded-full bg-slate-800 hover:bg-pink-500 hover:text-white flex items-center justify-center transition-colors text-slate-400">
+          <a href="{{ site_setting.instagram_url }}" target="_blank" rel="noopener" class="w-9 h-9 rounded-full bg-slate-800 hover:bg-pink-500 hover:text-white flex items-center justify-center transition-colors text-slate-400" title="Instagram">
             <i data-lucide="instagram" class="w-4 h-4"></i>
           </a>
           {% endif %}
           {% if site_setting.youtube_url %}
-          <a href="{{ site_setting.youtube_url }}" target="_blank" rel="noopener" class="w-9 h-9 rounded-full bg-slate-800 hover:bg-red-500 hover:text-white flex items-center justify-center transition-colors text-slate-400">
+          <a href="{{ site_setting.youtube_url }}" target="_blank" rel="noopener" class="w-9 h-9 rounded-full bg-slate-800 hover:bg-red-500 hover:text-white flex items-center justify-center transition-colors text-slate-400" title="YouTube">
             <i data-lucide="youtube" class="w-4 h-4"></i>
           </a>
           {% endif %}
@@ -66,15 +60,17 @@
         <ul class="space-y-3 text-sm text-slate-400">
           <li class="flex items-start space-x-2.5">
             <i data-lucide="phone" class="w-4 h-4 text-sky-400 flex-shrink-0 mt-1"></i>
-            <span>{{ site_setting.phone|default:"+880 1712-345678" }}</span>
+            <span>{{ site_setting.phone|default:"+8801518919370, 01855939459" }}</span>
           </li>
           <li class="flex items-start space-x-2.5">
             <i data-lucide="mail" class="w-4 h-4 text-sky-400 flex-shrink-0 mt-1"></i>
-            <span>{{ site_setting.email|default:"explore@bhromonghuri.com" }}</span>
+            <span>{{ site_setting.email|default:"bhromonghuri@gmail.com" }}</span>
           </li>
           <li class="flex items-start space-x-2.5">
             <i data-lucide="map-pin" class="w-4 h-4 text-sky-400 flex-shrink-0 mt-1"></i>
-            <span>{{ site_setting.address|default:"House 42, Road 11, Banani, Dhaka" }}</span>
+            <a href="https://maps.app.goo.gl/Cv52esJKLkZu2ouj9" target="_blank" rel="noopener" class="hover:text-sky-400 transition-colors">
+              {{ site_setting.address|default:"Location Map / গুগল ম্যাপে দেখুন" }}
+            </a>
           </li>
         </ul>
       </div>

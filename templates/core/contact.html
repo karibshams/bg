@@ -32,24 +32,27 @@
           <div class="flex items-start space-x-3">
             <i data-lucide="phone" class="w-5 h-5 text-sky-400 flex-shrink-0 mt-0.5"></i>
             <div>
-              <p class="text-xs text-slate-400">হেল্পলাইন</p>
-              <p class="font-bold text-white">{{ site_setting.phone|default:"+880 1712-345678" }}</p>
+              <p class="text-xs text-slate-400">হেল্পলাইন / Contact</p>
+              <p class="font-bold text-white">{{ site_setting.phone|default:"+8801518919370, 01855939459" }}</p>
             </div>
           </div>
 
           <div class="flex items-start space-x-3">
             <i data-lucide="mail" class="w-5 h-5 text-sky-400 flex-shrink-0 mt-0.5"></i>
             <div>
-              <p class="text-xs text-slate-400">ইমেইল</p>
-              <p class="font-bold text-white">{{ site_setting.email|default:"explore@bhromonghuri.com" }}</p>
+              <p class="text-xs text-slate-400">ইমেইল / Email</p>
+              <p class="font-bold text-white">{{ site_setting.email|default:"bhromonghuri@gmail.com" }}</p>
             </div>
           </div>
 
           <div class="flex items-start space-x-3">
             <i data-lucide="map-pin" class="w-5 h-5 text-sky-400 flex-shrink-0 mt-0.5"></i>
             <div>
-              <p class="text-xs text-slate-400">অফিস ঠিকানা</p>
-              <p class="font-bold text-white">{{ site_setting.address|default:"House 42, Road 11, Banani, Dhaka" }}</p>
+              <p class="text-xs text-slate-400">অফিস লোকেশন / Location</p>
+              <p class="font-bold text-white">{{ site_setting.address|default:"ঢাকা, বাংলাদেশ" }}</p>
+              <a href="https://maps.app.goo.gl/Cv52esJKLkZu2ouj9" target="_blank" rel="noopener" class="text-xs text-sky-400 hover:text-sky-300 underline mt-1 inline-block">
+                গুগল ম্যাপে দেখুন (View on Google Maps) &rarr;
+              </a>
             </div>
           </div>
         </div>

@@ -74,3 +74,28 @@ body {
 .tour-card:hover .tour-img-zoom {
   transform: scale(1.08);
 }
+
+/* Google Translate UI Overrides: Keep site layout pristine */
+.goog-te-banner-frame.skiptranslate,
+.goog-te-banner-frame,
+iframe.goog-te-banner-frame,
+.goog-te-gadget-icon,
+#goog-gt-tt,
+.goog-te-balloon-frame {
+  display: none !important;
+  visibility: hidden !important;
+}
+body {
+  top: 0px !important;
+}
+.goog-text-highlight {
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+.skiptranslate {
+  display: inline-block;
+}
+#google_translate_element {
+  display: none !important;
+}
+

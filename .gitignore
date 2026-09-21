@@ -35,12 +35,13 @@ media/
 
 # Windows
 powershell.bat
-Thumbs.db
-ehthumbs.db
-Desktop.ini
-
 # IDEs
 .vscode/
 .idea/
 *.swp
 *.swo
+
+# Scratch
+scratch/
+
+

@@ -12,11 +12,11 @@ class SiteSetting(models.Model):
     hero_headline = models.CharField(max_length=255, default="অদেখা বাংলাকে নতুন চোখে দেখা")
     hero_subheadline = models.TextField(default="ভ্রমণঘুড়ির সাথে আবিষ্কার করুন পাহাড়, সমুদ্র, মেঘের দেশ আর সবুজ বনানীর অপূর্ব সৌন্দর্য। প্রতিটি পদক্ষেপে নিরাপদ ও রোমাঞ্চকর ভ্রমণ।")
     
-    phone = models.CharField(max_length=30, default="+880 1700-000000")
-    email = models.EmailField(default="info@bhromonghuri.com")
+    phone = models.CharField(max_length=60, default="+8801518919370, 01855939459")
+    email = models.EmailField(default="bhromonghuri@gmail.com")
     address = models.CharField(max_length=255, default="Dhaka, Bangladesh")
     
-    facebook_url = models.URLField(blank=True, default="https://facebook.com/bhromonghuri")
+    facebook_url = models.URLField(blank=True, default="https://www.facebook.com/share/g/19km9RqB1g/")
     instagram_url = models.URLField(blank=True, default="https://instagram.com/bhromonghuri")
     youtube_url = models.URLField(blank=True, default="https://youtube.com/@bhromonghuri")
     
