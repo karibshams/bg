@@ -1,7 +1,10 @@
 /**
- * BhromonGhuri On-Page Language Translator (English <-> বাংলা)
- * Direct on-page translation without page reload or redirect.
+ * BhromonGhuri Pure Bilingual Translator (English <-> বাংলা)
+ * Direct on-page translation without page reload.
  * Language state persists across navigation via localStorage & cookies.
+ * STRICT RULE:
+ * - In Bengali mode: 100% Bengali, NO English words.
+ * - In English mode: 100% English, NO Bengali words.
  */
 
 (function () {
@@ -11,115 +14,109 @@
   const COOKIE_NAME = 'googtrans';
 
   // Comprehensive bilingual dictionary for instant on-page UI translation
+  // Every 'bn' value is strictly Bengali. Every 'en' value is strictly English.
   const translations = {
-    // Nav & Common Headers
-    'হোম (Home)': { en: 'Home', bn: 'হোম (Home)' },
+    // Navigation
     'হোম': { en: 'Home', bn: 'হোম' },
-    'ট্যুরস (Tours)': { en: 'Tours', bn: 'ট্যুরস (Tours)' },
-    'ট্যুর প্যাকেজ (All Tours)': { en: 'All Tour Packages', bn: 'ট্যুর প্যাকেজ (All Tours)' },
     'ট্যুর প্যাকেজ': { en: 'Tour Packages', bn: 'ট্যুর প্যাকেজ' },
-    'ট্যুরস': { en: 'Tours', bn: 'ট্যুরস' },
-    'গন্তব্য (Destinations)': { en: 'Destinations', bn: 'গন্তব্য (Destinations)' },
-    'দর্শনীয় স্থান (Destinations)': { en: 'Destinations', bn: 'দর্শনীয় স্থান (Destinations)' },
-    'দর্শনীয় স্থান': { en: 'Destinations', bn: 'দর্শনীয় স্থান' },
+    'ট্যুরস': { en: 'Tours', bn: 'ট্যুর প্যাকেজ' },
     'গন্তব্য': { en: 'Destinations', bn: 'গন্তব্য' },
-    'গল্প (Stories)': { en: 'Stories', bn: 'গল্প (Stories)' },
-    'ভ্রমণ কাহিনী (Travel Stories)': { en: 'Travel Stories', bn: 'ভ্রমণ কাহিনী (Travel Stories)' },
+    'দর্শনীয় স্থান': { en: 'Destinations', bn: 'দর্শনীয় স্থান' },
+    'ভ্রমণ গল্প': { en: 'Travel Stories', bn: 'ভ্রমণ গল্প' },
     'ভ্রমণ কাহিনী': { en: 'Travel Stories', bn: 'ভ্রমণ কাহিনী' },
-    'ভ্রমণ গল্প ও টিপস': { en: 'Travel Stories & Tips', bn: 'ভ্রমণ গল্প ও টিপস' },
     'গল্প': { en: 'Stories', bn: 'গল্প' },
-    'গ্যালারি (Gallery)': { en: 'Gallery', bn: 'গ্যালারি (Gallery)' },
-    'ফটো গ্যালারি (Gallery)': { en: 'Photo Gallery', bn: 'ফটো গ্যালারি (Gallery)' },
-    'ফটো গ্যালারি': { en: 'Photo Gallery', bn: 'ফটো গ্যালারি' },
     'গ্যালারি': { en: 'Gallery', bn: 'গ্যালারি' },
-    'আমাদের কথা (About)': { en: 'About Us', bn: 'আমাদের কথা (About)' },
-    'আমাদের কথা (About Us)': { en: 'About Us', bn: 'আমাদের কথা (About Us)' },
+    'ফটো গ্যালারি': { en: 'Photo Gallery', bn: 'ফটো গ্যালারি' },
     'আমাদের সম্পর্কে': { en: 'About Us', bn: 'আমাদের সম্পর্কে' },
     'আমাদের কথা': { en: 'About Us', bn: 'আমাদের কথা' },
-    'যোগাযোগ (Contact)': { en: 'Contact', bn: 'যোগাযোগ (Contact)' },
     'যোগাযোগ': { en: 'Contact', bn: 'যোগাযোগ' },
     'যোগাযোগ করুন': { en: 'Contact Us', bn: 'যোগাযোগ করুন' },
-    'বুকিং চেক': { en: 'Check Booking', bn: 'বুকিং চেক' },
+    'বুকিং যাচাই': { en: 'Track Booking', bn: 'বুকিং যাচাই' },
+    'বুকিং চেক': { en: 'Check Booking', bn: 'বুকিং যাচাই' },
     'বুকিং স্ট্যাটাস চেক': { en: 'Check Booking Status', bn: 'বুকিং স্ট্যাটাস চেক' },
-    'বুকিং স্ট্যাটাস চেক (Check Booking)': { en: 'Check Booking Status', bn: 'বুকিং স্ট্যাটাস চেক (Check Booking)' },
     'ট্যুর বুক করুন': { en: 'Book a Tour', bn: 'ট্যুর বুক করুন' },
     'ট্যুর নির্বাচন করুন': { en: 'Select a Tour', bn: 'ট্যুর নির্বাচন করুন' },
-    'অ্যাডমিন প্যানেল': { en: 'Admin Panel', bn: 'অ্যাডমিন প্যানেল' },
+    'অ্যাডমিন প্যানেল': { en: 'Admin Control Panel', bn: 'অ্যাডমিন প্যানেল' },
+    'লগআউট': { en: 'Logout', bn: 'লগআউট' },
+    'গুগল লগইন': { en: 'Google Sign In', bn: 'গুগল লগইন' },
+    'গুগল দিয়ে প্রবেশ': { en: 'Continue with Google', bn: 'গুগল দিয়ে প্রবেশ' },
+    'গল্প লিখুন': { en: 'Share Your Story', bn: 'গল্প লিখুন' },
+    'আমার বুকিং': { en: 'My Bookings', bn: 'আমার বুকিং' },
     'সর্বস্বত্ব সংরক্ষিত।': { en: 'All rights reserved.', bn: 'সর্বস্বত্ব সংরক্ষিত।' },
 
     // Hero & Taglines
-    'অদেখা বাংলাকে নতুন চোখে দেখা': { en: 'Looking at the unseen Bengal with a new eye', bn: 'অদেখা বাংলাকে নতুন চোখে দেখা' },
+    'অভিযান • অভিজ্ঞতা • আবিষ্কার': { en: 'Explore • Experience • Discover', bn: 'অভিযান • অভিজ্ঞতা • আবিষ্কার' },
+    'অদেখা বাংলাকে নতুন চোখে দেখা': { en: 'Explore Unseen Bangladesh With Fresh Eyes', bn: 'অদেখা বাংলাকে নতুন চোখে দেখা' },
     'নতুন জায়গা, নতুন গল্প, নতুন অনুভূতি': { en: 'New places, new stories, new emotions', bn: 'নতুন জায়গা, নতুন গল্প, নতুন অনুভূতি' },
-    'ভ্রমণঘুড়ির সাথে আবিষ্কার করুন বাংলাদেশ ও বিদেশের অনন্য সব দর্শনীয় স্থান। নিরাপদ ও আধুনিক ভ্রমণ অভিজ্ঞতা।': {
-      en: 'Discover unique destinations in Bangladesh and beyond with BhromonGhuri. Safe, modern, and exciting travel.',
-      bn: 'ভ্রমণঘুড়ির সাথে আবিষ্কার করুন বাংলাদেশ ও বিদেশের অনন্য সব দর্শনীয় স্থান। নিরাপদ ও আধুনিক ভ্রমণ অভিজ্ঞতা।'
-    },
-    'ভ্রমণঘুড়ির সাথে আবিষ্কার করুন পাহাড়, সমুদ্র, মেঘের দেশ আর সবুজ বনানীর অপূর্ব সৌন্দর্য। প্রতিটি পদক্ষেপে নিরাপদ ও রোমাঞ্চকর ভ্রমণ।': {
-      en: 'Discover mountains, seas, clouds, and lush green forests with BhromonGhuri. Safe and thrilling travel every step of the way.',
-      bn: 'ভ্রমণঘুড়ির সাথে আবিষ্কার করুন পাহাড়, সমুদ্র, মেঘের দেশ আর সবুজ বনানীর অপূর্ব সৌন্দর্য। প্রতিটি পদক্ষেপে নিরাপদ ও রোমাঞ্চকর ভ্রমণ।'
-    },
-    'প্যাকেজসমূহ দেখুন': { en: 'Check out packages', bn: 'প্যাকেজসমূহ দেখুন' },
-    'প্যাকেজ দেখুন': { en: 'View Packages', bn: 'প্যাকেজ দেখুন' },
+    'ট্যুর প্যাকেজগুলো দেখুন': { en: 'Explore Tour Packages', bn: 'ট্যুর প্যাকেজগুলো দেখুন' },
     'ভ্রমণ গল্প পড়ুন': { en: 'Read Travel Stories', bn: 'ভ্রমণ গল্প পড়ুন' },
-    'কখন কোথায় ভ্রমণ করতে চান?': { en: 'When and where do you want to travel?', bn: 'কখন কোথায় ভ্রমণ করতে চান?' },
-    'অনুসন্ধান করুন': { en: 'Search', bn: 'অনুসন্ধান করুন' },
+    'খুঁজুন': { en: 'Search', bn: 'খুঁজুন' },
     'অনুসন্ধান': { en: 'Search', bn: 'অনুসন্ধান' },
-    'সকল ট্যুর প্যাকেজ': { en: 'All Tour Packages', bn: 'সকল ট্যুর প্যাকেজ' },
-    'জনপ্রিয় গন্তব্যসমূহ': { en: 'Popular Destinations', bn: 'জনপ্রিয় গন্তব্যসমূহ' },
-    'দ্রুত লিঙ্ক': { en: 'Quick Links', bn: 'দ্রুত লিঙ্ক' },
-    'তথ্য ও সহায়তা': { en: 'Information & Support', bn: 'তথ্য ও সহায়তা' },
-    'সচরাচর জিজ্ঞাসা (FAQ)': { en: 'Frequently Asked Questions (FAQ)', bn: 'সচরাচর জিজ্ঞাসা (FAQ)' },
-    'নিরাপদ ভ্রমণ • আধুনিক অভিজ্ঞতা • দায়িত্বশীল পর্যটন': {
-      en: 'Safe Travel • Modern Experience • Responsible Tourism',
-      bn: 'নিরাপদ ভ্রমণ • আধুনিক অভিজ্ঞতা • দায়িত্বশীল পর্যটন'
-    },
+    'নিচে দেখুন': { en: 'Scroll Down', bn: 'নিচে দেখুন' },
+    'ভ্রমণকারীদের রেটিং': { en: 'Traveler Rating', bn: 'ভ্রমণকারীদের রেটিং' },
+    '১০০% নিরাপদ ভ্রমণ': { en: '100% Safe Travel', bn: '১০০% নিরাপদ ভ্রমণ' },
 
-    // Card details & filters
-    'বুকিং করুন': { en: 'Book Now', bn: 'বুকিং করুন' },
+    // Trust stats
+    'সফল ট্যুর প্যাকেজ': { en: 'Successful Tour Packages', bn: 'সফল ট্যুর প্যাকেজ' },
+    'সন্তুষ্ট ভ্রমণকারী': { en: 'Satisfied Travelers', bn: 'সন্তুষ্ট ভ্রমণকারী' },
+    'গড় রেটিং রিভিউ': { en: 'Average Review Rating', bn: 'গড় রেটিং রিভিউ' },
+    'রোমাঞ্চকর গন্তব্য': { en: 'Thrilling Destinations', bn: 'রোমাঞ্চকর গন্তব্য' },
+
+    // Section Titles
+    'আমাদের অসাধারণ ট্যুরসমূহ': { en: 'Explore Our Journeys', bn: 'আমাদের অসাধারণ ট্যুরসমূহ' },
+    'আমাদের সেরা ট্যুর প্যাকেজসমূহ': { en: 'Our Best Tour Packages', bn: 'আমাদের সেরা ট্যুর প্যাকেজসমূহ' },
+    'সবগুলো ট্যুর দেখুন': { en: 'View All Tours', bn: 'সবগুলো ট্যুর দেখুন' },
+    'আপনার পছন্দের গন্তব্য': { en: 'Where Do You Want To Go?', bn: 'আপনার পছন্দের গন্তব্য' },
+    'জনপ্রিয় দর্শনীয় স্থান ও গন্তব্য': { en: 'Popular Attractions & Destinations', bn: 'জনপ্রিয় দর্শনীয় স্থান ও গন্তব্য' },
+    'আসন্ন যাত্রাসমূহ': { en: 'Upcoming Journeys', bn: 'আসন্ন যাত্রাসমূহ' },
+    'আসন্ন যাত্রার সূচি ও আসন সংখ্যা': { en: 'Upcoming Journey Schedule & Seats', bn: 'আসন্ন যাত্রার সূচি ও আসন সংখ্যা' },
+    'সব তারিখ দেখুন →': { en: 'View All Dates →', bn: 'সব তারিখ দেখুন →' },
+    'ভ্রমণ কাহিনী ও বাস্তব অভিজ্ঞতা': { en: 'Authentic Travel Logs', bn: 'ভ্রমণ কাহিনী ও বাস্তব অভিজ্ঞতা' },
+    'ভ্রমণের গল্প ও বাস্তব অভিজ্ঞতা': { en: 'Travel Stories & Genuine Experiences', bn: 'ভ্রমণের গল্প ও বাস্তব অভিজ্ঞতা' },
+    'সব গল্প পড়ুন →': { en: 'Read All Stories →', bn: 'সব গল্প পড়ুন →' },
+    'ছবি ও ভিডিও গ্যালারি': { en: 'Photo & Video Gallery', bn: 'ছবি ও ভিডিও গ্যালারি' },
+    'স্মৃতির ফ্রেমে বাঁধা বাংলাদেশের সৌন্দর্য': { en: 'Memories of Beautiful Bangladesh', bn: 'স্মৃতির ফ্রেমে বাঁধা বাংলাদেশের সৌন্দর্য' },
+    'পুরো গ্যালারি এক্সপ্লোর করুন': { en: 'Explore Full Gallery', bn: 'পুরো গ্যালারি এক্সপ্লোর করুন' },
+    'ভ্রমণকারীদের মন্তব্য': { en: 'Traveler Testimonials', bn: 'ভ্রমণকারীদের মন্তব্য' },
+    'ভ্রমণকারীদের ভালোলাগার কথা': { en: 'Words of Joy from Travelers', bn: 'ভ্রমণকারীদের ভালোলাগার কথা' },
+
+    // Card details & actions
+    'জনপ্রতি প্যাকেজ মূল্য': { en: 'Price per person', bn: 'জনপ্রতি প্যাকেজ মূল্য' },
+    'বিস্তারিত': { en: 'View Details', bn: 'বিস্তারিত' },
     'বিস্তারিত দেখুন': { en: 'View Details', bn: 'বিস্তারিত দেখুন' },
+    'বুকিং করুন': { en: 'Book Now', bn: 'বুকিং করুন' },
+    'বুক করুন': { en: 'Book Now', bn: 'বুক করুন' },
     'দিন': { en: 'Days', bn: 'দিন' },
     'রাত': { en: 'Nights', bn: 'রাত' },
-    'জনপ্রতি': { en: 'per person', bn: 'জনপ্রতি' },
+    'জন': { en: 'persons', bn: 'জন' },
+    'টি বাকি': { en: 'seats left', bn: 'টি বাকি' },
     'আসন বাকি': { en: 'seats left', bn: 'আসন বাকি' },
-    'সর্বোচ্চ আসন': { en: 'Total Seats', bn: 'সর্বোচ্চ আসন' },
-    'যাত্রা শুরু': { en: 'Departure', bn: 'যাত্রা শুরু' },
-    'সকল ক্যাটাগরি': { en: 'All Categories', bn: 'সকল ক্যাটাগরি' },
-    'পাহাড় ও ক্লাউড': { en: 'Mountains & Clouds', bn: 'পাহাড় ও ক্লাউড' },
-    'সমুদ্র ও দ্বীপ': { en: 'Sea & Islands', bn: 'সমুদ্র ও দ্বীপ' },
-    'হাওর ও জলরাশি': { en: 'Haor & Wetlands', bn: 'হাওর ও জলরাশি' },
-    'ঐতিহ্য ও প্রত্নতত্ত্ব': { en: 'Heritage & Archaeology', bn: 'ঐতিহ্য ও প্রত্নতত্ত্ব' },
-    'জঙ্গল ও বন্যপ্রাণী': { en: 'Forest & Wildlife', bn: 'জঙ্গল ও বন্যপ্রাণী' },
+    'ট্যুরগুলো দেখুন': { en: 'View Tours', bn: 'ট্যুরগুলো দেখুন' },
+    'প্যাকেজ দেখুন': { en: 'View Packages', bn: 'প্যাকেজ দেখুন' },
+    'দ্রুত লিঙ্ক': { en: 'Quick Links', bn: 'দ্রুত লিঙ্ক' },
+    'তথ্য ও সহায়তা': { en: 'Support & Information', bn: 'তথ্য ও সহায়তা' },
+    'সচরাচর জিজ্ঞাসা': { en: 'Frequently Asked Questions', bn: 'সচরাচর জিজ্ঞাসা' },
+    'পেমেন্ট মাধ্যম': { en: 'Payment Methods', bn: 'পেমেন্ট মাধ্যম' },
 
-    // Story & details
-    'ভ্রমণ গল্প ও বাস্তব অভিজ্ঞতা': { en: 'Travel Stories and Real Experiences', bn: 'ভ্রমণ গল্প ও বাস্তব অভিজ্ঞতা' },
-    'পুরো গল্প পড়ুন': { en: 'Read full story', bn: 'পুরো গল্প পড়ুন' },
-    'আপনার গল্প শেয়ার করুন': { en: 'Share Your Story', bn: 'আপনার গল্প শেয়ার করুন' },
-    'গল্প শেয়ার করুন': { en: 'Share Story', bn: 'গল্প শেয়ার করুন' },
-
-    // Tour detail & booking
-    'ট্যুর পরিচিতি ও হাইলাইটস': { en: 'Tour Overview & Highlights', bn: 'ট্যুর পরিচিতি ও হাইলাইটস' },
-    'আগামী যাত্রার তারিখ': { en: 'Upcoming Departure Dates', bn: 'আগামী যাত্রার তারিখ' },
-    'দিনভিত্তিক ভ্রমণ পরিকল্পনা': { en: 'Day-by-Day Itinerary', bn: 'দিনভিত্তিক ভ্রমণ পরিকল্পনা' },
-    'প্যাকেজে যা যা অন্তর্ভুক্ত': { en: 'What is included in the package', bn: 'প্যাকেজে যা যা অন্তর্ভুক্ত' },
-    'প্যাকেজে যা অন্তর্ভুক্ত নয়': { en: 'What is not included (excluded)', bn: 'প্যাকেজে যা অন্তর্ভুক্ত নয়' },
-    'বুকিং সারাংশ': { en: 'Booking Summary', bn: 'বুকিং সারাংশ' },
-    'ভ্রমণকারী সংখ্যা': { en: 'Number of Travelers', bn: 'ভ্রমণকারী সংখ্যা' },
-    'গ্রাহকের তথ্য': { en: 'Customer Details', bn: 'গ্রাহকের তথ্য' },
-    'সম্পূর্ণ নাম': { en: 'Full Name', bn: 'সম্পূর্ণ নাম' },
-    'ইমেইল ঠিকানা': { en: 'Email Address', bn: 'ইমেইল ঠিকানা' },
-    'মোবাইল নম্বর': { en: 'Mobile Number', bn: 'মোবাইল নম্বর' },
-    'পেমেন্টে এগিয়ে যান': { en: 'Proceed to Payment', bn: 'পেমেন্টে এগিয়ে যান' },
-    'পেমেন্ট পদ্ধতি নির্বাচন করুন': { en: 'Select Payment Method', bn: 'পেমেন্ট পদ্ধতি নির্বাচন করুন' },
-    'পেমেন্ট সম্পন্ন করুন': { en: 'Complete Payment', bn: 'পেমেন্ট সম্পন্ন করুন' },
-    'যেকোনো বিশেষ নির্দেশনা (যদি থাকে)': { en: 'Special instructions (if any)', bn: 'যেকোনো বিশেষ নির্দেশনা (যদি থাকে)' },
-    'বুকিং রেফারেন্স আইডি': { en: 'Booking Reference ID', bn: 'বুকিং রেফারেন্স আইডি' },
-    'ট্রানজেকশন আইডি (TrxID)': { en: 'Transaction ID (TrxID)', bn: 'ট্রানজেকশন আইডি (TrxID)' },
-    'ট্যুর ও ব্যাচ': { en: 'Tour & Batch', bn: 'ট্যুর ও ব্যাচ' },
-    'পেমেন্ট স্ট্যাটাস': { en: 'Payment Status', bn: 'পেমেন্ট স্ট্যাটাস' },
-    'কনফার্মেশন ভাউচার ডাউনলোড': { en: 'Download Confirmation Voucher', bn: 'কনফার্মেশন ভাউচার ডাউনলোড' }
+    // Payment & Verification Page
+    'পেমেন্ট জমা সম্পন্ন • ভেরিফিকেশন চলছে': { en: 'Payment Submitted • Under Verification', bn: 'পেমেন্ট জমা সম্পন্ন • ভেরিফিকেশন চলছে' },
+    'আপনার পেমেন্ট ভেরিফিকেশনের অধীনে রয়েছে': { en: 'Your Payment is Under Verification', bn: 'আপনার পেমেন্ট ভেরিফিকেশনের অধীনে রয়েছে' },
+    'বুকিং রেফারেন্স নম্বর': { en: 'Booking Reference ID', bn: 'বুকিং রেফারেন্স নম্বর' },
+    'ভেরিফিকেশন অপেক্ষমাণ': { en: 'Pending Verification', bn: 'ভেরিফিকেশন অপেক্ষমাণ' },
+    'ট্যুর প্যাকেজ:': { en: 'Tour Package:', bn: 'ট্যুর প্যাকেজ:' },
+    'ভ্রমণের তারিখ:': { en: 'Travel Date:', bn: 'ভ্রমণের তারিখ:' },
+    'গ্রাহকের নাম:': { en: 'Customer Name:', bn: 'গ্রাহকের নাম:' },
+    'যাত্রী সংখ্যা:': { en: 'Travelers:', bn: 'যাত্রী সংখ্যা:' },
+    'পেমেন্ট মাধ্যম:': { en: 'Payment Method:', bn: 'পেমেন্ট মাধ্যম:' },
+    'প্রেরক নম্বর:': { en: 'Sender Number:', bn: 'প্রেরক নম্বর:' },
+    'লেনদেন নম্বর:': { en: 'Transaction ID:', bn: 'লেনদেন নম্বর:' },
+    'পরিশোধিত টাকা:': { en: 'Paid Amount:', bn: 'পরিশোধিত টাকা:' },
+    'পরবর্তী পদক্ষেপ': { en: 'What happens next?', bn: 'পরবর্তী পদক্ষেপ' },
+    'বুকিং স্ট্যাটাস ট্র্যাক করুন': { en: 'Track Booking Status', bn: 'বুকিং স্ট্যাটাস ট্র্যাক করুন' },
+    'হোম পেজে ফিরুন': { en: 'Return to Home', bn: 'হোম পেজে ফিরুন' },
+    'ফ্লেক্সিবল': { en: 'Flexible', bn: 'ফ্লেক্সিবল' }
   };
 
-  // Cache original text for text nodes to allow seamless round-trip switching
   const originalTextNodes = new Map();
 
   function getStoredLanguage() {
@@ -136,8 +133,24 @@
     document.cookie = name + '=' + (value || '') + expires + '; path=/';
   }
 
-  function applyDictionaryTranslation(targetLang) {
-    // Walk through all text-containing elements
+  function applyPureBilingualTranslation(targetLang) {
+    // 1. First priority: Pure DOM element swaps with data-en & data-bn
+    document.querySelectorAll('[data-en][data-bn]').forEach((el) => {
+      const targetText = targetLang === 'en' ? el.getAttribute('data-en') : el.getAttribute('data-bn');
+      if (targetText && el.textContent.trim() !== targetText.trim()) {
+        el.textContent = targetText;
+      }
+    });
+
+    // 2. Input Placeholders with data-en-placeholder & data-bn-placeholder
+    document.querySelectorAll('[data-en-placeholder][data-bn-placeholder]').forEach((el) => {
+      const targetPlaceholder = targetLang === 'en' ? el.getAttribute('data-en-placeholder') : el.getAttribute('data-bn-placeholder');
+      if (targetPlaceholder) {
+        el.setAttribute('placeholder', targetPlaceholder);
+      }
+    });
+
+    // 3. Fallback dictionary replacement across all text nodes
     const walker = document.createTreeWalker(
       document.body,
       NodeFilter.SHOW_TEXT,
@@ -151,6 +164,9 @@
             return NodeFilter.FILTER_REJECT;
           }
           if (parent.closest('#language-dropdown-menu') || parent.closest('#language-mobile-menu')) {
+            return NodeFilter.FILTER_REJECT;
+          }
+          if (parent.hasAttribute('data-en') && parent.hasAttribute('data-bn')) {
             return NodeFilter.FILTER_REJECT;
           }
           return NodeFilter.FILTER_ACCEPT;
@@ -179,7 +195,7 @@
         return;
       }
 
-      // Check reverse match (if page text was already in English or vice-versa)
+      // Reverse match check
       for (const [key, mapping] of Object.entries(translations)) {
         if (mapping.en === trimmed || mapping.bn === trimmed) {
           const replacement = mapping[targetLang] || (targetLang === 'en' ? mapping.en : mapping.bn);
@@ -205,7 +221,7 @@
       }
     });
 
-    // Also update input placeholders
+    // 4. Update input placeholders
     document.querySelectorAll('input[placeholder], textarea[placeholder]').forEach((input) => {
       const ph = input.getAttribute('placeholder').trim();
       if (translations[ph] && translations[ph][targetLang]) {
@@ -214,10 +230,8 @@
     });
   }
 
-  // Google Translate bridge for arbitrary dynamic text paragraphs
   function triggerGoogleTranslate(lang) {
     try {
-      // Set the standard Google Translate cookie
       const cookieVal = lang === 'en' ? '/auto/en' : '/auto/bn';
       setCookie(COOKIE_NAME, cookieVal, 30);
 
@@ -248,7 +262,6 @@
       }
     });
 
-    // Update html lang attribute
     document.documentElement.lang = lang;
   }
 
@@ -258,34 +271,30 @@
     localStorage.setItem(STORAGE_KEY, targetLang);
     updateNavbarUI(targetLang);
 
-    // Apply fast dictionary-based DOM translation immediately
-    applyDictionaryTranslation(targetLang);
+    // Apply instantaneous pure bilingual translation
+    applyPureBilingualTranslation(targetLang);
 
-    // Also trigger Google Translate for any dynamic text blocks
+    // Also trigger Google Translate for any large dynamic body text paragraphs
     triggerGoogleTranslate(targetLang);
 
-    // Dispatch event for other components if needed
     window.dispatchEvent(new CustomEvent('languageChanged', { detail: { lang: targetLang } }));
   };
 
-  // Initialize on page load
   document.addEventListener('DOMContentLoaded', () => {
     const preferredLang = getStoredLanguage();
     updateNavbarUI(preferredLang);
     if (preferredLang === 'en') {
-      // Apply translation right after DOM is ready
-      applyDictionaryTranslation('en');
+      applyPureBilingualTranslation('en');
       setTimeout(() => {
         triggerGoogleTranslate('en');
-      }, 500);
+      }, 400);
+    } else {
+      applyPureBilingualTranslation('bn');
     }
   });
 
-  // Also hook into HTMX content swaps
   document.body.addEventListener('htmx:afterSwap', () => {
     const currentLang = getStoredLanguage();
-    if (currentLang === 'en') {
-      applyDictionaryTranslation('en');
-    }
+    applyPureBilingualTranslation(currentLang);
   });
 })();

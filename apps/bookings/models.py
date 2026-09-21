@@ -44,8 +44,12 @@ class Booking(models.Model):
     def save(self, *args, **kwargs):
         if not self.booking_reference:
             year = timezone.now().year
-            rand_code = uuid.uuid4().hex[:6].upper()
-            self.booking_reference = f"BG-{year}-{rand_code}"
+            while True:
+                rand_code = uuid.uuid4().hex[:8].upper()
+                candidate = f"BG-{year}-{rand_code}"
+                if not Booking.objects.filter(booking_reference=candidate).exists():
+                    self.booking_reference = candidate
+                    break
         if not self.total_amount and self.unit_price:
             self.total_amount = self.unit_price * self.num_travelers
         super().save(*args, **kwargs)

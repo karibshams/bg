@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}লগইন — ভ্রমণঘুড়ি{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-slate-950 text-white pt-32 pb-20 flex items-center justify-center relative overflow-hidden">
+  
+  <!-- Ambient background glow -->
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(14,165,233,0.25),rgba(255,255,255,0))]"></div>
+  <div class="absolute -top-32 -right-32 w-80 h-80 bg-sky-500/20 rounded-full blur-3xl pointer-events-none"></div>
+
+  <div class="relative max-w-md w-full mx-auto px-4 z-10 font-bengali">
+    
+    <div class="bg-slate-900/90 backdrop-blur-xl border border-white/10 p-8 sm:p-10 rounded-3xl shadow-2xl space-y-6 text-center">
+      
+      <!-- Brand Logo -->
+      <a href="{% url 'core:home' %}" class="inline-block mx-auto mb-2">
+        <img src="{% static 'images/logo-navbar.png' %}" alt="ভ্রমণঘুড়ি" class="h-12 w-auto object-contain mx-auto filter drop-shadow-md">
+      </a>
+
+      <div class="space-y-1">
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-white trans-target" data-en="Welcome to BhromonGhuri" data-bn="ভ্রমণঘুড়িতে স্বাগতম">
+          ভ্রমণঘুড়িতে স্বাগতম
+        </h1>
+        <p class="text-xs text-slate-400 trans-target" data-en="Sign in to manage your bookings and share travel stories." data-bn="আপনার ভ্রমণ অভিজ্ঞতা সংরক্ষণ ও বুকিং পরিচালনার জন্য প্রবেশ করুন।">
+          আপনার ভ্রমণ অভিজ্ঞতা সংরক্ষণ ও বুকিং পরিচালনার জন্য প্রবেশ করুন।
+        </p>
+      </div>
+
+      <!-- PRIMARY: Sign In With Google -->
+      <div class="pt-2">
+        <a href="{% url 'core:google_login' %}?next={{ next|default:'/' }}" 
+           class="w-full py-3.5 px-4 rounded-2xl bg-white hover:bg-slate-100 text-slate-800 font-bold text-sm shadow-xl flex items-center justify-center space-x-3 transition-all duration-300 transform hover:-translate-y-0.5 border border-slate-200">
+          <!-- Google G Logo SVG -->
+          <svg class="w-5 h-5" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/>
+            <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.34 24 12 24z"/>
+            <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 10.03 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
+            <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+          </svg>
+          <span class="font-semibold trans-target" data-en="Continue with Google" data-bn="গুগল দিয়ে প্রবেশ করুন">গুগল দিয়ে প্রবেশ করুন</span>
+        </a>
+      </div>
+
+      <div class="relative flex items-center justify-center">
+        <div class="border-t border-slate-800 w-full"></div>
+        <span class="bg-slate-900 px-3 text-[11px] text-slate-500 uppercase trans-target" data-en="OR WITH EMAIL" data-bn="অথবা ইমেইল দিয়ে">অথবা ইমেইল দিয়ে</span>
+        <div class="border-t border-slate-800 w-full"></div>
+      </div>
+
+      <!-- Quick One-Click Google / Email Sign In Form -->
+      <form action="{% url 'core:google_login' %}" method="POST" class="space-y-4 text-left">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ next|default:'/' }}">
+
+        <div class="space-y-1">
+          <label class="block text-xs font-bold text-slate-300 trans-target" data-en="Email Address" data-bn="ইমেইল ঠিকানা">ইমেইল ঠিকানা</label>
+          <input type="email" name="email" required placeholder="yourname@gmail.com" 
+                 class="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-sm text-white focus:outline-none focus:ring-2 focus:ring-sky-500">
+        </div>
+
+        <div class="space-y-1">
+          <label class="block text-xs font-bold text-slate-300 trans-target" data-en="Full Name" data-bn="আপনার পুরো নাম">আপনার পুরো নাম</label>
+          <input type="text" name="name" placeholder="যেমন: সাজিদ করিম" 
+                 data-en-placeholder="e.g. Sajid Karim" data-bn-placeholder="যেমন: সাজিদ করিম"
+                 class="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-sm text-white focus:outline-none focus:ring-2 focus:ring-sky-500">
+        </div>
+
+        <button type="submit" 
+                class="w-full py-3.5 rounded-xl bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-400 hover:to-cyan-400 text-white font-bold text-sm shadow-lg shadow-sky-500/25 transition-all">
+          <span class="trans-target" data-en="Complete Sign In →" data-bn="লগইন সম্পন্ন করুন →">লগইন সম্পন্ন করুন →</span>
+        </button>
+      </form>
+
+      <p class="text-xs text-slate-400 pt-2">
+        <span class="trans-target" data-en="Don't have an account?" data-bn="অ্যাকাউন্ট নেই?">অ্যাকাউন্ট নেই?</span> 
+        <a href="{% url 'core:register' %}?next={{ next|default:'/' }}" class="text-sky-400 hover:text-sky-300 font-bold">
+          <span class="trans-target" data-en="Register with Google" data-bn="গুগল দিয়ে বিনামূল্যে নিবন্ধন করুন">গুগল দিয়ে বিনামূল্যে নিবন্ধন করুন</span>
+        </a>
+      </p>
+
+    </div>
+
+  </div>
+</div>
+{% endblock %}

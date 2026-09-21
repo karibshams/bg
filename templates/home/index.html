@@ -27,19 +27,25 @@
         <!-- Brand Pill -->
         <div id="hero-badge" class="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-sky-500/10 border border-sky-400/20 backdrop-blur-md">
           <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span class="text-xs font-bold tracking-widest text-sky-300 uppercase">
-            {{ site_setting.site_tagline_en|default:"EXPLORE • EXPERIENCE • DISCOVER" }}
+          <span class="text-xs font-bold tracking-widest text-sky-300 uppercase trans-target"
+                data-en="EXPLORE • EXPERIENCE • DISCOVER"
+                data-bn="অভিযান • অভিজ্ঞতা • আবিষ্কার">
+            অভিযান • অভিজ্ঞতা • আবিষ্কার
           </span>
         </div>
 
         <!-- Main Bengali Headline -->
-        <h1 id="hero-title" class="font-bengali text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-[1.2]">
-          {{ site_setting.hero_headline|default:"অদেখা বাংলাকে নতুন চোখে দেখা" }}
+        <h1 id="hero-title" class="font-bengali text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-[1.2] trans-target"
+            data-en="Explore Unseen Bangladesh With Fresh Eyes"
+            data-bn="অদেখা বাংলাকে নতুন চোখে দেখা">
+          অদেখা বাংলাকে নতুন চোখে দেখা
         </h1>
 
         <!-- Subtitle -->
-        <p id="hero-subtitle" class="font-bengali text-base sm:text-lg text-slate-300 max-w-2xl mx-auto lg:mx-0 leading-relaxed font-normal">
-          {{ site_setting.hero_subheadline|default:"ভ্রমণঘুড়ির সাথে আবিষ্কার করুন পাহাড়, মেঘের উপত্যকা, সুন্দরবনের ম্যানগ্রোভ আর সেন্টমার্টিনের প্রবাল দ্বীপ। প্রতিটি পদক্ষেপে নিরাপদ ও রোমাঞ্চকর ভ্রমণ।" }}
+        <p id="hero-subtitle" class="font-bengali text-base sm:text-lg text-slate-300 max-w-2xl mx-auto lg:mx-0 leading-relaxed font-normal trans-target"
+           data-en="Discover mountains, cloud valleys, Sundarbans mangrove safari, and Saint Martin coral island with BhromonGhuri. Safe and thrilling travel every step of the way."
+           data-bn="ভ্রমণঘুড়ির সাথে আবিষ্কার করুন পাহাড়, মেঘের উপত্যকা, সুন্দরবনের ম্যানগ্রোভ আর সেন্টমার্টিনের প্রবাল দ্বীপ। প্রতিটি পদক্ষেপে নিরাপদ ও রোমাঞ্চকর ভ্রমণ।">
+          ভ্রমণঘুড়ির সাথে আবিষ্কার করুন পাহাড়, মেঘের উপত্যকা, সুন্দরবনের ম্যানগ্রোভ আর সেন্টমার্টিনের প্রবাল দ্বীপ। প্রতিটি পদক্ষেপে নিরাপদ ও রোমাঞ্চকর ভ্রমণ।
         </p>
 
         <!-- CTAs -->
@@ -47,12 +53,12 @@
           <a href="{% url 'tours:list' %}" 
              class="magnetic-btn w-full sm:w-auto px-8 py-4 rounded-full bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-400 hover:to-cyan-400 text-white font-bold text-sm shadow-xl shadow-sky-500/30 transition-all duration-300 flex items-center justify-center space-x-3 font-bengali">
             <i data-lucide="compass" class="w-5 h-5"></i>
-            <span>ট্যুর প্যাকেজগুলো দেখুন</span>
+            <span class="trans-target" data-en="Explore Tour Packages" data-bn="ট্যুর প্যাকেজগুলো দেখুন">ট্যুর প্যাকেজগুলো দেখুন</span>
           </a>
           <a href="{% url 'stories:list' %}" 
              class="w-full sm:w-auto px-8 py-4 rounded-full bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 text-slate-200 hover:text-white font-semibold text-sm transition-all duration-300 flex items-center justify-center space-x-2 font-bengali">
             <i data-lucide="book-open" class="w-4 h-4 text-sky-400"></i>
-            <span>ভ্রমণ গল্প পড়ুন</span>
+            <span class="trans-target" data-en="Read Travel Stories" data-bn="ভ্রমণ গল্প পড়ুন">ভ্রমণ গল্প পড়ুন</span>
           </a>
         </div>
 
@@ -72,38 +78,45 @@
 
       </div>
 
-      <!-- Hero Right: Dynamic Aerodynamic Floating Kite Visual -->
-      <div id="hero-kite-mascot" class="lg:col-span-5 flex items-center justify-center relative">
-        <div class="relative w-72 sm:w-88 lg:w-96 aspect-square flex items-center justify-center">
+      <!-- Hero Right: Cinematic Destination Visual Showcase -->
+      <div id="hero-showcase" class="lg:col-span-5 flex items-center justify-center relative">
+        <div class="relative w-full max-w-md aspect-[4/3] sm:aspect-square flex items-center justify-center">
           
-          <!-- Outer glowing rings -->
-          <div class="absolute inset-0 rounded-full border border-sky-500/20 animate-spin" style="animation-duration: 35s;"></div>
-          <div class="absolute inset-8 rounded-full border border-dashed border-cyan-400/20 animate-spin" style="animation-duration: 25s; animation-direction: reverse;"></div>
-          
-          <!-- Atmospheric backdrop glass disk -->
-          <div class="w-64 h-64 sm:w-76 sm:h-76 rounded-full bg-gradient-to-tr from-sky-900/40 via-cyan-900/20 to-slate-900/60 backdrop-blur-2xl border border-sky-400/20 shadow-2xl flex items-center justify-center relative overflow-hidden">
-            
-            <!-- Mountain silhouettes inside portal -->
-            <svg class="absolute bottom-0 w-full h-28 text-slate-950/80 fill-current" viewBox="0 0 400 150">
-              <polygon points="0,150 70,60 140,150 200,90 280,150 350,40 400,150" />
-            </svg>
-            
-            <!-- Floating Hero Kite with Aerodynamic Movement -->
-            <div class="relative z-10 w-48 h-48 animate-kite-hover filter drop-shadow-[0_15px_30px_rgba(14,165,233,0.5)]">
-              <img src="{% static 'images/logo-kite.png' %}" alt="Bhromonghuri Master Kite" class="w-full h-full object-contain">
-            </div>
+          <!-- Outer glowing ambient aura -->
+          <div class="absolute -inset-2 rounded-3xl bg-gradient-to-tr from-sky-500/30 via-cyan-400/20 to-emerald-500/20 blur-xl opacity-80"></div>
 
+          <!-- Glassmorphic Image Frame -->
+          <div class="relative w-full h-full rounded-3xl overflow-hidden border border-white/20 shadow-2xl p-2 bg-slate-900/60 backdrop-blur-md">
+            <div class="relative w-full h-full rounded-2xl overflow-hidden group">
+              <img src="{% static 'images/hero-sajek.jpg' %}" 
+                   alt="Sajek Valley Clouds - BhromonGhuri" 
+                   class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700">
+              
+              <!-- Gradient vignette overlay -->
+              <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-black/20 pointer-events-none"></div>
+
+              <!-- Bottom Destination Tag inside photo -->
+              <div class="absolute bottom-4 left-4 right-4 flex items-center justify-between text-white pointer-events-none">
+                <div>
+                  <span class="text-[11px] font-bold tracking-wider text-sky-300 uppercase trans-target" data-en="FEATURED DESTINATION" data-bn="জনপ্রিয় গন্তব্য">জনপ্রিয় গন্তব্য</span>
+                  <h3 class="text-base font-bold font-bengali trans-target" data-en="Sajek Valley — Kingdom of Clouds" data-bn="সাজেক ভ্যালি — মেঘের রাজ্য">সাজেক ভ্যালি — মেঘের রাজ্য</h3>
+                </div>
+                <div class="w-9 h-9 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30">
+                  <img src="{% static 'images/logo-kite.png' %}" alt="Kite" class="w-5 h-5 object-contain">
+                </div>
+              </div>
+            </div>
           </div>
 
           <!-- Floating badge indicators -->
-          <div class="absolute -top-2 right-4 px-3.5 py-2 rounded-xl glass-dark border border-white/10 text-xs font-semibold text-white shadow-xl flex items-center space-x-2 animate-float">
+          <div class="absolute -top-3 -right-2 px-3.5 py-2 rounded-2xl glass-dark border border-white/15 text-xs font-semibold text-white shadow-xl flex items-center space-x-2 animate-float">
             <span class="text-amber-400">★ 4.9</span>
-            <span class="font-bengali text-slate-300">ভ্রমণকারীদের রেটিং</span>
+            <span class="font-bengali text-slate-200 trans-target" data-en="Traveler Rating" data-bn="ভ্রমণকারীদের রেটিং">ভ্রমণকারীদের রেটিং</span>
           </div>
 
-          <div class="absolute -bottom-4 left-4 px-4 py-2.5 rounded-xl glass-dark border border-white/10 text-xs font-semibold text-white shadow-xl flex items-center space-x-2 animate-float" style="animation-delay: 1.5s;">
+          <div class="absolute -bottom-4 -left-2 px-4 py-2.5 rounded-2xl glass-dark border border-white/15 text-xs font-semibold text-white shadow-xl flex items-center space-x-2 animate-float" style="animation-delay: 1.5s;">
             <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i>
-            <span class="font-bengali text-slate-300">১০০% নিরাপদ ভ্রমণ</span>
+            <span class="font-bengali text-slate-200 trans-target" data-en="100% Verified & Safe" data-bn="১০০% নিরাপদ ভ্রমণ">১০০% নিরাপদ ভ্রমণ</span>
           </div>
 
         </div>
@@ -112,130 +125,144 @@
     </div>
   </div>
 
-  <!-- Scroll down indicator -->
-  <div class="absolute bottom-4 left-1/2 -translate-x-1/2 text-slate-500 flex flex-col items-center space-y-1">
-    <span class="text-[10px] tracking-widest uppercase font-semibold text-slate-400">SCROLL</span>
-    <i data-lucide="chevron-down" class="w-4 h-4 animate-bounce text-sky-400"></i>
-  </div>
-</section>
+    <!-- Scroll down indicator -->
+    <div class="absolute bottom-4 left-1/2 -translate-x-1/2 text-slate-500 flex flex-col items-center space-y-1">
+      <span class="text-[10px] tracking-widest uppercase font-semibold text-slate-400 trans-target" data-en="SCROLL" data-bn="নিচে দেখুন">নিচে দেখুন</span>
+      <i data-lucide="chevron-down" class="w-4 h-4 animate-bounce text-sky-400"></i>
+    </div>
+  </section>
 
 
-<!-- ========================================== -->
-<!-- 2. TRUST STATS (Why Travel With Us)        -->
-<!-- ========================================== -->
-<section class="py-12 bg-white border-y border-slate-200/80">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center divide-y sm:divide-y-0 sm:divide-x divide-slate-100">
+  <!-- ========================================== -->
+  <!-- 2. TRUST STATS (Why Travel With Us)        -->
+  <!-- ========================================== -->
+  <section class="py-12 bg-white border-y border-slate-200/80">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center divide-y sm:divide-y-0 sm:divide-x divide-slate-100">
+        
+        <div class="pt-4 sm:pt-0">
+          <p class="text-3xl sm:text-4xl font-extrabold text-sky-600 tracking-tight">{{ site_setting.total_tours_count|default:"60+" }}</p>
+          <p class="font-bengali text-xs sm:text-sm text-slate-500 font-semibold mt-1 trans-target" data-en="Successful Tour Packages" data-bn="সফল ট্যুর প্যাকেজ">সফল ট্যুর প্যাকেজ</p>
+        </div>
+
+        <div class="pt-4 sm:pt-0">
+          <p class="text-3xl sm:text-4xl font-extrabold text-emerald-600 tracking-tight">{{ site_setting.total_travelers_count|default:"2,400+" }}</p>
+          <p class="font-bengali text-xs sm:text-sm text-slate-500 font-semibold mt-1 trans-target" data-en="Satisfied Travelers" data-bn="সন্তুষ্ট ভ্রমণকারী">সন্তুষ্ট ভ্রমণকারী</p>
+        </div>
+
+        <div class="pt-4 sm:pt-0">
+          <p class="text-3xl sm:text-4xl font-extrabold text-amber-500 tracking-tight">{{ site_setting.average_rating|default:"4.9" }}★</p>
+          <p class="font-bengali text-xs sm:text-sm text-slate-500 font-semibold mt-1 trans-target" data-en="Average Review Rating" data-bn="গড় রেটিং রিভিউ">গড় রেটিং রিভিউ</p>
+        </div>
+
+        <div class="pt-4 sm:pt-0">
+          <p class="text-3xl sm:text-4xl font-extrabold text-indigo-600 tracking-tight">{{ site_setting.destinations_count|default:"28+" }}</p>
+          <p class="font-bengali text-xs sm:text-sm text-slate-500 font-semibold mt-1 trans-target" data-en="Thrilling Destinations" data-bn="রোমাঞ্চকর গন্তব্য">রোমাঞ্চকর গন্তব্য</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ========================================== -->
+  <!-- 3. FEATURED TOURS                          -->
+  <!-- ========================================== -->
+  <section class="py-20 bg-slate-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       
-      <div class="pt-4 sm:pt-0">
-        <p class="text-3xl sm:text-4xl font-extrabold text-sky-600 tracking-tight">{{ site_setting.total_tours_count|default:"60+" }}</p>
-        <p class="font-bengali text-xs sm:text-sm text-slate-500 font-semibold mt-1">সফল ট্যুর প্যাকেজ</p>
+      <div class="flex flex-col md:flex-row md:items-end justify-between mb-12">
+        <div class="space-y-2">
+          <span class="text-xs font-bold tracking-widest text-sky-600 uppercase trans-target"
+                data-en="EXPLORE OUR JOURNEYS"
+                data-bn="আমাদের অসাধারণ ট্যুরসমূহ">
+            আমাদের অসাধারণ ট্যুরসমূহ
+          </span>
+          <h2 class="font-bengali text-3xl sm:text-4xl font-extrabold text-slate-900 trans-target"
+              data-en="Our Best Tour Packages"
+              data-bn="আমাদের সেরা ট্যুর প্যাকেজসমূহ">
+            আমাদের সেরা ট্যুর প্যাকেজসমূহ
+          </h2>
+        </div>
+        <a href="{% url 'tours:list' %}" 
+           class="mt-4 md:mt-0 inline-flex items-center space-x-2 text-sm font-bold text-sky-600 hover:text-sky-700 font-bengali group">
+          <span class="trans-target" data-en="View All Tours" data-bn="সবগুলো ট্যুর দেখুন">সবগুলো ট্যুর দেখুন</span>
+          <i data-lucide="arrow-right" class="w-4 h-4 transform group-hover:translate-x-1 transition-transform"></i>
+        </a>
       </div>
 
-      <div class="pt-4 sm:pt-0">
-        <p class="text-3xl sm:text-4xl font-extrabold text-emerald-600 tracking-tight">{{ site_setting.total_travelers_count|default:"2,400+" }}</p>
-        <p class="font-bengali text-xs sm:text-sm text-slate-500 font-semibold mt-1">সন্তুষ্ট ভ্রমণকারী</p>
-      </div>
-
-      <div class="pt-4 sm:pt-0">
-        <p class="text-3xl sm:text-4xl font-extrabold text-amber-500 tracking-tight">{{ site_setting.average_rating|default:"4.9" }}★</p>
-        <p class="font-bengali text-xs sm:text-sm text-slate-500 font-semibold mt-1">গড় রেটিং রিভিউ</p>
-      </div>
-
-      <div class="pt-4 sm:pt-0">
-        <p class="text-3xl sm:text-4xl font-extrabold text-indigo-600 tracking-tight">{{ site_setting.destinations_count|default:"28+" }}</p>
-        <p class="font-bengali text-xs sm:text-sm text-slate-500 font-semibold mt-1">রোমাঞ্চকর গন্তব্য</p>
+      <!-- Tours Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {% for tour in featured_tours %}
+          {% include 'components/tour_card.html' with tour=tour %}
+        {% empty %}
+          <p class="text-slate-500 text-center col-span-3 py-10 font-bengali trans-target" data-en="No featured tours added yet." data-bn="এখনো কোনো ফিচার্ড ট্যুর যুক্ত করা হয়নি।">এখনো কোনো ফিচার্ড ট্যুর যুক্ত করা হয়নি।</p>
+        {% endfor %}
       </div>
 
     </div>
-  </div>
-</section>
+  </section>
 
 
-<!-- ========================================== -->
-<!-- 3. FEATURED TOURS                          -->
-<!-- ========================================== -->
-<section class="py-20 bg-slate-50">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    
-    <div class="flex flex-col md:flex-row md:items-end justify-between mb-12">
-      <div class="space-y-2">
-        <span class="text-xs font-bold tracking-widest text-sky-600 uppercase">
-          EXPLORE OUR JOURNEYS
+  <!-- ========================================== -->
+  <!-- 4. POPULAR DESTINATIONS                    -->
+  <!-- ========================================== -->
+  <section id="destinations" class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="text-center max-w-3xl mx-auto mb-16 space-y-3">
+        <span class="text-xs font-bold tracking-widest text-sky-600 uppercase trans-target"
+              data-en="WHERE DO YOU WANT TO GO?"
+              data-bn="আপনার পছন্দের গন্তব্য">
+          আপনার পছন্দের গন্তব্য
         </span>
-        <h2 class="font-bengali text-3xl sm:text-4xl font-extrabold text-slate-900">
-          আমাদের সেরা ট্যুর প্যাকেজসমূহ
+        <h2 class="font-bengali text-3xl sm:text-4xl font-extrabold text-slate-900 trans-target"
+            data-en="Popular Attractions & Destinations"
+            data-bn="জনপ্রিয় দর্শনীয় স্থান ও গন্তব্য">
+          জনপ্রিয় দর্শনীয় স্থান ও গন্তব্য
         </h2>
+        <p class="font-bengali text-sm text-slate-600 trans-target"
+           data-en="Mountain peaks, azure sea, mangrove forest, or peaceful backwaters—visit your favorite places with complete peace of mind."
+           data-bn="পাহাড়ের চূড়া, নীল সমুদ্র, ম্যানগ্রোভ অরণ্য কিংবা শান্ত জলরাশি—আপনার পছন্দের স্থানে ঘুরে আসুন নিরাপদে।">
+          পাহাড়ের চূড়া, নীল সমুদ্র, ম্যানগ্রোভ অরণ্য কিংবা শান্ত জলরাশি—আপনার পছন্দের স্থানে ঘুরে আসুন নিরাপদে।
+        </p>
       </div>
-      <a href="{% url 'tours:list' %}" 
-         class="mt-4 md:mt-0 inline-flex items-center space-x-2 text-sm font-bold text-sky-600 hover:text-sky-700 font-bengali group">
-        <span>সবগুলো ট্যুর দেখুন</span>
-        <i data-lucide="arrow-right" class="w-4 h-4 transform group-hover:translate-x-1 transition-transform"></i>
-      </a>
-    </div>
 
-    <!-- Tours Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      {% for tour in featured_tours %}
-        {% include 'components/tour_card.html' with tour=tour %}
-      {% empty %}
-        <p class="text-slate-500 text-center col-span-3 py-10 font-bengali">এখনো কোনো ফিচার্ড ট্যুর যুক্ত করা হয়নি।</p>
-      {% endfor %}
-    </div>
-
-  </div>
-</section>
-
-
-<!-- ========================================== -->
-<!-- 4. POPULAR DESTINATIONS                    -->
-<!-- ========================================== -->
-<section id="destinations" class="py-20 bg-white">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    
-    <div class="text-center max-w-3xl mx-auto mb-16 space-y-3">
-      <span class="text-xs font-bold tracking-widest text-sky-600 uppercase">
-        WHERE DO YOU WANT TO GO?
-      </span>
-      <h2 class="font-bengali text-3xl sm:text-4xl font-extrabold text-slate-900">
-        জনপ্রিয় দর্শনীয় স্থান ও গন্তব্য
-      </h2>
-      <p class="font-bengali text-sm text-slate-600">
-        পাহাড়ের চূড়া, নীল সমুদ্র, ম্যানগ্রোভ অরণ্য কিংবা শান্ত জলরাশি—আপনার পছন্দের স্থানে ঘুরে আসুন নিরাপদে।
-      </p>
-    </div>
-
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      {% for dest in destinations %}
-        {% include 'components/destination_card.html' with destination=dest %}
-      {% endfor %}
-    </div>
-
-  </div>
-</section>
-
-
-<!-- ========================================== -->
-<!-- 5. UPCOMING JOURNEYS TIMELINE              -->
-<!-- ========================================== -->
-<section class="py-20 bg-slate-900 text-white relative overflow-hidden">
-  <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(14,165,233,0.15),transparent_50%)]"></div>
-
-  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    
-    <div class="flex flex-col md:flex-row md:items-end justify-between mb-12">
-      <div class="space-y-2">
-        <span class="text-xs font-bold tracking-widest text-sky-400 uppercase">
-          UPCOMING JOURNEYS
-        </span>
-        <h2 class="font-bengali text-3xl sm:text-4xl font-extrabold text-white">
-          আসন্ন যাত্রার সূচি ও আসন সংখ্যা
-        </h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for dest in destinations %}
+          {% include 'components/destination_card.html' with destination=dest %}
+        {% endfor %}
       </div>
-      <a href="{% url 'tours:list' %}" class="mt-4 md:mt-0 text-sm font-bold text-sky-400 hover:text-white font-bengali">
-        সব তারিখ দেখুন →
-      </a>
+
     </div>
+  </section>
+
+
+  <!-- ========================================== -->
+  <!-- 5. UPCOMING JOURNEYS TIMELINE              -->
+  <!-- ========================================== -->
+  <section class="py-20 bg-slate-900 text-white relative overflow-hidden">
+    <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(14,165,233,0.15),transparent_50%)]"></div>
+
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="flex flex-col md:flex-row md:items-end justify-between mb-12">
+        <div class="space-y-2">
+          <span class="text-xs font-bold tracking-widest text-sky-400 uppercase trans-target"
+                data-en="UPCOMING JOURNEYS"
+                data-bn="আসন্ন যাত্রাসমূহ">
+            আসন্ন যাত্রাসমূহ
+          </span>
+          <h2 class="font-bengali text-3xl sm:text-4xl font-extrabold text-white trans-target"
+              data-en="Upcoming Journey Schedule & Seats"
+              data-bn="আসন্ন যাত্রার সূচি ও আসন সংখ্যা">
+            আসন্ন যাত্রার সূচি ও আসন সংখ্যা
+          </h2>
+        </div>
+        <a href="{% url 'tours:list' %}" class="mt-4 md:mt-0 text-sm font-bold text-sky-400 hover:text-white font-bengali">
+          <span class="trans-target" data-en="View All Dates →" data-bn="সব তারিখ দেখুন →">সব তারিখ দেখুন →</span>
+        </a>
+      </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       {% for dt in upcoming_dates %}
@@ -282,15 +309,19 @@
     
     <div class="flex flex-col md:flex-row md:items-end justify-between mb-12">
       <div class="space-y-2">
-        <span class="text-xs font-bold tracking-widest text-sky-600 uppercase">
-          AUTHENTIC TRAVEL LOGS
+        <span class="text-xs font-bold tracking-widest text-sky-600 uppercase trans-target"
+              data-en="AUTHENTIC TRAVEL LOGS"
+              data-bn="ভ্রমণ কাহিনী ও বাস্তব অভিজ্ঞতা">
+          ভ্রমণ কাহিনী ও বাস্তব অভিজ্ঞতা
         </span>
-        <h2 class="font-bengali text-3xl sm:text-4xl font-extrabold text-slate-900">
+        <h2 class="font-bengali text-3xl sm:text-4xl font-extrabold text-slate-900 trans-target"
+            data-en="Travel Stories & Genuine Experiences"
+            data-bn="ভ্রমণের গল্প ও বাস্তব অভিজ্ঞতা">
           ভ্রমণের গল্প ও বাস্তব অভিজ্ঞতা
         </h2>
       </div>
       <a href="{% url 'stories:list' %}" class="mt-4 md:mt-0 text-sm font-bold text-sky-600 hover:text-sky-700 font-bengali">
-        সব গল্প পড়ুন →
+        <span class="trans-target" data-en="Read All Stories →" data-bn="সব গল্প পড়ুন →">সব গল্প পড়ুন →</span>
       </a>
     </div>
 
@@ -311,10 +342,14 @@
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     
     <div class="text-center max-w-2xl mx-auto mb-12 space-y-2">
-      <span class="text-xs font-bold tracking-widest text-sky-600 uppercase">
-        PHOTO & VIDEO GALLERY
+      <span class="text-xs font-bold tracking-widest text-sky-600 uppercase trans-target"
+            data-en="PHOTO & VIDEO GALLERY"
+            data-bn="ছবি ও ভিডিও গ্যালারি">
+        ছবি ও ভিডিও গ্যালারি
       </span>
-      <h2 class="font-bengali text-3xl font-extrabold text-slate-900">
+      <h2 class="font-bengali text-3xl font-extrabold text-slate-900 trans-target"
+          data-en="Memories of Beautiful Bangladesh"
+          data-bn="স্মৃতির ফ্রেমে বাঁধা বাংলাদেশের সৌন্দর্য">
         স্মৃতির ফ্রেমে বাঁধা বাংলাদেশের সৌন্দর্য
       </h2>
     </div>
@@ -340,7 +375,7 @@
     <div class="mt-8 text-center">
       <a href="{% url 'gallery:index' %}" class="inline-flex items-center space-x-2 px-6 py-3 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs font-bengali transition-colors">
         <i data-lucide="grid" class="w-4 h-4"></i>
-        <span>পুরো গ্যালারি এক্সপ্লোর করুন</span>
+        <span class="trans-target" data-en="Explore Full Gallery" data-bn="পুরো গ্যালারি এক্সপ্লোর করুন">পুরো গ্যালারি এক্সপ্লোর করুন</span>
       </a>
     </div>
 
@@ -355,10 +390,14 @@
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     
     <div class="text-center max-w-2xl mx-auto mb-14 space-y-2">
-      <span class="text-xs font-bold tracking-widest text-sky-600 uppercase">
-        TESTIMONIALS
+      <span class="text-xs font-bold tracking-widest text-sky-600 uppercase trans-target"
+            data-en="TRAVELER TESTIMONIALS"
+            data-bn="ভ্রমণকারীদের মন্তব্য">
+        ভ্রমণকারীদের মন্তব্য
       </span>
-      <h2 class="font-bengali text-3xl font-extrabold text-slate-900">
+      <h2 class="font-bengali text-3xl font-extrabold text-slate-900 trans-target"
+          data-en="Words of Joy from Travelers"
+          data-bn="ভ্রমণকারীদের ভালোলাগার কথা">
         ভ্রমণকারীদের ভালোলাগার কথা
       </h2>
     </div>

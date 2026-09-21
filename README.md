@@ -35,8 +35,9 @@ cp .env.example .env
 python manage.py makemigrations
 python manage.py migrate
 python manage.py seed_data
+python manage.py createsuperuser
 ```
-*Creates superuser (`admin` / `admin123`) and seeds Sajek Valley, Bandarban, Sreemangal, Tanguar Haor, Sundarbans, and Saint Martin tours, itineraries, stories, and reviews.*
+*Seeds Sajek Valley, Bandarban, Sreemangal, Tanguar Haor, Sundarbans, and Saint Martin tours, itineraries, stories, and reviews.*
 
 ### 4. Start Development Server
 ```bash

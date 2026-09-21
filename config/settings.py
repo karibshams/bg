@@ -67,6 +67,9 @@ TEMPLATES = [
                 # Global context for Bhromonghuri
                 'apps.core.context_processors.site_settings_processor',
             ],
+            'libraries': {
+                'admin_booking_tags': 'apps.bookings.templatetags.admin_booking_tags',
+            },
         },
     },
 ]

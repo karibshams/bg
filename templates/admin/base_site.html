@@ -1,5 +1,5 @@
 {% extends "admin/base.html" %}
-{% load static %}
+{% load static admin_booking_tags %}
 
 {% block title %}{% if subtitle %}{{ subtitle }} | {% endif %}{{ title }} | {{ site_title|default:"ভ্রমণঘুড়ি অ্যাডমিন" }}{% endblock %}
 
@@ -99,9 +99,33 @@
 {% endblock %}
 
 {% block nav-global %}
-<div style="margin-left: auto; display: flex; align-items: center; gap: 12px;">
-  <a href="{% url 'core:home' %}" target="_blank" style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 6px; color: #38bdf8; text-decoration: none; font-size: 0.8rem; font-weight: 600;">
-    <span>🌐 ওয়েবসাইট দেখুন</span>
+{% get_booking_stats as nav_stats %}
+<div style="margin-left: auto; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+  <a href="{% url 'admin:bookings_booking_changelist' %}?status__exact=PENDING_VERIFICATION" 
+     style="display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; background: {% if nav_stats.pending > 0 %}#ea580c{% else %}#059669{% endif %}; border: 1px solid rgba(255,255,255,0.25); border-radius: 8px; color: #ffffff; text-decoration: none; font-size: 0.82rem; font-weight: 800; box-shadow: 0 2px 6px rgba(0,0,0,0.25);">
+    <span>📋 বুকিং অনুমোদন</span>
+    {% if nav_stats.pending > 0 %}
+    <span style="background: #ffffff; color: #ea580c; padding: 1px 7px; border-radius: 9999px; font-size: 0.75rem; font-weight: 900; margin-left: 2px;">
+      {{ nav_stats.pending }} অপেক্ষমাণ
+    </span>
+    {% endif %}
+  </a>
+  <a href="{% url 'admin:payments_payment_changelist' %}" 
+     style="display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; background: #0284c7; border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; color: #ffffff; text-decoration: none; font-size: 0.82rem; font-weight: 700; box-shadow: 0 2px 6px rgba(0,0,0,0.2);">
+    <span>💳 পেমেন্ট ভেরিফিকেশন</span>
+  </a>
+  <a href="{% url 'admin:stories_story_changelist' %}" 
+     style="display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; background: #6366f1; border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; color: #ffffff; text-decoration: none; font-size: 0.82rem; font-weight: 700;">
+    <span>📖 গল্প অনুমোদন</span>
+    {% if nav_stats.stories_pending > 0 %}
+    <span style="background: #ffffff; color: #6366f1; padding: 1px 6px; border-radius: 9999px; font-size: 0.7rem; font-weight: 900;">
+      {{ nav_stats.stories_pending }}
+    </span>
+    {% endif %}
+  </a>
+  <a href="{% url 'core:home' %}" target="_blank" 
+     style="display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; background: rgba(255, 255, 255, 0.12); border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 8px; color: #f8fafc; text-decoration: none; font-size: 0.82rem; font-weight: 600;">
+    <span>🌐 ওয়েবসাইট দেখুন ↗</span>
   </a>
 </div>
 {% endblock %}

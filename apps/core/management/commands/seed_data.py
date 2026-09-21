@@ -1,3 +1,4 @@
+import os
 import datetime
 from django.core.management.base import BaseCommand
 from django.contrib.auth.models import User
@@ -13,11 +14,11 @@ class Command(BaseCommand):
         self.stdout.write(self.style.NOTICE("Seeding Bhromonghuri data..."))
 
         # 1. Superuser
-        if not User.objects.filter(username='admin').exists():
-            User.objects.create_superuser('admin', 'admin@bhromonghuri.com', 'admin123')
-            self.stdout.write(self.style.SUCCESS("[OK] Superuser created (admin / admin123)"))
+        if not User.objects.filter(is_superuser=True).exists():
+            User.objects.create_superuser('admin', 'admin@bhromonghuri.com', os.getenv('ADMIN_PASSWORD', 'admin123'))
+            self.stdout.write(self.style.SUCCESS("[OK] Default admin user initialized"))
         else:
-            self.stdout.write(self.style.WARNING("Superuser 'admin' already exists"))
+            self.stdout.write(self.style.NOTICE("[OK] Admin user already exists"))
 
         # 2. Site Settings
         setting, _ = SiteSetting.objects.get_or_create(pk=1)

@@ -1,0 +1,402 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static admin_booking_tags %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static "admin/css/dashboard.css" %}">
+<style>
+  .dashboard-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .stat-card {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 18px 20px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+  }
+  .stat-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .stat-val {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #0f172a;
+    line-height: 1.1;
+  }
+  .admin-panel-card {
+    background: #ffffff;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+    margin-bottom: 28px;
+    overflow: hidden;
+  }
+  .panel-header-pending {
+    background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);
+    color: #ffffff;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .panel-header-confirmed {
+    background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+    color: #ffffff;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .panel-title {
+    font-size: 1.05rem;
+    font-weight: 800;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .dash-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+  }
+  .dash-table th {
+    background: #f8fafc;
+    color: #475569;
+    font-weight: 700;
+    text-align: left;
+    padding: 12px 16px;
+    border-bottom: 1px solid #e2e8f0;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.03em;
+  }
+  .dash-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: middle;
+    color: #1e293b;
+  }
+  .dash-table tr:hover td {
+    background-color: #f8fafc;
+  }
+  .btn-approve-direct {
+    background-color: #10b981;
+    color: #ffffff !important;
+    padding: 7px 14px;
+    border-radius: 8px;
+    font-weight: 800;
+    font-size: 0.8rem;
+    text-decoration: none !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3);
+    transition: all 0.2s;
+  }
+  .btn-approve-direct:hover {
+    background-color: #059669;
+    transform: scale(1.03);
+  }
+  .pulse-badge {
+    background: #ef4444;
+    color: white;
+    padding: 3px 8px;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    animation: pulse 1.5s infinite;
+  }
+  @keyframes pulse {
+    0% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.7; transform: scale(1.05); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+</style>
+{% endblock %}
+
+{% block coltype %}colMS{% endblock %}
+{% block bodyclass %}{{ block.super }} dashboard{% endblock %}
+{% block nav-breadcrumbs %}{% endblock %}
+
+{% block content %}
+<div id="content-main" style="width: 100%;">
+
+  {% get_booking_stats as stats %}
+  {% get_pending_bookings as pending_list %}
+  {% get_recent_confirmed_bookings as confirmed_list %}
+
+  <!-- Top Real-time Metric Cards -->
+  <div class="dashboard-stats-grid">
+    <div class="stat-card" style="border-top: 4px solid #ea580c;">
+      <div class="stat-label">
+        <span>🚨 অপেক্ষমাণ বুকিং (Pending)</span>
+        {% if stats.pending > 0 %}<span class="pulse-badge">{{ stats.pending }}</span>{% endif %}
+      </div>
+      <div class="stat-val" style="color: #ea580c;">{{ stats.pending }}</div>
+    </div>
+
+    <div class="stat-card" style="border-top: 4px solid #10b981;">
+      <div class="stat-label">
+        <span>✓ নিশ্চিত বুকing (Confirmed)</span>
+      </div>
+      <div class="stat-val" style="color: #10b981;">{{ stats.confirmed }}</div>
+    </div>
+
+    <div class="stat-card" style="border-top: 4px solid #0284c7;">
+      <div class="stat-label">
+        <span>📋 মোট বুকিং (Total)</span>
+      </div>
+      <div class="stat-val" style="color: #0284c7;">{{ stats.total }}</div>
+    </div>
+
+    <div class="stat-card" style="border-top: 4px solid #6366f1;">
+      <div class="stat-label">
+        <span>💰 সংগৃহীত টাকা (Revenue)</span>
+      </div>
+      <div class="stat-val" style="color: #6366f1;">৳{{ stats.revenue|floatformat:0 }}</div>
+    </div>
+  </div>
+
+
+  <!-- ========================================== -->
+  <!-- 1. PENDING APPROVALS SECTION (PRIMARY)     -->
+  <!-- ========================================== -->
+  <div class="admin-panel-card" style="border: 2px solid #fdba74;">
+    <div class="panel-header-pending">
+      <h2 class="panel-title">
+        <span>🚨 বুকিং অনুমোদন ও ভেরিফিকেশন কেন্দ্র (Pending Approvals)</span>
+        {% if pending_list %}
+        <span class="pulse-badge">{{ pending_list|length }}টি অপেক্ষমাণ</span>
+        {% endif %}
+      </h2>
+      <a href="{% url 'admin:bookings_booking_changelist' %}?status__exact=PENDING_VERIFICATION" 
+         style="color: #ffffff; text-decoration: underline; font-size: 0.8rem; font-weight: 700;">
+        সকল বুকিং টেবিল ↗
+      </a>
+    </div>
+
+    {% if pending_list %}
+    <div style="overflow-x: auto;">
+      <table class="dash-table">
+        <thead>
+          <tr>
+            <th>রেফারেন্স আইডি</th>
+            <th>গ্রাহকের নাম ও ফোন</th>
+            <th>ট্যুর প্যাকেজ</th>
+            <th>তারিখ</th>
+            <th>যাত্রী</th>
+            <th>মোট টাকা</th>
+            <th>পেমেন্ট ও TrxID</th>
+            <th>স্ট্যাটাস</th>
+            <th style="text-align: center;">অ্যাকশন (অনুমোদন)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for b in pending_list %}
+          {% with p=b.payments.first %}
+          <tr>
+            <td>
+              <a href="{% url 'admin:bookings_booking_change' b.id %}" style="font-family: monospace; font-weight: 800; color: #0284c7; font-size: 0.95rem;">
+                {{ b.booking_reference }}
+              </a>
+            </td>
+            <td>
+              <strong>{{ b.customer_name }}</strong><br/>
+              <span style="color: #64748b; font-size: 0.8rem;">📞 {{ b.customer_phone }}</span>
+            </td>
+            <td>
+              <strong>{{ b.tour.bangla_title|default:b.tour.title }}</strong>
+            </td>
+            <td style="white-space: nowrap;">
+              {% if b.tour_date %}
+                {{ b.tour_date.start_date|date:"d M Y" }}
+              {% else %}
+                ফ্লেক্সিবল
+              {% endif %}
+            </td>
+            <td style="text-align: center; font-weight: 700;">{{ b.num_travelers }} জন</td>
+            <td style="font-weight: 800; color: #0284c7; white-space: nowrap;">৳{{ b.total_amount|floatformat:0 }}</td>
+            <td>
+              {% if p %}
+                <strong>{{ p.get_payment_method_display }}</strong><br/>
+                <span style="font-family: monospace; color: #ea580c; font-weight: 700;">{{ p.transaction_id }}</span><br/>
+                <span style="color: #64748b; font-size: 0.75rem;">প্রেরক: {{ p.sender_number|default:b.customer_phone }}</span>
+              {% else %}
+                <span style="color: #94a3b8; font-size: 0.8rem;">পেমেন্ট জমা হয়নি</span>
+              {% endif %}
+            </td>
+            <td>
+              <span style="background: #ffedd5; color: #c2410c; border: 1px solid #fdba74; padding: 4px 8px; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; white-space: nowrap;">
+                {{ b.get_status_display }}
+              </span>
+            </td>
+            <td style="text-align: center; white-space: nowrap;">
+              <a href="{% url 'admin:booking_approve_single' b.id %}" class="btn-approve-direct" title="ক্লিক করে এই বুকিং সরাসরি নিশ্চিত করুন">
+                <span>✓ Approve (অনুমোদন করুন)</span>
+              </a>
+            </td>
+          </tr>
+          {% endwith %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div style="padding: 28px; text-align: center; background: #f0fdf4; color: #166534; font-weight: 700;">
+      ✓ বর্তমানে কোনো অপেক্ষমাণ বুকিং নেই। নতুন বুকিং জমা হলে সাথে সাথে এই তালিকায় দেখা যাবে।
+    </div>
+    {% endif %}
+  </div>
+
+
+  <!-- ========================================== -->
+  <!-- 2. RECENT CONFIRMED BOOKINGS (APPROVED)    -->
+  <!-- ========================================== -->
+  <div class="admin-panel-card">
+    <div class="panel-header-confirmed">
+      <h2 class="panel-title">
+        <span>✅ অনুমোদিত ও নিশ্চিত বুকিং (Confirmed Bookings)</span>
+      </h2>
+      <a href="{% url 'admin:bookings_booking_changelist' %}?status__exact=CONFIRMED" 
+         style="color: #ffffff; text-decoration: underline; font-size: 0.8rem; font-weight: 700;">
+        সকল অনুমোদিত বুকিং ↗
+      </a>
+    </div>
+
+    {% if confirmed_list %}
+    <div style="overflow-x: auto;">
+      <table class="dash-table">
+        <thead>
+          <tr>
+            <th>রেফারেন্স আইডি</th>
+            <th>গ্রাহকের নাম ও ফোন</th>
+            <th>ট্যুর</th>
+            <th>তারিখ</th>
+            <th>যাত্রী</th>
+            <th>পরিশোধিত টাকা</th>
+            <th>পেমেন্ট TrxID</th>
+            <th>স্ট্যাটাস</th>
+            <th style="text-align: center;">ভাউচার (PDF)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for b in confirmed_list %}
+          {% with p=b.payments.first %}
+          <tr>
+            <td>
+              <a href="{% url 'admin:bookings_booking_change' b.id %}" style="font-family: monospace; font-weight: 800; color: #0284c7;">
+                {{ b.booking_reference }}
+              </a>
+            </td>
+            <td>
+              <strong>{{ b.customer_name }}</strong><br/>
+              <span style="color: #64748b; font-size: 0.8rem;">{{ b.customer_phone }}</span>
+            </td>
+            <td>{{ b.tour.bangla_title|default:b.tour.title }}</td>
+            <td>
+              {% if b.tour_date %}
+                {{ b.tour_date.start_date|date:"d M Y" }}
+              {% else %}
+                ফ্লেক্সিবল
+              {% endif %}
+            </td>
+            <td style="text-align: center; font-weight: 700;">{{ b.num_travelers }} জন</td>
+            <td style="font-weight: 800; color: #0284c7;">৳{{ b.total_amount|floatformat:0 }}</td>
+            <td>
+              {% if p %}
+                <span style="font-family: monospace; font-size: 0.8rem; color: #166534;">{{ p.transaction_id }}</span><br/>
+                <span style="color: #64748b; font-size: 0.75rem;">{{ p.get_payment_method_display }}</span>
+              {% else %}
+                <span style="color: #94a3b8;">-</span>
+              {% endif %}
+            </td>
+            <td>
+              <span style="background: #dcfce7; color: #166534; border: 1px solid #86efac; padding: 3px 8px; border-radius: 9999px; font-size: 0.75rem; font-weight: 700;">
+                ✓ নিশ্চিত (Confirmed)
+              </span>
+            </td>
+            <td style="text-align: center;">
+              <a href="{% url 'bookings:download_voucher' b.booking_reference %}" target="_blank" 
+                 style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; background: #e0f2fe; color: #0369a1; border-radius: 6px; font-size: 0.75rem; font-weight: 800; text-decoration: none;">
+                <span>ভাউচার ডাউনলোড ↗</span>
+              </a>
+            </td>
+          </tr>
+          {% endwith %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div style="padding: 24px; text-align: center; color: #64748b;">
+      এখনো কোনো বুকিং নিশ্চিত করা হয়নি।
+    </div>
+    {% endif %}
+  </div>
+
+
+  <!-- ========================================== -->
+  <!-- 3. STANDARD DJANGO APPS LIST               -->
+  <!-- ========================================== -->
+  <div style="margin-top: 10px;">
+    <h3 style="font-size: 1rem; font-weight: 800; color: #334155; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em;">
+      ⚙️ ডেটাবেজ ও ওয়েবসাইট সেটিংস ব্যবস্থাপনা (All Modules)
+    </h3>
+    {% include "admin/app_list.html" with app_list=app_list %}
+  </div>
+
+</div>
+{% endblock %}
+
+{% block sidebar %}
+<div id="content-related">
+    <div class="module" id="recent-actions-module">
+        <h2>{% translate 'Recent actions' %}</h2>
+        <h3>{% translate 'My actions' %}</h3>
+            {% load log %}
+            {% get_admin_log 10 as admin_log for_user user %}
+            {% if not admin_log %}
+            <p>{% translate 'None available' %}</p>
+            {% else %}
+            <ul class="actionlist">
+            {% for entry in admin_log %}
+            <li class="{% if entry.is_addition %}addlink{% endif %}{% if entry.is_change %}changelink{% endif %}{% if entry.is_deletion %}deletelink{% endif %}">
+                {% if entry.is_deletion or not entry.get_admin_url %}
+                    {{ entry.object_repr }}
+                {% else %}
+                    <a href="{{ entry.get_admin_url }}">{{ entry.object_repr }}</a>
+                {% endif %}
+                <br>
+                {% if entry.content_type %}
+                    <span class="mini quiet">{% filter capfirst %}{{ entry.content_type.name }}{% endfilter %}</span>
+                {% else %}
+                    <span class="mini quiet">{% translate 'Unknown content' %}</span>
+                {% endif %}
+            </li>
+            {% endfor %}
+            </ul>
+            {% endif %}
+    </div>
+</div>
+{% endblock %}
