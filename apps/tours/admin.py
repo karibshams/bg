@@ -8,7 +8,7 @@ from .models import (
 class TourDateInline(admin.TabularInline):
     model = TourDate
     extra = 1
-    fields = ('start_date', 'end_date', 'available_seats', 'price_override', 'is_active')
+    fields = ('start_date', 'end_date', 'total_capacity', 'available_seats', 'price_override', 'is_active')
 
 
 class TourItineraryInline(admin.StackedInline):
@@ -25,7 +25,7 @@ class TourInclusionInline(admin.TabularInline):
 
 class TourImageInline(admin.TabularInline):
     model = TourImage
-    extra = 1
+    extra = 3
     fields = ('image', 'caption', 'order')
 
 
@@ -47,6 +47,10 @@ class TourAdmin(admin.ModelAdmin):
         }),
         ('Descriptions & Media', {
             'fields': ('short_description', 'description', 'cover_image', 'video_url')
+        }),
+        ('Package Inclusions & Exclusions (List Builders)', {
+            'description': 'Enter items one per line to dynamically show in "What is included" and "What is excluded" on the tour page.',
+            'fields': ('included_items', 'excluded_items')
         }),
         ('Reviews & Visibility', {
             'fields': (('rating', 'reviews_count'), ('is_featured', 'is_published'))

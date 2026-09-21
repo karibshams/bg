@@ -86,19 +86,32 @@
                   <span class="font-bold text-slate-900 text-sm">
                     {{ dt.start_date|date:"d M Y" }} – {{ dt.end_date|date:"d M Y" }}
                   </span>
-                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-100 text-emerald-800">
-                    {{ dt.available_seats }}টি সিট বাকি
+                  {% if dt.available_seats > 0 %}
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold {% if dt.available_seats <= 5 %}bg-rose-100 text-rose-700 border border-rose-200{% else %}bg-emerald-100 text-emerald-800 border border-emerald-200{% endif %}">
+                    {{ dt.available_seats }}টি সিট বাকি (মোট {{ dt.total_capacity }})
                   </span>
+                  {% else %}
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-slate-200 text-slate-700">
+                    আসন পূর্ণ (Sold Out)
+                  </span>
+                  {% endif %}
                 </div>
                 <p class="text-xs text-slate-500 font-bengali">নিয়মিত প্রফেশনাল ব্যাচ</p>
               </div>
 
               <div class="pt-2 border-t border-slate-200/60 flex items-center justify-between">
                 <span class="text-base font-extrabold text-sky-600">৳{{ dt.effective_price|floatformat:0 }}</span>
+                {% if dt.available_seats > 0 %}
                 <a href="{% url 'bookings:create' %}?tour={{ tour.slug }}&date={{ dt.id }}" 
-                   class="px-4 py-1.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-white text-xs font-bold font-bengali transition-colors">
+                   class="px-4 py-1.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-white text-xs font-bold font-bengali transition-colors shadow-sm">
                   সিট বুক করুন
                 </a>
+                {% else %}
+                <button disabled 
+                   class="px-4 py-1.5 rounded-xl bg-slate-200 text-slate-400 text-xs font-bold font-bengali cursor-not-allowed">
+                  আসন পূর্ণ
+                </button>
+                {% endif %}
               </div>
             </div>
             {% empty %}
@@ -161,7 +174,7 @@
               {% for inc in inclusions %}
               <li class="flex items-start space-x-2">
                 <i data-lucide="check" class="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5"></i>
-                <span>{{ inc.item }}</span>
+                <span>{{ inc }}</span>
               </li>
               {% empty %}
               <li class="text-slate-400">কোনো তথ্য নেই।</li>
@@ -179,7 +192,7 @@
               {% for exc in exclusions %}
               <li class="flex items-start space-x-2">
                 <i data-lucide="x" class="w-4 h-4 text-rose-500 flex-shrink-0 mt-0.5"></i>
-                <span>{{ exc.item }}</span>
+                <span>{{ exc }}</span>
               </li>
               {% empty %}
               <li class="text-slate-400">কোনো তথ্য নেই।</li>
@@ -188,6 +201,29 @@
           </div>
 
         </div>
+
+        <!-- Multi-image Tour Gallery -->
+        {% if gallery_images %}
+        <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-200/80 space-y-6">
+          <h2 class="font-bengali text-2xl font-bold text-slate-900 border-b border-slate-100 pb-3 flex items-center space-x-2">
+            <i data-lucide="image" class="w-5 h-5 text-sky-500"></i>
+            <span>ট্যুর ফটো গ্যালারি (Tour Gallery)</span>
+          </h2>
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+            {% for gimg in gallery_images %}
+            <div class="group relative aspect-video rounded-2xl overflow-hidden bg-slate-100 border border-slate-200 shadow-sm">
+              <img src="{{ gimg.image.url }}" alt="{{ gimg.caption|default:tour.title }}" 
+                   class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+              {% if gimg.caption %}
+              <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-2 text-white text-[11px] font-bengali">
+                {{ gimg.caption }}
+              </div>
+              {% endif %}
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
 
       </div>
 

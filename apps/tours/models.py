@@ -66,6 +66,9 @@ class Tour(models.Model):
     cover_image = models.ImageField(upload_to='tours/covers/', blank=True, null=True)
     video_url = models.URLField(blank=True, help_text="YouTube or Vimeo preview link")
     
+    included_items = models.TextField(blank=True, help_text="What is included (one item per line)")
+    excluded_items = models.TextField(blank=True, help_text="What is not included (excluded) (one item per line)")
+    
     badge_text = models.CharField(max_length=50, blank=True, default="Featured", help_text="e.g. Popular, Hot Deal")
     rating = models.DecimalField(max_digits=3, decimal_places=1, default=4.9)
     reviews_count = models.PositiveIntegerField(default=12)
@@ -89,6 +92,22 @@ class Tour(models.Model):
     def current_price(self):
         return self.discount_price if self.discount_price else self.price
 
+    def get_included_list(self):
+        """Returns unified list of included items from model field & inline objects."""
+        items = []
+        if self.included_items:
+            items.extend([line.strip() for line in self.included_items.splitlines() if line.strip()])
+        items.extend([i.item for i in self.inclusions.filter(is_included=True)])
+        return items
+
+    def get_excluded_list(self):
+        """Returns unified list of excluded items from model field & inline objects."""
+        items = []
+        if self.excluded_items:
+            items.extend([line.strip() for line in self.excluded_items.splitlines() if line.strip()])
+        items.extend([i.item for i in self.inclusions.filter(is_included=False)])
+        return items
+
     def __str__(self):
         return f"{self.title} (৳{self.current_price:,.0f})"
 
@@ -98,7 +117,8 @@ class TourDate(models.Model):
     tour = models.ForeignKey(Tour, on_delete=models.CASCADE, related_name='dates')
     start_date = models.DateField()
     end_date = models.DateField()
-    available_seats = models.PositiveIntegerField(default=20)
+    total_capacity = models.PositiveIntegerField(default=40, help_text="Total batch capacity (e.g., 40 seats)")
+    available_seats = models.PositiveIntegerField(default=40, help_text="Remaining available seats")
     price_override = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     is_active = models.BooleanField(default=True)
 
@@ -113,8 +133,25 @@ class TourDate(models.Model):
             return self.price_override
         return self.tour.current_price
 
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            if self.total_capacity == 40 and self.available_seats != 40:
+                self.total_capacity = self.available_seats
+            elif self.total_capacity != 40 and self.available_seats == 40:
+                self.available_seats = self.total_capacity
+        super().save(*args, **kwargs)
+
+    def update_available_seats(self):
+        """Recalculate real-time seat availability: Available = Total Capacity - Confirmed Bookings."""
+        confirmed_seats = self.bookings.filter(status='CONFIRMED').aggregate(
+            total=models.Sum('num_travelers')
+        )['total'] or 0
+        self.available_seats = max(0, self.total_capacity - confirmed_seats)
+        self.save(update_fields=['available_seats'])
+        return self.available_seats
+
     def __str__(self):
-        return f"{self.tour.title} — {self.start_date.strftime('%d %b %Y')} ({self.available_seats} seats)"
+        return f"{self.tour.title} — {self.start_date.strftime('%d %b %Y')} ({self.available_seats}/{self.total_capacity} seats left)"
 
 
 class TourItinerary(models.Model):

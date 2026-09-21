@@ -7,4 +7,5 @@ urlpatterns = [
     path('new/', views.booking_create_view, name='create'),
     path('success/<str:reference>/', views.booking_success_view, name='success'),
     path('lookup/', views.booking_lookup_view, name='lookup'),
+    path('voucher/<str:reference>/pdf/', views.download_voucher_pdf_view, name='download_voucher'),
 ]

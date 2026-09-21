@@ -4,11 +4,18 @@ from django.utils import timezone
 from apps.tours.models import Tour, TourDate
 
 class Booking(models.Model):
+    STATUS_PENDING = 'PENDING'
+    STATUS_PENDING_VERIFICATION = 'PENDING_VERIFICATION'
+    STATUS_CONFIRMED = 'CONFIRMED'
+    STATUS_CANCELLED = 'CANCELLED'
+    STATUS_COMPLETED = 'COMPLETED'
+
     STATUS_CHOICES = [
-        ('PENDING', 'Pending Payment'),
-        ('CONFIRMED', 'Confirmed'),
-        ('CANCELLED', 'Cancelled'),
-        ('COMPLETED', 'Completed'),
+        (STATUS_PENDING, 'Pending Payment'),
+        (STATUS_PENDING_VERIFICATION, 'Pending Verification'),
+        (STATUS_CONFIRMED, 'Confirmed'),
+        (STATUS_CANCELLED, 'Cancelled'),
+        (STATUS_COMPLETED, 'Completed'),
     ]
 
     booking_reference = models.CharField(max_length=30, unique=True, editable=False)
@@ -42,6 +49,20 @@ class Booking(models.Model):
         if not self.total_amount and self.unit_price:
             self.total_amount = self.unit_price * self.num_travelers
         super().save(*args, **kwargs)
+
+    def confirm_booking(self):
+        """Marks booking confirmed and updates available seats on the tour batch."""
+        self.status = self.STATUS_CONFIRMED
+        self.save(update_fields=['status', 'updated_at'])
+        if self.tour_date:
+            self.tour_date.update_available_seats()
+
+    def cancel_booking(self):
+        """Marks booking cancelled and restores seats on the tour batch."""
+        self.status = self.STATUS_CANCELLED
+        self.save(update_fields=['status', 'updated_at'])
+        if self.tour_date:
+            self.tour_date.update_available_seats()
 
     def __str__(self):
         return f"{self.booking_reference} - {self.customer_name} ({self.tour.title})"

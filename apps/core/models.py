@@ -15,6 +15,8 @@ class SiteSetting(models.Model):
     phone = models.CharField(max_length=60, default="+8801518919370, 01855939459")
     email = models.EmailField(default="bhromonghuri@gmail.com")
     address = models.CharField(max_length=255, default="Dhaka, Bangladesh")
+    bkash_number = models.CharField(max_length=100, default="01518919370 (Personal / Send Money)")
+    nagad_number = models.CharField(max_length=100, default="01855939459 (Personal / Send Money)")
     
     facebook_url = models.URLField(blank=True, default="https://www.facebook.com/share/g/19km9RqB1g/")
     instagram_url = models.URLField(blank=True, default="https://instagram.com/bhromonghuri")

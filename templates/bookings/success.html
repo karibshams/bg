@@ -111,14 +111,20 @@
 
     <!-- Actions -->
     <div class="flex flex-col sm:flex-row items-center justify-center gap-4 print:hidden pt-4 font-bengali">
+      <a href="{% url 'bookings:download_voucher' booking.booking_reference %}" 
+         class="w-full sm:w-auto px-6 py-3 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center justify-center space-x-2 shadow-md transition-colors">
+        <i data-lucide="download" class="w-4 h-4"></i>
+        <span>অফিশিয়াল ভাউচার PDF ডাউনলোড</span>
+      </a>
+
       <button onclick="window.print()" 
-              class="w-full sm:w-auto px-6 py-3 rounded-full bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs flex items-center justify-center space-x-2 shadow-md">
+              class="w-full sm:w-auto px-6 py-3 rounded-full bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs flex items-center justify-center space-x-2 shadow-md transition-colors">
         <i data-lucide="printer" class="w-4 h-4"></i>
-        <span>ভাউচার প্রিন্ট করুন (Print Voucher)</span>
+        <span>প্রিন্ট করুন (Print Voucher)</span>
       </button>
 
       <a href="{% url 'core:home' %}" 
-         class="w-full sm:w-auto px-6 py-3 rounded-full bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs flex items-center justify-center space-x-2 shadow-sm">
+         class="w-full sm:w-auto px-6 py-3 rounded-full bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs flex items-center justify-center space-x-2 shadow-sm transition-colors">
         <i data-lucide="home" class="w-4 h-4"></i>
         <span>হোম পেজে ফিরুন</span>
       </a>

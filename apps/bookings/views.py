@@ -99,3 +99,20 @@ def booking_lookup_view(request):
         'searched': searched,
         'ref': ref,
     })
+
+
+def download_voucher_pdf_view(request, reference):
+    """Generates and serves downloadable PDF voucher for a booking."""
+    from django.http import HttpResponse
+    from .voucher import generate_booking_voucher_pdf
+
+    booking = get_object_or_404(
+        Booking.objects.select_related('tour', 'tour_date', 'tour__destination'),
+        booking_reference=reference
+    )
+    pdf_bytes = generate_booking_voucher_pdf(booking)
+    response = HttpResponse(pdf_bytes, content_type='application/pdf')
+    filename = f"BhromonGhuri_Voucher_{booking.booking_reference}.pdf"
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    return response
+

@@ -16,7 +16,8 @@
 <div class="py-12 bg-slate-50 min-h-screen"
      x-data="{
        travelers: 1,
-       unitPrice: {{ selected_tour.current_price|default:8500 }},
+       maxSeats: {{ selected_date.available_seats|default:20 }},
+       unitPrice: {{ selected_date.effective_price|default:selected_tour.current_price|default:8500 }},
        get total() { return this.travelers * this.unitPrice; }
      }">
   <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -82,12 +83,18 @@
               </button>
               <span class="text-xl font-black text-slate-900 w-8 text-center" x-text="travelers">1</span>
               <button type="button" 
-                      @click="if (travelers < 20) travelers++" 
+                      @click="if (travelers < maxSeats) travelers++" 
                       class="w-10 h-10 rounded-xl bg-sky-500 hover:bg-sky-600 text-white flex items-center justify-center font-bold text-lg shadow-sm focus:outline-none">
                 +
               </button>
             </div>
           </div>
+          {% if selected_date %}
+          <div class="text-[11px] text-slate-500 flex justify-between font-bengali">
+            <span>এই ব্যাচে সর্বোচ্চ খালি আসন: <strong class="text-sky-700">{{ selected_date.available_seats }}টি</strong></span>
+            <span x-show="travelers >= maxSeats" class="text-amber-600 font-bold">সর্বোচ্চ আসন নির্বাচিত</span>
+          </div>
+          {% endif %}
         </div>
 
         <!-- Step 3: Customer Information -->

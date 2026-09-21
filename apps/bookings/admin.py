@@ -4,7 +4,7 @@ from .models import Booking
 
 @admin.register(Booking)
 class BookingAdmin(admin.ModelAdmin):
-    list_display = ('booking_reference', 'customer_name', 'tour_title', 'travel_date', 'num_travelers', 'formatted_total', 'status_badge', 'created_at')
+    list_display = ('booking_reference', 'customer_name', 'tour_title', 'travel_date', 'num_travelers', 'formatted_total', 'status_badge', 'voucher_link', 'created_at')
     list_filter = ('status', 'created_at', 'tour')
     search_fields = ('booking_reference', 'customer_name', 'customer_email', 'customer_phone', 'tour__title')
     readonly_fields = ('booking_reference', 'created_at', 'updated_at')
@@ -24,9 +24,18 @@ class BookingAdmin(admin.ModelAdmin):
         return format_html('<span style="font-weight: bold; color: #0284c7;">৳{:,.0f}</span>', obj.total_amount)
     formatted_total.short_description = "Total Amount"
 
+    def voucher_link(self, obj):
+        from django.urls import reverse
+        if obj.status == 'CONFIRMED':
+            url = reverse('bookings:download_voucher', args=[obj.booking_reference])
+            return format_html('<a href="{}" target="_blank" style="color: #0284c7; font-weight: bold;">PDF Voucher ↗</a>', url)
+        return "-"
+    voucher_link.short_description = "Voucher"
+
     def status_badge(self, obj):
         colors = {
             'PENDING': '#f59e0b',
+            'PENDING_VERIFICATION': '#f97316',
             'CONFIRMED': '#10b981',
             'CANCELLED': '#ef4444',
             'COMPLETED': '#6366f1',
@@ -38,10 +47,12 @@ class BookingAdmin(admin.ModelAdmin):
         )
     status_badge.short_description = "Status"
 
-    @admin.action(description="Mark selected bookings as Confirmed")
+    @admin.action(description="✓ Mark selected bookings as Confirmed (Update Seats)")
     def mark_confirmed(self, request, queryset):
-        queryset.update(status='CONFIRMED')
+        for b in queryset:
+            b.confirm_booking()
 
-    @admin.action(description="Mark selected bookings as Cancelled")
+    @admin.action(description="✗ Mark selected bookings as Cancelled (Restore Seats)")
     def mark_cancelled(self, request, queryset):
-        queryset.update(status='CANCELLED')
+        for b in queryset:
+            b.cancel_booking()
