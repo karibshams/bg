@@ -48,7 +48,7 @@
       </span>
       <span class="flex items-center space-x-1.5">
         <i data-lucide="shield-check" class="w-4 h-4 text-cyan-400"></i>
-        <span class="trans-target" data-en="BhromonGhuri Escort & Safety" data-bn="ভ্রমণঘুড়ি এসকর্ট ও নিরাপত্তা">BhromonGhuri Escort & Safety</span>
+        <span class="trans-target" data-en="{{ tour.guide_security_info }}" data-bn="{{ tour.bangla_guide_security_info|default:tour.guide_security_info }}">{{ tour.guide_security_info }}</span>
       </span>
     </div>
   </div>
@@ -68,51 +68,79 @@
             <i data-lucide="info" class="w-5 h-5 text-sky-500"></i>
             <span class="trans-target" data-en="Tour Overview & Highlights" data-bn="ট্যুর পরিচিতি ও হাইলাইটস">Tour Overview & Highlights</span>
           </h2>
-          <div class="text-slate-700 leading-relaxed space-y-3 whitespace-pre-line text-sm sm:text-base trans-target"
-               data-en="{{ tour.description }}"
-               data-bn="{{ tour.bangla_description|default:tour.description }}">
-            {{ tour.description }}
+          <div class="text-slate-700 leading-relaxed text-sm sm:text-base prose max-w-none trans-target"
+               data-en="{{ tour.description|safe }}"
+               data-bn="{{ tour.bangla_description|default:tour.description|safe }}">
+            {{ tour.description|safe }}
           </div>
         </div>
 
         <!-- Available Departure Dates -->
         <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-200/80 space-y-6">
-          <h2 class="text-2xl font-bold text-slate-900 border-b border-slate-100 pb-3 flex items-center space-x-2">
-            <i data-lucide="calendar" class="w-5 h-5 text-sky-500"></i>
-            <span class="trans-target" data-en="Upcoming Departure Dates" data-bn="আসন্ন যাত্রার তারিখসমূহ">Upcoming Departure Dates</span>
-          </h2>
+          <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+            <h2 class="text-2xl font-bold text-slate-900 flex items-center space-x-2">
+              <i data-lucide="calendar" class="w-5 h-5 text-sky-500"></i>
+              <span class="trans-target" data-en="Upcoming Departure Batches" data-bn="আসন্ন যাত্রার তারিখসমূহ">Upcoming Departure Batches</span>
+            </h2>
+            <span class="text-xs font-semibold text-slate-500 trans-target" data-en="Real-Time Seat Availability" data-bn="রিয়েল-টাইম আসন তথ্য">Real-Time Seat Availability</span>
+          </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {% for dt in active_dates %}
-            <div class="p-4 rounded-2xl border border-slate-200 hover:border-sky-500 transition-colors flex flex-col justify-between space-y-3 bg-slate-50/50">
-              <div class="space-y-1">
-                <div class="flex items-center justify-between">
-                  <span class="font-bold text-slate-900 text-sm">
-                    {{ dt.start_date|date:"d M Y" }} – {{ dt.end_date|date:"d M Y" }}
+            <div class="p-5 rounded-2xl border border-slate-200 hover:border-sky-500 transition-all flex flex-col justify-between space-y-4 bg-slate-50/60 hover:bg-white shadow-xs">
+              <div class="space-y-2">
+                <div class="flex items-start justify-between gap-2">
+                  <span class="font-extrabold text-slate-900 text-sm flex items-center space-x-1.5">
+                    <i data-lucide="calendar-days" class="w-4 h-4 text-sky-600 flex-shrink-0"></i>
+                    <span>{{ dt.start_date|date:"d M Y" }} – {{ dt.end_date|date:"d M Y" }}</span>
                   </span>
-                  {% if dt.available_seats > 0 %}
-                  <span class="px-2 py-0.5 rounded text-[11px] font-bold {% if dt.available_seats <= 5 %}bg-rose-100 text-rose-700 border border-rose-200{% else %}bg-emerald-100 text-emerald-800 border border-emerald-200{% endif %}">
-                    <span class="trans-target" data-en="{{ dt.available_seats }} seats left" data-bn="{{ dt.available_seats }}টি সিট বাকি">{{ dt.available_seats }} seats left</span>
+                  
+                  <!-- Color-Coded Seat Status Badge -->
+                  {% if dt.available_seats <= 0 %}
+                  <span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-slate-200 text-slate-700 border border-slate-300 flex-shrink-0 trans-target" data-en="Sold Out" data-bn="আসন পূর্ণ">
+                    Sold Out
+                  </span>
+                  {% elif dt.available_seats <= 5 %}
+                  <span class="px-2.5 py-1 rounded-full text-[11px] font-extrabold bg-rose-100 text-rose-800 border border-rose-300 flex-shrink-0 animate-pulse">
+                    <span class="trans-target" data-en="Only {{ dt.available_seats }} seats left!" data-bn="মাত্র {{ dt.available_seats }}টি আসন বাকি!">Only {{ dt.available_seats }} seats left!</span>
+                  </span>
+                  {% elif dt.available_seats <= 12 %}
+                  <span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-100 text-amber-800 border border-amber-300 flex-shrink-0">
+                    <span class="trans-target" data-en="{{ dt.available_seats }} / {{ dt.total_capacity }} seats left (Filling Fast)" data-bn="{{ dt.available_seats }} / {{ dt.total_capacity }} সিট বাকি (দ্রুত পূর্ণ)">{{ dt.available_seats }} / {{ dt.total_capacity }} seats left (Filling Fast)</span>
                   </span>
                   {% else %}
-                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-slate-200 text-slate-700 trans-target" data-en="Sold Out" data-bn="আসন পূর্ণ">
-                    Sold Out
+                  <span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 flex-shrink-0">
+                    <span class="trans-target" data-en="{{ dt.available_seats }} / {{ dt.total_capacity }} seats left" data-bn="{{ dt.available_seats }} / {{ dt.total_capacity }} সিট বাকি">{{ dt.available_seats }} / {{ dt.total_capacity }} seats left</span>
                   </span>
                   {% endif %}
                 </div>
-                <p class="text-xs text-slate-500 trans-target" data-en="Regular Professional Batch" data-bn="নিয়মিত প্রফেশনাল ব্যাচ">Regular Professional Batch</p>
+
+                <!-- Visual Dynamic Seat Progress Bar -->
+                <div class="space-y-1">
+                  <div class="w-full bg-slate-200 rounded-full h-1.5 overflow-hidden">
+                    <div class="h-1.5 rounded-full {% if dt.available_seats <= 0 %}bg-slate-400{% elif dt.available_seats <= 5 %}bg-rose-500{% elif dt.available_seats <= 12 %}bg-amber-500{% else %}bg-emerald-500{% endif %}" style="width: {{ dt.percent_booked }}%;"></div>
+                  </div>
+                  <div class="flex justify-between text-[10px] text-slate-500 font-medium">
+                    <span class="trans-target" data-en="Total Capacity: {{ dt.total_capacity }}" data-bn="মোট আসন: {{ dt.total_capacity }}">Total Capacity: {{ dt.total_capacity }}</span>
+                    <span>{{ dt.percent_booked }}% <span class="trans-target" data-en="booked" data-bn="বুকড">booked</span></span>
+                  </div>
+                </div>
               </div>
 
-              <div class="pt-2 border-t border-slate-200/60 flex items-center justify-between">
-                <span class="text-base font-extrabold text-sky-600">৳{{ dt.effective_price|floatformat:0 }}</span>
+              <div class="pt-3 border-t border-slate-200/60 flex items-center justify-between">
+                <div>
+                  <span class="text-xs text-slate-400 block font-medium trans-target" data-en="Batch Rate" data-bn="ব্যাচ রেট">Batch Rate</span>
+                  <span class="text-base font-extrabold text-sky-600">৳{{ dt.effective_price|floatformat:0 }}</span>
+                </div>
                 {% if dt.available_seats > 0 %}
                 <a href="{% url 'bookings:create' %}?tour={{ tour.slug }}&date={{ dt.id }}" 
-                   class="px-4 py-1.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-white text-xs font-bold transition-colors shadow-sm">
+                   class="px-4 py-2 rounded-xl bg-gradient-to-r from-sky-500 to-sky-600 hover:from-sky-600 hover:to-sky-700 text-white text-xs font-bold transition-all shadow-sm flex items-center space-x-1.5">
                   <span class="trans-target" data-en="Book Seat" data-bn="সিট বুক করুন">Book Seat</span>
+                  <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
                 </a>
                 {% else %}
                 <button disabled 
-                   class="px-4 py-1.5 rounded-xl bg-slate-200 text-slate-400 text-xs font-bold cursor-not-allowed">
+                   class="px-4 py-2 rounded-xl bg-slate-200 text-slate-400 text-xs font-bold cursor-not-allowed">
                   <span class="trans-target" data-en="Sold Out" data-bn="আসন পূর্ণ">Sold Out</span>
                 </button>
                 {% endif %}
@@ -124,7 +152,7 @@
           </div>
         </div>
 
-        <!-- Day by Day Itinerary -->
+        <!-- Day by Day Itinerary (Word-like WYSIWYG Rendered) -->
         <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-200/80 space-y-6">
           <h2 class="text-2xl font-bold text-slate-900 border-b border-slate-100 pb-3 flex items-center space-x-2">
             <i data-lucide="map" class="w-5 h-5 text-sky-500"></i>
@@ -144,11 +172,11 @@
                 {{ item.title }}
               </h3>
 
-              <p class="text-sm text-slate-600 leading-relaxed trans-target"
-                 data-en="{{ item.description }}"
-                 data-bn="{{ item.bangla_description|default:item.description }}">
-                {{ item.description }}
-              </p>
+              <div class="text-sm text-slate-700 leading-relaxed prose max-w-none trans-target"
+                 data-en="{{ item.description|safe }}"
+                 data-bn="{{ item.bangla_description|default:item.description|safe }}">
+                {{ item.description|safe }}
+              </div>
 
               <div class="flex flex-wrap gap-4 pt-2 text-xs text-slate-500">
                 {% if item.meals %}

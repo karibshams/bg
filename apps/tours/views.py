@@ -89,17 +89,10 @@ def tour_detail_view(request, slug):
         is_published=True
     )
     
-    active_dates = tour.dates.filter(is_active=True)
+    active_dates = tour.dates.filter(is_active=True).order_by('start_date')
     
-    inclusions = [inc.item for inc in tour.inclusions.filter(is_included=True)]
-    for item in tour.get_included_list():
-        if item not in inclusions:
-            inclusions.append(item)
-
-    exclusions = [exc.item for exc in tour.inclusions.filter(is_included=False)]
-    for item in tour.get_excluded_list():
-        if item not in exclusions:
-            exclusions.append(item)
+    inclusions = tour.get_included_list()
+    exclusions = tour.get_excluded_list()
     
     related_tours = Tour.objects.filter(
         destination=tour.destination, 

@@ -141,9 +141,14 @@ class Command(BaseCommand):
                 'duration_days': 3,
                 'price': 9500.00,
                 'discount_price': 8500.00,
-                'max_travelers': 22,
+                'max_travelers': 25,
+                'guide_security_info': 'Certified Mountain Guide & Armed Police Escort',
+                'bangla_guide_security_info': 'প্রশিক্ষিত মাউন্টেন গাইড ও আর্মড পুলিশ এসকর্ট',
                 'short_description': 'খাগড়াছড়ি থেকে চাঁন্দের গাড়িতে পাহাড়ি আঁকাবাঁকা পথ পাড়ি দিয়ে সাজেকের রুইলুই পাড়া, কংলাক পাহাড় ও হেলিপ্যাডের মেঘ দেখা।',
-                'description': 'সাজেক ভ্যালি ভ্রমণ মানেই মেঘের উপর দিয়ে চলা। সকালে ঘুম ভেঙে জানালার বাইরে কেবল ভাসমান মেঘমালা। এই ট্যুরে থাকছে সাজেকের সেরা ইকো-রিসোর্টে থাকার সুযোগ, কংলাক পাহাড়ে ট্র্যাকিং, আলুটিলা গুহা ও তারেং এক্সপ্লোরেশন। সাথে অভিজ্ঞ ট্যুর ম্যানেজার ও ট্রাভেল কিট।',
+                'description': '<p><strong>Sajek Valley</strong> is renowned as the <em>Kingdom of Clouds</em> in Bangladesh. Wake up above the morning mist from your eco-resort balcony, trek up the ancient Konglak Peak, and explore Alutila Cave.</p><p>Includes full transport via 4x4 Chander Gari, dedicated tour escort, and all forest/tribal entry permits.</p>',
+                'bangla_description': '<p><strong>সাজেক ভ্যালি</strong> মানেই মেঘের রাজ্যে অবগাহন। সকালবেলা রিসোর্টের বারান্দায় দাঁড়ালেই ভেসে বেড়ায় মেঘের ভেলা। কংলাক পাহাড়ে ট্র্যাকিং এবং আলুটিলা রহস্যময় গুহা পরিদর্শন।</p>',
+                'included_items': '• 3 Nights Premium Eco-Resort Accommodation\n• Daily Buffet Breakfast & Dinner\n• Dedicated 4x4 Chander Gari (Khagrachhari-Sajek-Khagrachhari)\n• Professional Tour Escort & Security Clearance\n• All Entry Fees & Sightseeing Passes',
+                'excluded_items': '• Personal Shopping & Souvenirs\n• Mineral Water & Extra Snacks\n• Personal Medical Expenses',
                 'badge_text': 'Popular Choice',
                 'rating': 4.9,
                 'reviews_count': 34,
@@ -163,9 +168,14 @@ class Command(BaseCommand):
                 'duration_days': 3,
                 'price': 10500.00,
                 'discount_price': 9200.00,
-                'max_travelers': 18,
+                'max_travelers': 20,
+                'guide_security_info': 'Certified Local Tour Manager & 24/7 Assistance',
+                'bangla_guide_security_info': 'প্রশিক্ষিত স্থানীয় ট্যুর ম্যানেজার ও সার্বক্ষণিক সহায়তা',
                 'short_description': 'পাহাড়ের চূড়া ছুঁয়ে যাওয়া মেঘ, নীলগিরি রিসোর্ট পয়েন্ট, শৈলপ্রপাত ঝর্ণা ও পাহাড়ি আদিবাসী পল্লীর জীবনযাত্রা।',
-                'description': 'বাংলার অন্যতম উঁচু পাহাড় চূড়া নীলগিরিতে দাঁড়িয়ে মেঘের সাগরে অবগাহন। চিম্বুক পাহাড়ের নৈসর্গিক সৌন্দর্য, মিলনছড়ি ভিউ পয়েন্ট আর সাঙ্গু নদীর তীরে শান্ত সন্ধ্যা উপভোগ করার পূর্ণাঙ্গ ভ্রমণ পরিকল্পনা।',
+                'description': '<p>Touch the sky at Nilgiri, the highest resort point in Bangladesh! Immerse yourself in the green peaks of Bandarban, Shoilo Propat waterfall, and golden sunsets over Chimbuk Hill.</p>',
+                'bangla_description': '<p>বাংলার অন্যতম উঁচু পাহাড় চূড়া নীলগিরিতে দাঁড়িয়ে মেঘের সাগরে অবগাহন। চিম্বুক পাহাড়ের নৈসর্গিক সৌন্দর্য, শৈলপ্রপাত ঝর্ণা ও পাহাড়ি সংস্কৃতি।</p>',
+                'included_items': '• 2 Nights Hotel Accommodation in Bandarban\n• Dedicated AC Transport & Local 4x4 Jeeps\n• All Entry Tickets & Forest Clearance\n• Certified Local Guide & Escort',
+                'excluded_items': '• Meals not mentioned in itinerary\n• Personal Camera Fees & Tips',
                 'badge_text': 'Best Seller',
                 'rating': 4.8,
                 'reviews_count': 28,
@@ -186,11 +196,16 @@ class Command(BaseCommand):
                 'price': 8500.00,
                 'discount_price': 7500.00,
                 'max_travelers': 16,
+                'guide_security_info': 'Life Guard Certified Boat Captain & Support Crew',
+                'bangla_guide_security_info': 'লাইফগার্ড সনদপ্রাপ্ত বোট ক্যাপ্টেন ও সহকারী ক্রু',
                 'short_description': 'ঐতিহ্যবাহী কাঠের হাউসবোটে আধুনিক সব সুযোগ-সুবিধা নিয়ে টাঙ্গুয়ার হাওর, নীলাদ্রি লেক ও যাদুকাটা নদীতে ভেসে বেড়ানো।',
-                'description': 'বৃষ্টির দিনে কিংবা শরতের নীল আকাশে মেঘালয়ের পাহাড়কে সামনে রেখে টাঙ্গুয়ার হাওরে ভাসার অনবদ্য অভিজ্ঞতা। ওয়াচ টাওয়ার, শিমুল বাগান, বারিক্কা টিলা এবং নীলাদ্রি লেকে ক্যাম্পিং ফিল। দেশি হাঁসের মাংস ও হাওরের তাজা মাছের লোভনীয় খাবার।',
-                'badge_text': 'Hot Deal',
-                'rating': 5.0,
-                'reviews_count': 42,
+                'description': '<p>Float across the turquoise waters of Tanguar Haor on a wooden luxury houseboat. Gaze at the Meghalaya mountains, savor authentic wetland fresh fish, and swim in Niladri Lake.</p>',
+                'bangla_description': '<p>মেঘালয়ের পাহাড়কে সামনে রেখে টাঙ্গুয়ার হাওরে ভাসার অনবদ্য অভিজ্ঞতা। ওয়াচ টাওয়ার, শিমুল বাগান ও নীলাদ্রি লেক।</p>',
+                'included_items': '• 2 Days / 1 Night on Luxury Wooden Houseboat\n• 5 Multi-Course Traditional Meals (Fresh Haor Fish & Duck)\n• Life Jackets for all passengers\n• Boat Master & Experienced Cook Service',
+                'excluded_items': '• Transport up to Tahirpur Ghat\n• Personal Purchases & Tips',
+                'badge_text': 'Trending Now',
+                'rating': 4.9,
+                'reviews_count': 19,
                 'is_featured': True,
                 'is_published': True,
             }
@@ -208,8 +223,13 @@ class Command(BaseCommand):
                 'price': 6500.00,
                 'discount_price': 5800.00,
                 'max_travelers': 20,
+                'guide_security_info': 'Forest Eco-Guide & Safety Escort',
+                'bangla_guide_security_info': 'বন ও পরিবেশ গাইড এবং নিরাপত্তা সহকারী',
                 'short_description': 'লাউয়াছড়া জাতীয় উদ্যানের ট্র্যাকিং, মাধবপুর লেকের পদ্মফুল এবং শত বছরের ঐতিহ্যবাহী চা বাগানের মনোরম সবুজ।',
-                'description': 'শহরের কোলাহল থেকে দূরে নিবিড় প্রকৃতির কোলে দুই দিন। বিশেষ আকর্ষণ: উলুক বানর ও বিরল পাখির কলতান, পাহাড়ি আদিবাসী মণিপুরী পাড়ার তাঁতশিল্প এবং বিখ্যাত নীলকণ্ঠের সাত রঙের চা।',
+                'description': '<p>Rejuvenate in the lush tea capital of Sreemangal. Trek through Lawachara Rainforest, discover rare wildlife, and relax beside Madhabpur Lake.</p>',
+                'bangla_description': '<p>মাইলের পর মাইল বিস্তৃত চা বাগান, সাত রঙের চা, মাধবপুর লেক ও চিরসবুজ রেইনফরেস্ট লাউয়াছড়া।</p>',
+                'included_items': '• Eco Resort Stay with Breakfast\n• AC Microbus Transport\n• Forest Trek Guide & Wildlife Entry Permits',
+                'excluded_items': '• Seven Layer Tea & Extra Beverage\n• Personal Tips',
                 'badge_text': 'Weekend Special',
                 'rating': 4.7,
                 'reviews_count': 19,
@@ -230,8 +250,13 @@ class Command(BaseCommand):
                 'price': 16000.00,
                 'discount_price': 14500.00,
                 'max_travelers': 30,
+                'guide_security_info': 'Armed Forest Rangers & Senior Naturalist Guide',
+                'bangla_guide_security_info': 'সশস্ত্র বন প্রহরী ও সিনিয়র পরিবেশবিদ গাইড',
                 'short_description': 'মোংলা থেকে লাক্সারি ভেসেল ক্রুজে কটকা, কচিখালী, করমজল এবং হরিনটানা ক্যানেল ক্রুজিং সাফারি।',
-                'description': 'ইউনেস্কো ওয়ার্ল্ড হেরিটেজ সুন্দরবনের গহীনে চার দিনের রোমাঞ্চকর জাহাজ যাত্রা। অভিজ্ঞ গানম্যান গাইড, ডলফিন ওয়াচিং, ওয়াচ টাওয়ার থেকে বাঘের পদচিহ্ন পর্যবেক্ষণ ও ম্যানগ্রোভ ফরেস্ট ট্র্যাকিং।',
+                'description': '<p>Venture deep into the UNESCO World Heritage Sundarbans. Cruise through misty tidal creeks, watch spotted deer grazing at Kotka beach, and search for Royal Bengal Tiger tracks with armed forest escorts.</p>',
+                'bangla_description': '<p>বিশ্বের বৃহত্তম ম্যানগ্রোভ অরণ্য সুন্দরবনের গহীনে চার দিনের জাহাজ যাত্রা। চিত্রল হরিণ ও বন্য জীববৈচিত্র্য।</p>',
+                'included_items': '• 4 Days / 3 Nights Luxury Cruise Vessel with AC Cabin\n• All Meals (Breakfast, Lunch, Dinner, Evening Snacks)\n• Armed Forest Guard Protection & Entry Fees\n• Small Boat Canal Safaris into Narrow Creeks',
+                'excluded_items': '• Video Camera Forest Fee\n• Alcohol & Extra Personal Requests',
                 'badge_text': 'Wild Expedition',
                 'rating': 4.9,
                 'reviews_count': 22,
@@ -252,8 +277,13 @@ class Command(BaseCommand):
                 'price': 12000.00,
                 'discount_price': 10500.00,
                 'max_travelers': 24,
+                'guide_security_info': 'Island Specialist Guide & Marine Assistance',
+                'bangla_guide_security_info': 'আইল্যান্ড স্পেশালিস্ট গাইড ও মেরিন সহায়তা',
                 'short_description': 'জাহাজে নীল সাগরে যাত্রা, সেন্টমার্টিনের স্বচ্ছ পানি, ছেঁড়াদ্বীপে সাইক্লিং আর রূপচাঁদা মাছের ফ্রাই।',
-                'description': 'কক্সবাজার বা টেকনাফ থেকে জাহাজে সরাসরি সেন্টমার্টিন। রাতের জোছনায় সাগরের গর্জন শোনা, স্থানীয় বারবিকিউ ডিনার, ছেঁড়াদ্বীপে ট্রলারে ভ্রমণ ও প্রবালের মাঝে স্নরকেলিং।',
+                'description': '<p>Bask in crystal-clear waters and coral reefs on Saint Martin’s Island. Experience breathtaking starry nights, cycle around the island, and savor BBQ dinner on the beach.</p>',
+                'bangla_description': '<p>বঙ্গোপসাগরের বুকে একমাত্র প্রবাল দ্বীপ সেন্টমার্টিন ও ছেঁড়াদ্বীপ। সূর্যাস্ত ও তাজা সামুদ্রিক মাছের স্বাদ।</p>',
+                'included_items': '• Ship Cruise Ticket (Roundtrip)\n• 2 Nights Beachfront Hotel Accommodation\n• Chera Dwip Trawler Tour\n• Special Beach Seafood BBQ Dinner',
+                'excluded_items': '• Scuba Diving / Snorkeling Gear Rental\n• Bicycle Hire Fees',
                 'badge_text': 'Island Vibes',
                 'rating': 4.8,
                 'reviews_count': 31,
@@ -261,28 +291,55 @@ class Command(BaseCommand):
                 'is_published': True,
             }
         )
-        self.stdout.write(self.style.SUCCESS("[OK] Tours created"))
 
-        # 6. Tour Dates
+        # 6. Multiple Departure Batches with Diverse Real-Time Seat Statuses
         today = datetime.date.today()
         sample_tours = [tour_1, tour_2, tour_3, tour_4, tour_5, tour_6]
         for idx, tour in enumerate(sample_tours):
+            # Batch 1: Available (Green)
             TourDate.objects.get_or_create(
                 tour=tour,
                 start_date=today + datetime.timedelta(days=7 + idx * 3),
                 defaults={
                     'end_date': today + datetime.timedelta(days=7 + idx * 3 + tour.duration_days),
-                    'available_seats': 14,
+                    'total_capacity': 40,
+                    'available_seats': 26,
                     'price_override': None,
                     'is_active': True,
                 }
             )
+            # Batch 2: Filling Fast (Amber)
             TourDate.objects.get_or_create(
                 tour=tour,
-                start_date=today + datetime.timedelta(days=21 + idx * 4),
+                start_date=today + datetime.timedelta(days=18 + idx * 3),
                 defaults={
-                    'end_date': today + datetime.timedelta(days=21 + idx * 4 + tour.duration_days),
-                    'available_seats': 18,
+                    'end_date': today + datetime.timedelta(days=18 + idx * 3 + tour.duration_days),
+                    'total_capacity': 40,
+                    'available_seats': 8,
+                    'price_override': None,
+                    'is_active': True,
+                }
+            )
+            # Batch 3: Almost Full (Rose)
+            TourDate.objects.get_or_create(
+                tour=tour,
+                start_date=today + datetime.timedelta(days=28 + idx * 3),
+                defaults={
+                    'end_date': today + datetime.timedelta(days=28 + idx * 3 + tour.duration_days),
+                    'total_capacity': 40,
+                    'available_seats': 2,
+                    'price_override': None,
+                    'is_active': True,
+                }
+            )
+            # Batch 4: Sold Out (Slate)
+            TourDate.objects.get_or_create(
+                tour=tour,
+                start_date=today + datetime.timedelta(days=38 + idx * 3),
+                defaults={
+                    'end_date': today + datetime.timedelta(days=38 + idx * 3 + tour.duration_days),
+                    'total_capacity': 40,
+                    'available_seats': 0,
                     'price_override': None,
                     'is_active': True,
                 }

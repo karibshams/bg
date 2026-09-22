@@ -1,9 +1,11 @@
 from django.contrib import admin
 from django.utils.html import format_html
+from django.db import models
 from .models import (
     Destination, TourCategory, Tour, TourDate, 
     TourItinerary, TourImage, TourInclusion
 )
+from .widgets import QuillAdminWidget
 
 class TourDateInline(admin.TabularInline):
     model = TourDate
@@ -14,13 +16,16 @@ class TourDateInline(admin.TabularInline):
 class TourItineraryInline(admin.StackedInline):
     model = TourItinerary
     extra = 1
-    fields = ('day_number', 'title', 'description', 'meals', 'stay_info')
+    fields = ('day_number', ('title', 'bangla_title'), 'description', 'bangla_description', ('meals', 'stay_info'))
+    formfield_overrides = {
+        models.TextField: {'widget': QuillAdminWidget(attrs={'rows': 6})},
+    }
 
 
 class TourInclusionInline(admin.TabularInline):
     model = TourInclusion
     extra = 2
-    fields = ('item', 'is_included')
+    fields = (('item', 'bangla_item'), 'is_included')
 
 
 class TourImageInline(admin.TabularInline):
@@ -37,20 +42,37 @@ class TourAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('title',)}
     list_editable = ('is_featured', 'is_published')
     inlines = [TourDateInline, TourItineraryInline, TourInclusionInline, TourImageInline]
+    formfield_overrides = {
+        models.TextField: {'widget': QuillAdminWidget},
+    }
 
     fieldsets = (
         ('General Information', {
             'fields': ('title', 'bangla_title', 'slug', 'destination', 'category', 'badge_text')
         }),
-        ('Duration & Pricing', {
-            'fields': (('duration', 'duration_days'), ('price', 'discount_price'), 'max_travelers')
+        ('Duration, Group Size, Guide & Pricing', {
+            'description': 'Manage group capacity, duration, security/guide info, and dynamic regular vs discount prices.',
+            'fields': (
+                ('duration', 'duration_days'),
+                ('price', 'discount_price'),
+                'max_travelers',
+                ('guide_security_info', 'bangla_guide_security_info')
+            )
         }),
-        ('Descriptions & Media', {
-            'fields': ('short_description', 'description', 'cover_image', 'video_url')
+        ('Descriptions & Media (WYSIWYG Overview)', {
+            'description': 'Provide rich text overviews, highlights, and teaser descriptions.',
+            'fields': (
+                'short_description', 'bangla_short_description',
+                'description', 'bangla_description',
+                'cover_image', 'video_url'
+            )
         }),
         ('Package Inclusions & Exclusions (List Builders)', {
-            'description': 'Enter items one per line to dynamically show in "What is included" and "What is excluded" on the tour page.',
-            'fields': ('included_items', 'excluded_items')
+            'description': 'Paste or type bullet points or items one per line. Bullets, dashes, and numbers are automatically cleaned.',
+            'fields': (
+                'included_items', 'bangla_included_items',
+                'excluded_items', 'bangla_excluded_items'
+            )
         }),
         ('Reviews & Visibility', {
             'fields': (('rating', 'reviews_count'), ('is_featured', 'is_published'))
@@ -92,6 +114,31 @@ class TourCategoryAdmin(admin.ModelAdmin):
 
 @admin.register(TourDate)
 class TourDateAdmin(admin.ModelAdmin):
-    list_display = ('tour', 'start_date', 'end_date', 'available_seats', 'price_override', 'is_active')
+    list_display = ('tour', 'start_date', 'end_date', 'total_capacity', 'available_seats', 'seat_status_pill', 'price_override', 'is_active')
     list_filter = ('is_active', 'start_date', 'tour__destination')
     search_fields = ('tour__title',)
+
+    def seat_status_pill(self, obj):
+        badge = obj.seat_status_badge
+        colors = {
+            'emerald': ('#059669', '#ecfdf5', '#a7f3d0'),
+            'amber': ('#d97706', '#fffbeb', '#fde68a'),
+            'rose': ('#dc2626', '#fef2f2', '#fecaca'),
+            'slate': ('#475569', '#f8fafc', '#cbd5e1')
+        }
+        fg, bg, border = colors.get(badge['color'], ('#334155', '#f1f5f9', '#cbd5e1'))
+        return format_html(
+            '<span style="display:inline-block; padding: 3px 8px; border-radius: 9999px; font-size: 11px; font-weight: 700; color: {}; background-color: {}; border: 1px solid {};">{}</span>',
+            fg, bg, border, badge['en']
+        )
+    seat_status_pill.short_description = "Seat Availability"
+
+
+@admin.register(TourItinerary)
+class TourItineraryAdmin(admin.ModelAdmin):
+    list_display = ('tour', 'day_number', 'title', 'meals', 'stay_info')
+    list_filter = ('tour__destination', 'tour')
+    search_fields = ('title', 'bangla_title', 'description', 'tour__title')
+    formfield_overrides = {
+        models.TextField: {'widget': QuillAdminWidget},
+    }

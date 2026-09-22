@@ -69,8 +69,13 @@ class Tour(models.Model):
     cover_image = models.ImageField(upload_to='tours/covers/', blank=True, null=True)
     video_url = models.URLField(blank=True, help_text="YouTube or Vimeo preview link")
     
+    guide_security_info = models.CharField(max_length=200, default="Certified Guide & Safety Escort", blank=True, help_text="e.g. Certified Guide & Safety Escort")
+    bangla_guide_security_info = models.CharField(max_length=200, blank=True, help_text="Bengali: Certified Guide & Safety Escort")
+    
     included_items = models.TextField(blank=True, help_text="What is included (one item per line)")
+    bangla_included_items = models.TextField(blank=True, help_text="Bengali: What is included (one item per line)")
     excluded_items = models.TextField(blank=True, help_text="What is not included (excluded) (one item per line)")
+    bangla_excluded_items = models.TextField(blank=True, help_text="Bengali: What is not included (excluded) (one item per line)")
     
     badge_text = models.CharField(max_length=50, blank=True, default="Featured", help_text="e.g. Popular, Hot Deal")
     rating = models.DecimalField(max_digits=3, decimal_places=1, default=4.9)
@@ -96,19 +101,31 @@ class Tour(models.Model):
         return self.discount_price if self.discount_price else self.price
 
     def get_included_list(self):
-        """Returns unified list of included items from model field & inline objects."""
+        """Returns unified list of included items from model field & inline objects, cleanly stripping bullet points."""
         items = []
         if self.included_items:
-            items.extend([line.strip() for line in self.included_items.splitlines() if line.strip()])
-        items.extend([i.item for i in self.inclusions.filter(is_included=True)])
+            for line in self.included_items.splitlines():
+                clean = line.strip().lstrip('•-*+✓✔> ').strip()
+                if clean and clean not in items:
+                    items.append(clean)
+        for inc in self.inclusions.filter(is_included=True):
+            clean = inc.item.strip().lstrip('•-*+✓✔> ').strip()
+            if clean and clean not in items:
+                items.append(clean)
         return items
 
     def get_excluded_list(self):
-        """Returns unified list of excluded items from model field & inline objects."""
+        """Returns unified list of excluded items from model field & inline objects, cleanly stripping bullet points."""
         items = []
         if self.excluded_items:
-            items.extend([line.strip() for line in self.excluded_items.splitlines() if line.strip()])
-        items.extend([i.item for i in self.inclusions.filter(is_included=False)])
+            for line in self.excluded_items.splitlines():
+                clean = line.strip().lstrip('•-*+✕✗xX- ').strip()
+                if clean and clean not in items:
+                    items.append(clean)
+        for exc in self.inclusions.filter(is_included=False):
+            clean = exc.item.strip().lstrip('•-*+✕✗xX- ').strip()
+            if clean and clean not in items:
+                items.append(clean)
         return items
 
     def __str__(self):
@@ -136,9 +153,80 @@ class TourDate(models.Model):
             return self.price_override
         return self.tour.current_price
 
+    @property
+    def booked_seats(self):
+        return max(0, self.total_capacity - self.available_seats)
+
+    @property
+    def percent_booked(self):
+        if not self.total_capacity:
+            return 0
+        return min(100, round((self.booked_seats / self.total_capacity) * 100))
+
+    @property
+    def percent_available(self):
+        if not self.total_capacity:
+            return 0
+        return max(0, 100 - self.percent_booked)
+
+    @property
+    def seat_status(self):
+        if self.available_seats <= 0:
+            return 'SOLD_OUT'
+        if self.available_seats <= 5:
+            return 'ALMOST_FULL'
+        if self.available_seats <= max(10, int(self.total_capacity * 0.4)):
+            return 'FILLING_FAST'
+        return 'AVAILABLE'
+
+    @property
+    def seat_status_badge(self):
+        """Returns status metadata (color classes, English label, Bangla label)."""
+        status = self.seat_status
+        if status == 'SOLD_OUT':
+            return {
+                'status': 'SOLD_OUT',
+                'en': 'Sold Out',
+                'bn': 'আসন পূর্ণ',
+                'badge_class': 'bg-slate-200 text-slate-700 border-slate-300',
+                'bar_class': 'bg-slate-400',
+                'color': 'slate',
+            }
+        elif status == 'ALMOST_FULL':
+            return {
+                'status': 'ALMOST_FULL',
+                'en': f'Only {self.available_seats} seats left!',
+                'bn': f'মাত্র {self.available_seats}টি আসন বাকি!',
+                'badge_class': 'bg-rose-100 text-rose-800 border-rose-200 animate-pulse',
+                'bar_class': 'bg-rose-500',
+                'color': 'rose',
+            }
+        elif status == 'FILLING_FAST':
+            return {
+                'status': 'FILLING_FAST',
+                'en': f'{self.available_seats} seats remaining (Filling Fast)',
+                'bn': f'{self.available_seats}টি আসন বাকি (দ্রুত পূর্ণ হচ্ছে)',
+                'badge_class': 'bg-amber-100 text-amber-800 border-amber-200',
+                'bar_class': 'bg-amber-500',
+                'color': 'amber',
+            }
+        else:
+            return {
+                'status': 'AVAILABLE',
+                'en': f'{self.available_seats} / {self.total_capacity} seats available',
+                'bn': f'{self.available_seats} / {self.total_capacity} আসন খালি আছে',
+                'badge_class': 'bg-emerald-100 text-emerald-800 border-emerald-200',
+                'bar_class': 'bg-emerald-500',
+                'color': 'emerald',
+            }
+
+    def __init__(self, *args, **kwargs):
+        self._capacity_passed = 'total_capacity' in kwargs
+        super().__init__(*args, **kwargs)
+
     def save(self, *args, **kwargs):
         if not self.pk:
-            if self.total_capacity == 40 and self.available_seats != 40:
+            if not getattr(self, '_capacity_passed', False) and self.total_capacity == 40 and self.available_seats != 40:
                 self.total_capacity = self.available_seats
             elif self.total_capacity != 40 and self.available_seats == 40:
                 self.available_seats = self.total_capacity

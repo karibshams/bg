@@ -4,3 +4,6 @@ class BookingsConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'apps.bookings'
     verbose_name = '3. Customer Bookings'
+
+    def ready(self):
+        import apps.bookings.signals
