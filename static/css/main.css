@@ -26,6 +26,18 @@ body {
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+#main-navbar nav a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+#main-navbar nav a:hover {
+  text-shadow: 0 0 10px rgba(56, 189, 248, 0.35);
+}
+
 .glass-card {
   background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(12px);

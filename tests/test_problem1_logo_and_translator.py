@@ -60,3 +60,19 @@ class Problem1LogoAndTranslatorTestCase(TestCase):
         self.assertIn('bhromonghuri@gmail.com', content)
         self.assertIn('https://maps.app.goo.gl/Cv52esJKLkZu2ouj9', content)
         self.assertIn('https://www.facebook.com/share/g/19km9RqB1g/', content)
+
+    def test_navbar_spacing_and_responsiveness(self):
+        """Verify balanced spacing, gap controls, and responsive classes across nav items."""
+        response = self.client.get(reverse('core:home'))
+        self.assertEqual(response.status_code, 200)
+        content = response.content.decode('utf-8')
+
+        # Outer container has expanded max-width and balanced gap
+        self.assertIn('max-w-[1440px]', content)
+        # Desktop nav has balanced gaps and prevents awkward line breaking
+        self.assertIn('whitespace-nowrap', content)
+        self.assertIn('justify-center', content)
+        # Responsive padding on nav items
+        self.assertIn('px-2.5 py-1.5 xl:px-3.5 xl:py-2', content)
+        # Header actions have balanced spacing
+        self.assertIn('gap-2 lg:gap-2 xl:gap-3', content)
