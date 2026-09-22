@@ -1,4 +1,6 @@
 import os
+import secrets
+import urllib.parse
 import requests
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
@@ -86,63 +88,69 @@ def register_view(request):
 
 
 def google_login_view(request):
-    """Initiates Google OAuth 2.0 flow or one-click instant Google Sign-In."""
+    """
+    Initiates standard Google OAuth 2.0 / SSO authorization flow.
+    Directly prompts users to authenticate with their own active Google account.
+    """
+    if request.user.is_authenticated:
+        return redirect('core:home')
+
     client_id = os.getenv('GOOGLE_CLIENT_ID', '').strip()
-    next_url = request.GET.get('next') or request.POST.get('next') or reverse('core:home')
+    next_url = request.GET.get('next') or reverse('core:home')
     request.session['auth_next'] = next_url
 
-    # One-click / form submit sign in
-    if request.method == 'POST':
-        email = request.POST.get('email', 'traveler@gmail.com').strip().lower()
-        name = request.POST.get('name', 'Google Traveler').strip()
-        username = email.split('@')[0].replace('.', '_')
-        
-        user, created = User.objects.get_or_create(
-            username=username,
-            defaults={'email': email, 'first_name': name}
-        )
-        if not user.email:
-            user.email = email
-            user.save(update_fields=['email'])
-        if name and not user.first_name:
-            user.first_name = name
-            user.save(update_fields=['first_name'])
-
-        login(request, user)
-        messages.success(request, f"গুগল দিয়ে সফলভাবে সাইন ইন হয়েছে! স্বাগতম {user.first_name or user.username}।")
-        return redirect(next_url)
-
-    if client_id:
-        redirect_uri = request.build_absolute_uri(reverse('core:google_callback'))
-        google_auth_url = (
-            f"https://accounts.google.com/o/oauth2/v2/auth?"
-            f"client_id={client_id}&"
-            f"redirect_uri={redirect_uri}&"
-            f"response_type=code&"
-            f"scope=openid%20email%20profile&"
-            f"access_type=offline"
-        )
-        return redirect(google_auth_url)
-    else:
-        # Prompt instant Google profile confirmation
+    if not client_id:
+        # If client ID is missing in environment, render the Google OAuth setup notice
+        # with zero mock forms or hardcoded user details.
         return render(request, 'core/google_auth.html', {
             'next': next_url,
-            'is_configured': False
+            'is_configured': False,
         })
+
+    # Generate cryptographic state parameter for CSRF prevention in OAuth
+    state = secrets.token_urlsafe(32)
+    request.session['oauth_state'] = state
+
+    redirect_uri = request.build_absolute_uri(reverse('core:google_callback'))
+    params = {
+        'client_id': client_id,
+        'redirect_uri': redirect_uri,
+        'response_type': 'code',
+        'scope': 'openid email profile',
+        'prompt': 'select_account',
+        'state': state,
+        'access_type': 'online',
+    }
+    google_auth_url = f"https://accounts.google.com/o/oauth2/v2/auth?{urllib.parse.urlencode(params)}"
+    return redirect(google_auth_url)
 
 
 def google_callback_view(request):
-    """Callback listener for Google OAuth 2.0 code exchange."""
+    """
+    Callback listener for official Google OAuth 2.0 code exchange.
+    Strictly verifies email verification status from Google and allows instant sign-in/registration.
+    """
     code = request.GET.get('code')
     error = request.GET.get('error')
+    state = request.GET.get('state')
     next_url = request.session.pop('auth_next', reverse('core:home'))
 
-    if error or not code:
-        messages.error(request, "গুগল সাইন-ইন বাতিল করা হয়েছে।")
+    if error:
+        messages.error(request, "Google sign-in was cancelled or declined.")
         return redirect('core:login')
 
-    client_id = os.getenv('GOOGLE_CLIENT_ID')
-    client_secret = os.getenv('GOOGLE_CLIENT_SECRET')
+    if not code:
+        messages.error(request, "Invalid authentication response from Google.")
+        return redirect('core:login')
+
+    # Verify CSRF state token
+    expected_state = request.session.pop('oauth_state', None)
+    if expected_state and state != expected_state:
+        messages.error(request, "Authentication state mismatch. Please try again.")
+        return redirect('core:login')
+
+    client_id = os.getenv('GOOGLE_CLIENT_ID', '').strip()
+    client_secret = os.getenv('GOOGLE_CLIENT_SECRET', '').strip()
     redirect_uri = request.build_absolute_uri(reverse('core:google_callback'))
 
     try:
@@ -157,11 +165,15 @@ def google_callback_view(request):
             },
             timeout=10
         )
+        if token_resp.status_code != 200:
+            messages.error(request, "Failed to exchange authorization code with Google.")
+            return redirect('core:login')
+
         token_json = token_resp.json()
         access_token = token_json.get('access_token')
 
         if not access_token:
-            messages.error(request, "গুগল অ্যাক্সেস টোকেন পাওয়া যায়নি।")
+            messages.error(request, "Google access token could not be obtained.")
             return redirect('core:login')
 
         user_info_resp = requests.get(
@@ -169,24 +181,57 @@ def google_callback_view(request):
             headers={'Authorization': f'Bearer {access_token}'},
             timeout=10
         )
-        user_info = user_info_resp.json()
-        email = user_info.get('email')
-        name = user_info.get('name', '')
-
-        if not email:
-            messages.error(request, "গুগল একাউন্টে কোনো ইমেইল পাওয়া যায়নি।")
+        if user_info_resp.status_code != 200:
+            messages.error(request, "Failed to fetch user profile from Google.")
             return redirect('core:login')
 
-        username = email.split('@')[0].replace('.', '_')
-        user, created = User.objects.get_or_create(
-            username=username,
-            defaults={'email': email, 'first_name': name}
-        )
+        user_info = user_info_resp.json()
+        email = (user_info.get('email') or '').strip().lower()
+        email_verified = user_info.get('email_verified', False) or user_info.get('verified_email', False)
+        first_name = user_info.get('given_name') or user_info.get('name') or ''
+        last_name = user_info.get('family_name') or ''
+
+        # Strict Email Verification: Reject unverified or missing email
+        if not email:
+            messages.error(request, "No email address returned by your Google account.")
+            return redirect('core:login')
+
+        if not email_verified:
+            messages.error(request, "Your Google account email is not verified. Only authentic, verified Google accounts can sign in.")
+            return redirect('core:login')
+
+        # Instant sign-in or registration without manual admin approval
+        user = User.objects.filter(email__iexact=email).first()
+        if not user:
+            base_username = email.split('@')[0].replace('.', '_')
+            username = base_username
+            counter = 1
+            while User.objects.filter(username=username).exists():
+                username = f"{base_username}_{counter}"
+                counter += 1
+
+            user = User.objects.create_user(
+                username=username,
+                email=email,
+                first_name=first_name,
+                last_name=last_name,
+                is_active=True
+            )
+        else:
+            if not user.is_active:
+                user.is_active = True
+            if first_name and not user.first_name:
+                user.first_name = first_name
+            if last_name and not user.last_name:
+                user.last_name = last_name
+            user.save()
+
         login(request, user)
-        messages.success(request, f"গুগল দিয়ে সফলভাবে সাইন ইন হয়েছে! স্বাগতম {user.first_name or user.username}।")
+        messages.success(request, f"Welcome, {user.first_name or user.username}! Successfully signed in with Google.")
         return redirect(next_url)
+
     except Exception as e:
-        messages.error(request, f"গুগল সাইন-ইনে ত্রুটি হয়েছে: {e}")
+        messages.error(request, f"Google authentication encountered an error: {e}")
         return redirect('core:login')
 
 

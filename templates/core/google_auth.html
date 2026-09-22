@@ -1,13 +1,17 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Google সাইন ইন — ভ্রমণঘুড়ি{% endblock %}
+{% block title %}Google OAuth 2.0 — ভ্রমণঘুড়ি{% endblock %}
 
 {% block content %}
 <div class="min-h-screen bg-slate-950 text-white pt-32 pb-20 flex items-center justify-center relative overflow-hidden font-bengali">
   
+  <!-- Ambient glow -->
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(14,165,233,0.2),rgba(255,255,255,0))]"></div>
+  <div class="absolute -top-32 -right-32 w-80 h-80 bg-sky-500/15 rounded-full blur-3xl pointer-events-none"></div>
+
   <div class="relative max-w-md w-full mx-auto px-4 z-10">
-    <div class="bg-slate-900 border border-white/10 p-8 sm:p-10 rounded-3xl shadow-2xl space-y-6 text-center">
+    <div class="bg-slate-900/95 backdrop-blur-xl border border-white/10 p-8 sm:p-10 rounded-3xl shadow-2xl space-y-6 text-center">
       
       <!-- Google G Logo -->
       <div class="w-16 h-16 rounded-2xl bg-white shadow-xl flex items-center justify-center mx-auto p-3.5">
@@ -19,40 +23,46 @@
         </svg>
       </div>
 
-      <div class="space-y-1">
+      <div class="space-y-2">
         <h2 class="text-xl sm:text-2xl font-extrabold text-white">
-          Google একাউন্ট নিশ্চিত করুন
+          Google OAuth 2.0 Integration
         </h2>
-        <p class="text-xs text-slate-400">
-          ভ্রমণঘুড়িতে সাইন-ইন করতে আপনার Google ইমেইল ঠিকানা প্রদান করুন।
+        <p class="text-xs text-slate-300">
+          ভ্রমণঘুড়ি শুধুমাত্র আসল ও ভেরিফাইড Google একাউন্ট দিয়ে তাৎক্ষণিক সাইন-ইন সমর্থন করে।
         </p>
       </div>
 
-      <form action="{% url 'core:google_login' %}" method="POST" class="space-y-4 text-left">
-        {% csrf_token %}
-        <input type="hidden" name="next" value="{{ next|default:'/' }}">
-
-        <div class="space-y-1">
-          <label class="block text-xs font-bold text-slate-300">Google Email</label>
-          <input type="email" name="email" required placeholder="your.google.account@gmail.com" 
-                 value="shams22karib@gmail.com"
-                 class="w-full px-4 py-3 rounded-xl bg-slate-800 border border-slate-700 text-sm text-white focus:outline-none focus:ring-2 focus:ring-sky-500">
+      <!-- Instructions for Environment Credentials -->
+      <div class="p-4 rounded-2xl bg-slate-800/80 border border-slate-700 text-left space-y-3">
+        <div class="flex items-center space-x-2 text-amber-400 font-bold text-xs">
+          <i data-lucide="shield-alert" class="w-4 h-4"></i>
+          <span>Google Console Credentials Required</span>
         </div>
-
-        <div class="space-y-1">
-          <label class="block text-xs font-bold text-slate-300">Name</label>
-          <input type="text" name="name" placeholder="Karib Shams" value="Karib Shams"
-                 class="w-full px-4 py-3 rounded-xl bg-slate-800 border border-slate-700 text-sm text-white focus:outline-none focus:ring-2 focus:ring-sky-500">
+        <p class="text-[12px] text-slate-300 leading-relaxed font-sans">
+          To connect directly to Google's official sign-in prompt, configure your client credentials in the <code class="bg-slate-900 px-1.5 py-0.5 rounded text-sky-400 font-mono">.env</code> file:
+        </p>
+        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 font-mono text-[11px] text-slate-300 space-y-1 overflow-x-auto">
+          <div><span class="text-sky-400">GOOGLE_CLIENT_ID</span>=your-client-id.apps.googleusercontent.com</div>
+          <div><span class="text-sky-400">GOOGLE_CLIENT_SECRET</span>=your-client-secret</div>
         </div>
+        <p class="text-[11px] text-slate-400 font-sans">
+          Authorized Redirect URI: <code class="text-emerald-400 font-mono">/auth/google/callback/</code>
+        </p>
+      </div>
 
-        <button type="submit" 
-                class="w-full py-3.5 rounded-xl bg-white hover:bg-slate-100 text-slate-800 font-bold text-sm shadow-xl transition-all flex items-center justify-center space-x-2 font-sans">
-          <span>Sign In as Karib Shams (Google)</span>
-        </button>
-      </form>
+      <div class="flex items-center justify-center space-x-3 pt-2">
+        <a href="{% url 'core:home' %}" 
+           class="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-semibold transition-all">
+          ← হোমপেজে ফিরে যান
+        </a>
+        <a href="{% url 'core:login' %}" 
+           class="px-5 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-white text-xs font-semibold transition-all shadow-lg shadow-sky-500/25">
+          লগইন পেজে যান
+        </a>
+      </div>
 
-      <div class="p-3 rounded-xl bg-sky-500/10 border border-sky-400/20 text-[11px] text-sky-300">
-        🔒 SSL এনক্রিপ্টকৃত ও নিরাপদ Google SSO অথেনটিকেশন।
+      <div class="p-3 rounded-xl bg-emerald-500/10 border border-emerald-400/20 text-[11px] text-emerald-300">
+        🔒 নিরাপদ ও ভেরিফাইড Google SSO অথেনটিকেশন। ভুয়া বা নকল ইমেইল স্বয়ংক্রিয়ভাবে ব্লক করা হবে।
       </div>
 
     </div>
