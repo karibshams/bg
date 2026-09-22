@@ -9,13 +9,13 @@
   <div class="w-16 h-16 mx-auto mb-4 text-slate-300">
     <i data-lucide="compass" class="w-full h-full"></i>
   </div>
-  <h3 class="font-bengali text-xl font-bold text-slate-800 mb-2">কোনো ট্যুর প্যাকেজ পাওয়া যায়নি</h3>
-  <p class="font-bengali text-sm text-slate-500 max-w-md mx-auto mb-6">
-    আপনার বর্তমান ফিল্টারের সাথে মিলে এমন কোনো ট্যুর এই মুহূর্তে নেই। ফিল্টার পরিবর্তন করে পুনরায় চেষ্টা করুন।
+  <h3 class="text-xl font-bold text-slate-800 mb-2 trans-target" data-en="No Tour Packages Found" data-bn="কোনো ট্যুর প্যাকেজ পাওয়া যায়নি">No Tour Packages Found</h3>
+  <p class="text-sm text-slate-500 max-w-md mx-auto mb-6 trans-target" data-en="No tours match your current filters. Please adjust your filters and try again." data-bn="আপনার বর্তমান ফিল্টারের সাথে মিলে এমন কোনো ট্যুর এই মুহূর্তে নেই। ফিল্টার পরিবর্তন করে পুনরায় চেষ্টা করুন।">
+    No tours match your current filters. Please adjust your filters and try again.
   </p>
-  <a href="{% url 'tours:list' %}" class="inline-flex items-center space-x-2 px-5 py-2.5 rounded-full bg-sky-500 hover:bg-sky-600 text-white text-xs font-semibold transition-colors font-bengali">
+  <a href="{% url 'tours:list' %}" class="inline-flex items-center space-x-2 px-5 py-2.5 rounded-full bg-sky-500 hover:bg-sky-600 text-white text-xs font-semibold transition-colors">
     <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
-    <span>সব ফিল্টার ক্লিয়ার করুন</span>
+    <span class="trans-target" data-en="Clear All Filters" data-bn="সব ফিল্টার ক্লিয়ার করুন">Clear All Filters</span>
   </a>
 </div>
 {% endif %}

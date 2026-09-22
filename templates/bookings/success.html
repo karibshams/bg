@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}বুকিং সফল হয়েছে! — ভ্রমণঘুড়ি{% endblock %}
+{% block title %}Booking Confirmed! — BhromonGhuri{% endblock %}
 
 {% block content %}
 <div class="bg-slate-900 text-white pt-32 pb-12 print:hidden">
@@ -9,12 +9,17 @@
     <div class="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-400/30 flex items-center justify-center mx-auto mb-4">
       <i data-lucide="check" class="w-8 h-8"></i>
     </div>
-    <span class="text-xs font-bold tracking-widest text-emerald-400 uppercase">BOOKING CONFIRMED</span>
-    <h1 class="font-bengali text-3xl sm:text-4xl font-extrabold text-white">
-      অভিনন্দন! আপনার বুকিং নিশ্চিত হয়েছে
+    <span class="text-xs font-bold tracking-widest text-emerald-400 uppercase trans-target"
+          data-en="BOOKING CONFIRMED" data-bn="বুকিং নিশ্চিত হয়েছে">BOOKING CONFIRMED</span>
+    <h1 class="font-bengali text-3xl sm:text-4xl font-extrabold text-white trans-target"
+        data-en="Congratulations! Your Booking is Confirmed"
+        data-bn="অভিনন্দন! আপনার বুকিং নিশ্চিত হয়েছে">
+      Congratulations! Your Booking is Confirmed
     </h1>
-    <p class="font-bengali text-sm text-slate-300">
-      বুকিং সংক্রান্ত সকল তথ্য আপনার ইমেইলে পাঠিয়ে দেওয়া হয়েছে।
+    <p class="font-bengali text-sm text-slate-300 trans-target"
+       data-en="All details regarding your booking have been sent to your email."
+       data-bn="বুকিং সংক্রান্ত সকল তথ্য আপনার ইমেইলে পাঠিয়ে দেওয়া হয়েছে।">
+      All details regarding your booking have been sent to your email.
     </p>
   </div>
 </div>
@@ -36,7 +41,7 @@
         </div>
 
         <div class="text-center sm:text-right bg-white/10 px-4 py-2 rounded-2xl backdrop-blur-md">
-          <span class="text-[11px] text-sky-200 block">বুকিং রেফারেন্স আইডি</span>
+          <span class="text-[11px] text-sky-200 block trans-target" data-en="Booking Reference ID" data-bn="বুকিং রেফারেন্স আইডি">Booking Reference ID</span>
           <span class="text-lg font-mono font-black tracking-wider text-white">{{ booking.booking_reference }}</span>
         </div>
       </div>
@@ -47,51 +52,56 @@
         <!-- Status & Tour Title -->
         <div class="border-b border-slate-100 pb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <span class="text-xs text-slate-400">ট্যুর প্যাকেজ</span>
-            <h3 class="text-xl font-bold text-slate-900">{{ booking.tour.bangla_title|default:booking.tour.title }}</h3>
+            <span class="text-xs text-slate-400 trans-target" data-en="Tour Package" data-bn="ট্যুর প্যাকেজ">Tour Package</span>
+            <h3 class="text-xl font-bold text-slate-900 trans-target"
+                data-en="{{ booking.tour.title }}"
+                data-bn="{{ booking.tour.bangla_title|default:booking.tour.title }}">
+              {{ booking.tour.title }}
+            </h3>
             <p class="text-xs text-slate-500">{{ booking.tour.destination.name }} • {{ booking.tour.duration }}</p>
           </div>
 
-          <span class="px-4 py-1.5 rounded-full text-xs font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-300 self-start sm:self-auto">
-            ✓ বুকিং কনফার্মড
+          <span class="px-4 py-1.5 rounded-full text-xs font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-300 self-start sm:self-auto trans-target"
+                data-en="✓ Booking Confirmed" data-bn="✓ বুকিং কনফার্মড">
+            ✓ Booking Confirmed
           </span>
         </div>
 
         <!-- Details Grid -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm text-slate-600">
           <div>
-            <span class="text-xs text-slate-400 block mb-1">গ্রাহকের নাম:</span>
+            <span class="text-xs text-slate-400 block mb-1 trans-target" data-en="Customer Name:" data-bn="গ্রাহকের নাম:">Customer Name:</span>
             <span class="font-bold text-slate-900">{{ booking.customer_name }}</span>
           </div>
 
           <div>
-            <span class="text-xs text-slate-400 block mb-1">মোবাইল নম্বর:</span>
+            <span class="text-xs text-slate-400 block mb-1 trans-target" data-en="Phone Number:" data-bn="মোবাইল নম্বর:">Phone Number:</span>
             <span class="font-bold text-slate-900">{{ booking.customer_phone }}</span>
           </div>
 
           <div>
-            <span class="text-xs text-slate-400 block mb-1">ইমেইল:</span>
+            <span class="text-xs text-slate-400 block mb-1 trans-target" data-en="Email Address:" data-bn="ইমেইল:">Email Address:</span>
             <span class="font-bold text-slate-900">{{ booking.customer_email }}</span>
           </div>
 
           <div>
-            <span class="text-xs text-slate-400 block mb-1">ভ্রমণকারীর সংখ্যা:</span>
-            <span class="font-bold text-slate-900">{{ booking.num_travelers }} জন</span>
+            <span class="text-xs text-slate-400 block mb-1 trans-target" data-en="Travelers:" data-bn="ভ্রমণকারীর সংখ্যা:">Travelers:</span>
+            <span class="font-bold text-slate-900">{{ booking.num_travelers }} <span class="trans-target" data-en="persons" data-bn="জন">persons</span></span>
           </div>
 
           <div>
-            <span class="text-xs text-slate-400 block mb-1">যাত্রার তারিখ:</span>
+            <span class="text-xs text-slate-400 block mb-1 trans-target" data-en="Travel Date:" data-bn="যাত্রার তারিখ:">Travel Date:</span>
             <span class="font-bold text-sky-600">
               {% if booking.tour_date %}
                 {{ booking.tour_date.start_date|date:"d M Y" }}
               {% else %}
-                ওপেন / ফ্লেক্সিবল
+                <span class="trans-target" data-en="Open / Flexible" data-bn="ওপেন / ফ্লেক্সিবল">Open / Flexible</span>
               {% endif %}
             </span>
           </div>
 
           <div>
-            <span class="text-xs text-slate-400 block mb-1">পরিশোধিত মোট টাকা:</span>
+            <span class="text-xs text-slate-400 block mb-1 trans-target" data-en="Total Paid Amount:" data-bn="পরিশোধিত মোট টাকা:">Total Paid Amount:</span>
             <span class="font-extrabold text-slate-900 text-base">৳{{ booking.total_amount|floatformat:0 }} (Paid)</span>
           </div>
         </div>
@@ -100,7 +110,11 @@
         <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-2">
           <div class="flex items-center space-x-2">
             <i data-lucide="shield-check" class="w-4 h-4 text-emerald-500"></i>
-            <span>ভ্রমণ শুরুর দিন এই ভাউচারটি বা রেফারেন্স নম্বরটি প্রদর্শন করুন।</span>
+            <span class="trans-target"
+                  data-en="Please present this voucher or reference number on the day of your tour."
+                  data-bn="ভ্রমণ শুরুর দিন এই ভাউচারটি বা রেফারেন্স নম্বরটি প্রদর্শন করুন।">
+              Please present this voucher or reference number on the day of your tour.
+            </span>
           </div>
           <span class="font-mono text-[11px] text-slate-400 tracking-widest uppercase">VERIFIED SECURE TICKET</span>
         </div>
@@ -114,19 +128,19 @@
       <a href="{% url 'bookings:download_voucher' booking.booking_reference %}" 
          class="w-full sm:w-auto px-6 py-3 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center justify-center space-x-2 shadow-md transition-colors">
         <i data-lucide="download" class="w-4 h-4"></i>
-        <span>অফিশিয়াল ভাউচার PDF ডাউনলোড</span>
+        <span class="trans-target" data-en="Download Official Voucher PDF" data-bn="অফিশিয়াল ভাউচার PDF ডাউনলোড">Download Official Voucher PDF</span>
       </a>
 
       <button onclick="window.print()" 
               class="w-full sm:w-auto px-6 py-3 rounded-full bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs flex items-center justify-center space-x-2 shadow-md transition-colors">
         <i data-lucide="printer" class="w-4 h-4"></i>
-        <span>প্রিন্ট করুন (Print Voucher)</span>
+        <span class="trans-target" data-en="Print Voucher" data-bn="প্রিন্ট করুন (Print Voucher)">Print Voucher</span>
       </button>
 
       <a href="{% url 'core:home' %}" 
          class="w-full sm:w-auto px-6 py-3 rounded-full bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs flex items-center justify-center space-x-2 shadow-sm transition-colors">
         <i data-lucide="home" class="w-4 h-4"></i>
-        <span>হোম পেজে ফিরুন</span>
+        <span class="trans-target" data-en="Return to Home" data-bn="হোম পেজে ফিরুন">Return to Home</span>
       </a>
     </div>
 

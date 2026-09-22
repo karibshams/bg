@@ -1,18 +1,23 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}যোগাযোগ করুন — ভ্রমণঘুড়ি{% endblock %}
+{% block title %}Contact Us — BhromonGhuri{% endblock %}
 
 {% block content %}
 <section class="bg-slate-900 text-white pt-32 pb-16 relative overflow-hidden">
   <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(14,165,233,0.3),transparent_70%)]"></div>
   <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-3">
-    <span class="text-xs font-bold tracking-widest text-sky-400 uppercase">GET IN TOUCH</span>
-    <h1 class="font-bengali text-4xl sm:text-5xl font-extrabold text-white">
-      আমাদের সাথে যোগাযোগ
+    <span class="text-xs font-bold tracking-widest text-sky-400 uppercase trans-target"
+          data-en="GET IN TOUCH" data-bn="যোগাযোগ করুন">GET IN TOUCH</span>
+    <h1 class="font-bengali text-4xl sm:text-5xl font-extrabold text-white trans-target"
+        data-en="Contact Our Travel Experts"
+        data-bn="আমাদের সাথে যোগাযোগ">
+      Contact Our Travel Experts
     </h1>
-    <p class="font-bengali text-sm text-slate-300 max-w-xl mx-auto">
-      যেকোনো কাস্টমাইজড ট্রিপ, কর্পোরেট বুকিং বা তথ্যের জন্য আমাদের লিখুন অথবা সরাসরি কল করুন।
+    <p class="font-bengali text-sm text-slate-300 max-w-xl mx-auto trans-target"
+       data-en="For customized tours, corporate bookings, or general inquiries, call us directly or drop a message."
+       data-bn="যেকোনো কাস্টমাইজড ট্রিপ, কর্পোরেট বুকিং বা তথ্যের জন্য আমাদের লিখুন অথবা সরাসরি কল করুন।">
+      For customized tours, corporate bookings, or general inquiries, call us directly or drop a message.
     </p>
   </div>
 </section>
@@ -24,15 +29,15 @@
       <!-- Contact Info -->
       <div class="md:col-span-5 bg-slate-900 text-white p-8 rounded-3xl space-y-8">
         <div class="space-y-2">
-          <h2 class="font-bengali text-2xl font-bold">ভ্রমণঘুড়ি হেড অফিস</h2>
-          <p class="font-bengali text-xs text-slate-400">আমরা সপ্তাহের ৭ দিনই আপনার সেবায় নিয়োজিত।</p>
+          <h2 class="font-bengali text-2xl font-bold trans-target" data-en="BhromonGhuri Head Office" data-bn="ভ্রমণঘুড়ি হেড অফিস">BhromonGhuri Head Office</h2>
+          <p class="font-bengali text-xs text-slate-400 trans-target" data-en="We are dedicated to serving you 7 days a week." data-bn="আমরা সপ্তাহের ৭ দিনই আপনার সেবায় নিয়োজিত।">We are dedicated to serving you 7 days a week.</p>
         </div>
 
         <div class="space-y-6 text-sm font-bengali text-slate-300">
           <div class="flex items-start space-x-3">
             <i data-lucide="phone" class="w-5 h-5 text-sky-400 flex-shrink-0 mt-0.5"></i>
             <div>
-              <p class="text-xs text-slate-400">হেল্পলাইন / Contact</p>
+              <p class="text-xs text-slate-400 trans-target" data-en="Helpline / Contact" data-bn="হেল্পলাইন / Contact">Helpline / Contact</p>
               <p class="font-bold text-white">{{ site_setting.phone|default:"+8801518919370, 01855939459" }}</p>
             </div>
           </div>
@@ -40,7 +45,7 @@
           <div class="flex items-start space-x-3">
             <i data-lucide="mail" class="w-5 h-5 text-sky-400 flex-shrink-0 mt-0.5"></i>
             <div>
-              <p class="text-xs text-slate-400">ইমেইল / Email</p>
+              <p class="text-xs text-slate-400 trans-target" data-en="Email Address" data-bn="ইমেইল / Email">Email Address</p>
               <p class="font-bold text-white">{{ site_setting.email|default:"bhromonghuri@gmail.com" }}</p>
             </div>
           </div>
@@ -48,17 +53,17 @@
           <div class="flex items-start space-x-3">
             <i data-lucide="map-pin" class="w-5 h-5 text-sky-400 flex-shrink-0 mt-0.5"></i>
             <div>
-              <p class="text-xs text-slate-400">অফিস লোকেশন / Location</p>
-              <p class="font-bold text-white">{{ site_setting.address|default:"ঢাকা, বাংলাদেশ" }}</p>
-              <a href="https://maps.app.goo.gl/Cv52esJKLkZu2ouj9" target="_blank" rel="noopener" class="text-xs text-sky-400 hover:text-sky-300 underline mt-1 inline-block">
-                গুগল ম্যাপে দেখুন (View on Google Maps) &rarr;
+              <p class="text-xs text-slate-400 trans-target" data-en="Office Location" data-bn="অফিস লোকেশন / Location">Office Location</p>
+              <p class="font-bold text-white">{{ site_setting.address|default:"Dhaka, Bangladesh" }}</p>
+              <a href="https://maps.app.goo.gl/Cv52esJKLkZu2ouj9" target="_blank" rel="noopener" class="text-xs text-sky-400 hover:text-sky-300 underline mt-1 inline-block trans-target" data-en="View on Google Maps &rarr;" data-bn="গুগল ম্যাপে দেখুন &rarr;">
+                View on Google Maps &rarr;
               </a>
             </div>
           </div>
 
           <!-- Social Media Connections -->
           <div class="pt-4 border-t border-slate-800">
-            <p class="text-xs font-semibold text-slate-400 mb-3">সোশ্যাল মিডিয়ায় যুক্ত থাকুন / Connect With Us</p>
+            <p class="text-xs font-semibold text-slate-400 mb-3 trans-target" data-en="Connect With Us on Social Media" data-bn="সোশ্যাল মিডিয়ায় যুক্ত থাকুন / Connect With Us">Connect With Us on Social Media</p>
             <div class="flex items-center space-x-3">
               <!-- Facebook -->
               <a href="{{ site_setting.facebook_url|default:'https://www.facebook.com/share/g/19km9RqB1g/' }}" 
@@ -117,34 +122,36 @@
         <form method="POST" class="space-y-4">
           {% csrf_token %}
           <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">আপনার নাম *</label>
-            <input type="text" name="name" required placeholder="নাম লিখুন" 
+            <label class="block text-xs font-bold text-slate-600 mb-1 trans-target" data-en="Your Name *" data-bn="আপনার নাম *">Your Name *</label>
+            <input type="text" name="name" required placeholder="Enter your full name" 
+                   data-en-placeholder="Enter your full name" data-bn-placeholder="নাম লিখুন"
                    class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500">
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">ইমেইল *</label>
+              <label class="block text-xs font-bold text-slate-600 mb-1 trans-target" data-en="Email Address *" data-bn="ইমেইল *">Email Address *</label>
               <input type="email" name="email" required placeholder="you@example.com" 
                      class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500">
             </div>
             <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">ফোন নম্বর</label>
+              <label class="block text-xs font-bold text-slate-600 mb-1 trans-target" data-en="Phone Number" data-bn="ফোন নম্বর">Phone Number</label>
               <input type="tel" name="phone" placeholder="017XXXXXXXX" 
                      class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500">
             </div>
           </div>
 
           <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">আপনার বার্তা বা অনুসন্ধান *</label>
-            <textarea name="message" rows="4" required placeholder="আপনার মতামত বা প্রশ্ন লিখুন..." 
+            <label class="block text-xs font-bold text-slate-600 mb-1 trans-target" data-en="Your Message or Inquiry *" data-bn="আপনার বার্তা বা অনুসন্ধান *">Your Message or Inquiry *</label>
+            <textarea name="message" rows="4" required placeholder="Type your message or inquiry..." 
+                      data-en-placeholder="Type your message or inquiry..." data-bn-placeholder="আপনার মতামত বা প্রশ্ন লিখুন..."
                       class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"></textarea>
           </div>
 
           <button type="submit" 
                   class="w-full py-4 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-bold text-sm shadow-md transition-colors flex items-center justify-center space-x-2">
             <i data-lucide="send" class="w-4 h-4"></i>
-            <span>বার্তা পাঠান</span>
+            <span class="trans-target" data-en="Send Message" data-bn="বার্তা পাঠান">Send Message</span>
           </button>
         </form>
       </div>

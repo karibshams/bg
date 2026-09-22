@@ -1,21 +1,25 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}ট্যুর প্যাকেজসমূহ — ভ্রমণঘুড়ি (Bhromonghuri){% endblock %}
+{% block title %}Tour Packages — BhromonGhuri{% endblock %}
 
 {% block content %}
 <!-- Page Header Banner -->
 <section class="bg-slate-900 text-white pt-32 pb-16 relative overflow-hidden">
   <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(14,165,233,0.25),transparent_60%)]"></div>
   <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-3">
-    <span class="text-xs font-bold tracking-widest text-sky-400 uppercase">
+    <span class="text-xs font-bold tracking-widest text-sky-400 uppercase trans-target" data-en="ALL JOURNEYS & EXPEDITIONS" data-bn="সকল যাত্রা ও অভিযান">
       ALL JOURNEYS & EXPEDITIONS
     </span>
-    <h1 class="font-bengali text-4xl sm:text-5xl font-extrabold text-white">
-      আপনার পছন্দের ভ্রমণ প্যাকেজ খুঁজুন
+    <h1 class="text-4xl sm:text-5xl font-extrabold text-white trans-target"
+        data-en="Find Your Dream Travel Package"
+        data-bn="আপনার পছন্দের ভ্রমণ প্যাকেজ খুঁজুন">
+      Find Your Dream Travel Package
     </h1>
-    <p class="font-bengali text-sm text-slate-300 max-w-xl mx-auto">
-      পাহাড়, সমুদ্র, হাওর কিংবা সুন্দরবনের অরণ্য—এইচটিএমএক্স ফিল্টার ব্যবহার করে সহজেই আপনার বাজেট ও তারিখ অনুযায়ী ট্যুর বেছে নিন।
+    <p class="text-sm text-slate-300 max-w-xl mx-auto trans-target"
+       data-en="Mountains, sea, haor, or mangrove forest—easily discover and book trips matching your dates and budget."
+       data-bn="পাহাড়, সমুদ্র, হাওর কিংবা সুন্দরবনের অরণ্য—এইচটিএমএক্স ফিল্টার ব্যবহার করে সহজেই আপনার বাজেট ও তারিখ অনুযায়ী ট্যুর বেছে নিন।">
+      Mountains, sea, haor, or mangrove forest—easily discover and book trips matching your dates and budget.
     </p>
   </div>
 </section>
@@ -42,19 +46,21 @@
               <i data-lucide="search" class="w-4 h-4"></i>
             </div>
             <input type="text" name="q" value="{{ query }}"
-                   placeholder="ট্যুর বা গন্তব্যের নাম দিয়ে খুঁজুন..." 
+                   placeholder="Search by tour or destination name..." 
+                   data-en-placeholder="Search by tour or destination name..." 
+                   data-bn-placeholder="ট্যুর বা গন্তব্যের নাম দিয়ে খুঁজুন..." 
                    hx-trigger="keyup delay:350ms, search"
-                   class="w-full pl-10 pr-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 font-bengali">
+                   class="w-full pl-10 pr-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500">
           </div>
 
           <!-- Sort selector -->
           <div class="md:col-span-4">
             <select name="sort" hx-trigger="change" 
-                    class="w-full py-3 px-4 rounded-2xl bg-slate-50 border border-slate-200 text-sm font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-500 font-bengali">
-              <option value="featured" {% if selected_sort == 'featured' %}selected{% endif %}>জনপ্রিয় ও নতুন (Featured)</option>
-              <option value="price_asc" {% if selected_sort == 'price_asc' %}selected{% endif %}>মূল্য: কম থেকে বেশি (Lowest Price)</option>
-              <option value="price_desc" {% if selected_sort == 'price_desc' %}selected{% endif %}>মূল্য: বেশি থেকে কম (Highest Price)</option>
-              <option value="rating" {% if selected_sort == 'rating' %}selected{% endif %}>সর্বোচ্চ রেটিং (Top Rated)</option>
+                    class="w-full py-3 px-4 rounded-2xl bg-slate-50 border border-slate-200 text-sm font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-500">
+              <option value="featured" {% if selected_sort == 'featured' %}selected{% endif %}>Featured & Popular</option>
+              <option value="price_asc" {% if selected_sort == 'price_asc' %}selected{% endif %}>Price: Low to High</option>
+              <option value="price_desc" {% if selected_sort == 'price_desc' %}selected{% endif %}>Price: High to Low</option>
+              <option value="rating" {% if selected_sort == 'rating' %}selected{% endif %}>Top Rated</option>
             </select>
           </div>
 
@@ -65,13 +71,13 @@
           
           <!-- Destination filter -->
           <div>
-            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5 font-bengali">গন্তব্য (Destination)</label>
+            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5 trans-target" data-en="Destination" data-bn="গন্তব্য">Destination</label>
             <select name="destination" hx-trigger="change" 
-                    class="w-full py-2.5 px-3 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-500 font-bengali">
-              <option value="">সকল দর্শনীয় স্থান (All)</option>
+                    class="w-full py-2.5 px-3 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-500">
+              <option value="">All Destinations</option>
               {% for dest in destinations %}
               <option value="{{ dest.slug }}" {% if selected_dest == dest.slug %}selected{% endif %}>
-                {{ dest.bangla_name|default:dest.name }}
+                {{ dest.name }}
               </option>
               {% endfor %}
             </select>
@@ -79,13 +85,13 @@
 
           <!-- Category filter -->
           <div>
-            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5 font-bengali">ক্যাটাগরি (Category)</label>
+            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5 trans-target" data-en="Category" data-bn="ক্যাটাগরি">Category</label>
             <select name="category" hx-trigger="change" 
-                    class="w-full py-2.5 px-3 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-500 font-bengali">
-              <option value="">সকল ক্যাটাগরি (All)</option>
+                    class="w-full py-2.5 px-3 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-500">
+              <option value="">All Categories</option>
               {% for cat in categories %}
               <option value="{{ cat.slug }}" {% if selected_cat == cat.slug %}selected{% endif %}>
-                {{ cat.bangla_name|default:cat.name }}
+                {{ cat.name }}
               </option>
               {% endfor %}
             </select>
@@ -93,13 +99,13 @@
 
           <!-- Duration filter -->
           <div>
-            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5 font-bengali">সময়কাল (Duration)</label>
+            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5 trans-target" data-en="Duration" data-bn="সময়কাল">Duration</label>
             <select name="duration" hx-trigger="change" 
-                    class="w-full py-2.5 px-3 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-500 font-bengali">
-              <option value="">সকল সময়কাল</option>
-              <option value="1-2" {% if selected_duration == '1-2' %}selected{% endif %}>১-২ দিন (Weekend Trips)</option>
-              <option value="3-4" {% if selected_duration == '3-4' %}selected{% endif %}>৩-৪ দিন (Standard Tour)</option>
-              <option value="5+" {% if selected_duration == '5+' %}selected{% endif %}>৫+ দিন (Long Expedition)</option>
+                    class="w-full py-2.5 px-3 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-500">
+              <option value="">All Durations</option>
+              <option value="1-2" {% if selected_duration == '1-2' %}selected{% endif %}>1-2 Days (Weekend Trips)</option>
+              <option value="3-4" {% if selected_duration == '3-4' %}selected{% endif %}>3-4 Days (Standard Tour)</option>
+              <option value="5+" {% if selected_duration == '5+' %}selected{% endif %}>5+ Days (Long Expedition)</option>
             </select>
           </div>
 

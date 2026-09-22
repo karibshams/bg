@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}{{ tour.bangla_title|default:tour.title }} — ভ্রমণঘুড়ি{% endblock %}
+{% block title %}{{ tour.title }} — BhromonGhuri{% endblock %}
 
 {% block content %}
 <!-- Tour Header / Cover Image -->
@@ -18,35 +18,37 @@
   <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full space-y-4">
     <div class="flex flex-wrap items-center gap-3">
       <a href="{% url 'tours:destination_detail' tour.destination.slug %}" class="px-3 py-1 rounded-full text-xs font-semibold bg-sky-500/20 text-sky-300 border border-sky-400/30 backdrop-blur-md">
-        {{ tour.destination.name }}
+        <span class="trans-target" data-en="{{ tour.destination.name }}" data-bn="{{ tour.destination.bangla_name|default:tour.destination.name }}">{{ tour.destination.name }}</span>
       </a>
       {% if tour.category %}
       <span class="px-3 py-1 rounded-full text-xs font-semibold bg-slate-800/80 text-slate-300 border border-slate-700 backdrop-blur-md">
-        {{ tour.category.name }}
+        <span class="trans-target" data-en="{{ tour.category.name }}" data-bn="{{ tour.category.bangla_name|default:tour.category.name }}">{{ tour.category.name }}</span>
       </span>
       {% endif %}
       <span class="px-3 py-1 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-400/30 flex items-center space-x-1">
         <i data-lucide="star" class="w-3.5 h-3.5 fill-amber-400"></i>
-        <span>{{ tour.rating }} ({{ tour.reviews_count }} রিভিউ)</span>
+        <span>{{ tour.rating }} (<span class="trans-target" data-en="{{ tour.reviews_count }} Reviews" data-bn="{{ tour.reviews_count }} রিভিউ">{{ tour.reviews_count }} Reviews</span>)</span>
       </span>
     </div>
 
-    <h1 class="font-bengali text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white leading-tight">
-      {{ tour.bangla_title|default:tour.title }}
+    <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white leading-tight trans-target"
+        data-en="{{ tour.title }}"
+        data-bn="{{ tour.bangla_title|default:tour.title }}">
+      {{ tour.title }}
     </h1>
 
     <div class="flex flex-wrap items-center gap-6 text-sm text-slate-300 font-medium">
       <span class="flex items-center space-x-1.5">
         <i data-lucide="clock" class="w-4 h-4 text-emerald-400"></i>
-        <span>{{ tour.duration }}</span>
+        <span class="trans-target" data-en="{{ tour.duration }}" data-bn="{{ tour.duration }}">{{ tour.duration }}</span>
       </span>
       <span class="flex items-center space-x-1.5">
         <i data-lucide="users" class="w-4 h-4 text-sky-400"></i>
-        <span>সর্বোচ্চ {{ tour.max_travelers }} জন</span>
+        <span class="trans-target" data-en="Max {{ tour.max_travelers }} travelers" data-bn="সর্বোচ্চ {{ tour.max_travelers }} জন">Max {{ tour.max_travelers }} travelers</span>
       </span>
       <span class="flex items-center space-x-1.5">
         <i data-lucide="shield-check" class="w-4 h-4 text-cyan-400"></i>
-        <span>ভ্রমণঘুড়ি এসকর্ট ও নিরাপত্তা</span>
+        <span class="trans-target" data-en="BhromonGhuri Escort & Safety" data-bn="ভ্রমণঘুড়ি এসকর্ট ও নিরাপত্তা">BhromonGhuri Escort & Safety</span>
       </span>
     </div>
   </div>
@@ -62,20 +64,22 @@
         
         <!-- Overview & Description -->
         <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-200/80 space-y-4">
-          <h2 class="font-bengali text-2xl font-bold text-slate-900 border-b border-slate-100 pb-3 flex items-center space-x-2">
+          <h2 class="text-2xl font-bold text-slate-900 border-b border-slate-100 pb-3 flex items-center space-x-2">
             <i data-lucide="info" class="w-5 h-5 text-sky-500"></i>
-            <span>ট্যুর পরিচিতি ও হাইলাইটস</span>
+            <span class="trans-target" data-en="Tour Overview & Highlights" data-bn="ট্যুর পরিচিতি ও হাইলাইটস">Tour Overview & Highlights</span>
           </h2>
-          <div class="font-bengali text-slate-700 leading-relaxed space-y-3 whitespace-pre-line text-sm sm:text-base">
+          <div class="text-slate-700 leading-relaxed space-y-3 whitespace-pre-line text-sm sm:text-base trans-target"
+               data-en="{{ tour.description }}"
+               data-bn="{{ tour.bangla_description|default:tour.description }}">
             {{ tour.description }}
           </div>
         </div>
 
         <!-- Available Departure Dates -->
         <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-200/80 space-y-6">
-          <h2 class="font-bengali text-2xl font-bold text-slate-900 border-b border-slate-100 pb-3 flex items-center space-x-2">
+          <h2 class="text-2xl font-bold text-slate-900 border-b border-slate-100 pb-3 flex items-center space-x-2">
             <i data-lucide="calendar" class="w-5 h-5 text-sky-500"></i>
-            <span>আসন্ন যাত্রার তারিখসমূহ (Departure Dates)</span>
+            <span class="trans-target" data-en="Upcoming Departure Dates" data-bn="আসন্ন যাত্রার তারিখসমূহ">Upcoming Departure Dates</span>
           </h2>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -88,43 +92,43 @@
                   </span>
                   {% if dt.available_seats > 0 %}
                   <span class="px-2 py-0.5 rounded text-[11px] font-bold {% if dt.available_seats <= 5 %}bg-rose-100 text-rose-700 border border-rose-200{% else %}bg-emerald-100 text-emerald-800 border border-emerald-200{% endif %}">
-                    {{ dt.available_seats }}টি সিট বাকি (মোট {{ dt.total_capacity }})
+                    <span class="trans-target" data-en="{{ dt.available_seats }} seats left" data-bn="{{ dt.available_seats }}টি সিট বাকি">{{ dt.available_seats }} seats left</span>
                   </span>
                   {% else %}
-                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-slate-200 text-slate-700">
-                    আসন পূর্ণ (Sold Out)
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-slate-200 text-slate-700 trans-target" data-en="Sold Out" data-bn="আসন পূর্ণ">
+                    Sold Out
                   </span>
                   {% endif %}
                 </div>
-                <p class="text-xs text-slate-500 font-bengali">নিয়মিত প্রফেশনাল ব্যাচ</p>
+                <p class="text-xs text-slate-500 trans-target" data-en="Regular Professional Batch" data-bn="নিয়মিত প্রফেশনাল ব্যাচ">Regular Professional Batch</p>
               </div>
 
               <div class="pt-2 border-t border-slate-200/60 flex items-center justify-between">
                 <span class="text-base font-extrabold text-sky-600">৳{{ dt.effective_price|floatformat:0 }}</span>
                 {% if dt.available_seats > 0 %}
                 <a href="{% url 'bookings:create' %}?tour={{ tour.slug }}&date={{ dt.id }}" 
-                   class="px-4 py-1.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-white text-xs font-bold font-bengali transition-colors shadow-sm">
-                  সিট বুক করুন
+                   class="px-4 py-1.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-white text-xs font-bold transition-colors shadow-sm">
+                  <span class="trans-target" data-en="Book Seat" data-bn="সিট বুক করুন">Book Seat</span>
                 </a>
                 {% else %}
                 <button disabled 
-                   class="px-4 py-1.5 rounded-xl bg-slate-200 text-slate-400 text-xs font-bold font-bengali cursor-not-allowed">
-                  আসন পূর্ণ
+                   class="px-4 py-1.5 rounded-xl bg-slate-200 text-slate-400 text-xs font-bold cursor-not-allowed">
+                  <span class="trans-target" data-en="Sold Out" data-bn="আসন পূর্ণ">Sold Out</span>
                 </button>
                 {% endif %}
               </div>
             </div>
             {% empty %}
-            <p class="text-slate-500 text-sm font-bengali col-span-2">এই মুহূর্তে নির্দিষ্ট কোনো ব্যাচের তারিখ নেই। তবে কাস্টম বুকিং করতে পারবেন।</p>
+            <p class="text-slate-500 text-sm col-span-2 trans-target" data-en="No scheduled batches at the moment. Custom bookings are available." data-bn="এই মুহূর্তে নির্দিষ্ট কোনো ব্যাচের তারিখ নেই। তবে কাস্টম বুকিং করতে পারবেন।">No scheduled batches at the moment. Custom bookings are available.</p>
             {% endfor %}
           </div>
         </div>
 
         <!-- Day by Day Itinerary -->
         <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-200/80 space-y-6">
-          <h2 class="font-bengali text-2xl font-bold text-slate-900 border-b border-slate-100 pb-3 flex items-center space-x-2">
+          <h2 class="text-2xl font-bold text-slate-900 border-b border-slate-100 pb-3 flex items-center space-x-2">
             <i data-lucide="map" class="w-5 h-5 text-sky-500"></i>
-            <span>দিনভিত্তিক ভ্রমণ পরিকল্পনা (Day-by-Day Itinerary)</span>
+            <span class="trans-target" data-en="Day-by-Day Itinerary" data-bn="দিনভিত্তিক ভ্রমণ পরিকল্পনা">Day-by-Day Itinerary</span>
           </h2>
 
           <div class="space-y-6">
@@ -134,25 +138,29 @@
                 {{ item.day_number }}
               </div>
 
-              <h3 class="font-bengali text-lg font-bold text-slate-900">
-                দিন {{ item.day_number }}: {{ item.title }}
+              <h3 class="text-lg font-bold text-slate-900 trans-target"
+                  data-en="{{ item.title }}"
+                  data-bn="{{ item.bangla_title|default:item.title }}">
+                {{ item.title }}
               </h3>
 
-              <p class="font-bengali text-sm text-slate-600 leading-relaxed">
+              <p class="text-sm text-slate-600 leading-relaxed trans-target"
+                 data-en="{{ item.description }}"
+                 data-bn="{{ item.bangla_description|default:item.description }}">
                 {{ item.description }}
               </p>
 
               <div class="flex flex-wrap gap-4 pt-2 text-xs text-slate-500">
                 {% if item.meals %}
-                <span class="flex items-center space-x-1 font-bengali bg-slate-100 px-2.5 py-1 rounded-md">
+                <span class="flex items-center space-x-1 bg-slate-100 px-2.5 py-1 rounded-md">
                   <i data-lucide="utensils" class="w-3.5 h-3.5 text-amber-500"></i>
-                  <span>খাবার: {{ item.meals }}</span>
+                  <span><strong class="trans-target" data-en="Meals:" data-bn="খাবার:">Meals:</strong> {{ item.meals }}</span>
                 </span>
                 {% endif %}
                 {% if item.stay_info %}
-                <span class="flex items-center space-x-1 font-bengali bg-slate-100 px-2.5 py-1 rounded-md">
+                <span class="flex items-center space-x-1 bg-slate-100 px-2.5 py-1 rounded-md">
                   <i data-lucide="home" class="w-3.5 h-3.5 text-sky-500"></i>
-                  <span>রাত্রিবাস: {{ item.stay_info }}</span>
+                  <span><strong class="trans-target" data-en="Stay:" data-bn="রাত্রিবাস:">Stay:</strong> {{ item.stay_info }}</span>
                 </span>
                 {% endif %}
               </div>
@@ -166,36 +174,36 @@
           
           <!-- Inclusions -->
           <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-200/80 space-y-4">
-            <h3 class="font-bengali text-lg font-bold text-emerald-700 flex items-center space-x-2">
+            <h3 class="text-lg font-bold text-emerald-700 flex items-center space-x-2">
               <i data-lucide="check-circle" class="w-5 h-5 text-emerald-500"></i>
-              <span>প্যাকেজে যা অন্তর্ভুক্ত (Included)</span>
+              <span class="trans-target" data-en="Included in Package" data-bn="প্যাকেজে যা অন্তর্ভুক্ত">Included in Package</span>
             </h3>
-            <ul class="space-y-2.5 font-bengali text-sm text-slate-700">
+            <ul class="space-y-2.5 text-sm text-slate-700">
               {% for inc in inclusions %}
               <li class="flex items-start space-x-2">
                 <i data-lucide="check" class="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5"></i>
-                <span>{{ inc }}</span>
+                <span class="trans-target" data-en="{{ inc }}" data-bn="{{ inc }}">{{ inc }}</span>
               </li>
               {% empty %}
-              <li class="text-slate-400">কোনো তথ্য নেই।</li>
+              <li class="text-slate-400 trans-target" data-en="No specific inclusions listed." data-bn="কোনো তথ্য নেই।">No specific inclusions listed.</li>
               {% endfor %}
             </ul>
           </div>
 
           <!-- Exclusions -->
           <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-200/80 space-y-4">
-            <h3 class="font-bengali text-lg font-bold text-rose-700 flex items-center space-x-2">
+            <h3 class="text-lg font-bold text-rose-700 flex items-center space-x-2">
               <i data-lucide="x-circle" class="w-5 h-5 text-rose-500"></i>
-              <span>যা অন্তর্ভুক্ত নয় (Excluded)</span>
+              <span class="trans-target" data-en="Not Included (Excluded)" data-bn="যা অন্তর্ভুক্ত নয়">Not Included (Excluded)</span>
             </h3>
-            <ul class="space-y-2.5 font-bengali text-sm text-slate-700">
+            <ul class="space-y-2.5 text-sm text-slate-700">
               {% for exc in exclusions %}
               <li class="flex items-start space-x-2">
                 <i data-lucide="x" class="w-4 h-4 text-rose-500 flex-shrink-0 mt-0.5"></i>
-                <span>{{ exc }}</span>
+                <span class="trans-target" data-en="{{ exc }}" data-bn="{{ exc }}">{{ exc }}</span>
               </li>
               {% empty %}
-              <li class="text-slate-400">কোনো তথ্য নেই।</li>
+              <li class="text-slate-400 trans-target" data-en="No specific exclusions listed." data-bn="কোনো তথ্য নেই।">No specific exclusions listed.</li>
               {% endfor %}
             </ul>
           </div>
@@ -205,9 +213,9 @@
         <!-- Multi-image Tour Gallery -->
         {% if gallery_images %}
         <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-200/80 space-y-6">
-          <h2 class="font-bengali text-2xl font-bold text-slate-900 border-b border-slate-100 pb-3 flex items-center space-x-2">
+          <h2 class="text-2xl font-bold text-slate-900 border-b border-slate-100 pb-3 flex items-center space-x-2">
             <i data-lucide="image" class="w-5 h-5 text-sky-500"></i>
-            <span>ট্যুর ফটো গ্যালারি (Tour Gallery)</span>
+            <span class="trans-target" data-en="Tour Photo Gallery" data-bn="ট্যুর ফটো গ্যালারি">Tour Photo Gallery</span>
           </h2>
           <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
             {% for gimg in gallery_images %}
@@ -215,7 +223,7 @@
               <img src="{{ gimg.image.url }}" alt="{{ gimg.caption|default:tour.title }}" 
                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
               {% if gimg.caption %}
-              <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-2 text-white text-[11px] font-bengali">
+              <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-2 text-white text-[11px]">
                 {{ gimg.caption }}
               </div>
               {% endif %}
@@ -232,38 +240,38 @@
         <div class="bg-white p-8 rounded-3xl shadow-xl border border-slate-200/80 space-y-6">
           
           <div class="space-y-1">
-            <span class="font-bengali text-xs font-semibold text-slate-400 block">জনপ্রতি স্পেশাল প্যাকেজ রেট</span>
+            <span class="text-xs font-semibold text-slate-400 block trans-target" data-en="Special Package Rate per Person" data-bn="জনপ্রতি স্পেশাল প্যাকেজ রেট">Special Package Rate per Person</span>
             <div class="flex items-baseline space-x-3">
               <span class="text-3xl font-black text-sky-600">৳{{ tour.current_price|floatformat:0 }}</span>
               {% if tour.discount_price %}
               <span class="text-sm text-slate-400 line-through">৳{{ tour.price|floatformat:0 }}</span>
-              <span class="px-2 py-0.5 rounded text-xs font-bold bg-rose-100 text-rose-700">ছাড়</span>
+              <span class="px-2 py-0.5 rounded text-xs font-bold bg-rose-100 text-rose-700 trans-target" data-en="Discount" data-bn="ছাড়">Discount</span>
               {% endif %}
             </div>
           </div>
 
-          <div class="space-y-3 pt-4 border-t border-slate-100 text-xs text-slate-600 font-bengali">
+          <div class="space-y-3 pt-4 border-t border-slate-100 text-xs text-slate-600">
             <div class="flex items-center justify-between">
-              <span>ট্যুর সময়কাল:</span>
-              <span class="font-bold text-slate-900">{{ tour.duration }}</span>
+              <span class="trans-target" data-en="Tour Duration:" data-bn="ট্যুর সময়কাল:">Tour Duration:</span>
+              <span class="font-bold text-slate-900 trans-target" data-en="{{ tour.duration }}" data-bn="{{ tour.duration }}">{{ tour.duration }}</span>
             </div>
             <div class="flex items-center justify-between">
-              <span>গন্তব্য:</span>
-              <span class="font-bold text-slate-900">{{ tour.destination.name }}</span>
+              <span class="trans-target" data-en="Destination:" data-bn="গন্তব্য:">Destination:</span>
+              <span class="font-bold text-slate-900 trans-target" data-en="{{ tour.destination.name }}" data-bn="{{ tour.destination.bangla_name|default:tour.destination.name }}">{{ tour.destination.name }}</span>
             </div>
             <div class="flex items-center justify-between">
-              <span>নিশ্চিত আসন:</span>
-              <span class="font-bold text-emerald-600">ইনস্ট্যান্ট কনফার্মেশন</span>
+              <span class="trans-target" data-en="Confirmed Seat:" data-bn="নিশ্চিত আসন:">Confirmed Seat:</span>
+              <span class="font-bold text-emerald-600 trans-target" data-en="Instant Confirmation" data-bn="ইনস্ট্যান্ট কনফার্মেশন">Instant Confirmation</span>
             </div>
           </div>
 
           <a href="{% url 'bookings:create' %}?tour={{ tour.slug }}" 
-             class="w-full py-4 rounded-2xl bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-400 hover:to-cyan-400 text-white font-extrabold text-center shadow-lg shadow-sky-500/25 transition-all block font-bengali text-base">
-            এখনই বুক করুন (Book Now)
+             class="w-full py-4 rounded-2xl bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-400 hover:to-cyan-400 text-white font-extrabold text-center shadow-lg shadow-sky-500/25 transition-all block text-base">
+            <span class="trans-target" data-en="Book Now" data-bn="এখনই বুক করুন">Book Now</span>
           </a>
 
-          <p class="text-center text-xs text-slate-400 font-bengali">
-            🔒 ১০০% নিরাপদ পেমেন্ট ও সহজ রিফান্ড পলিসি
+          <p class="text-center text-xs text-slate-400 trans-target" data-en="🔒 100% Safe Payment & Easy Refund Policy" data-bn="🔒 ১০০% নিরাপদ পেমেন্ট ও সহজ রিফান্ড পলিসি">
+            🔒 100% Safe Payment & Easy Refund Policy
           </p>
         </div>
       </div>
@@ -275,12 +283,12 @@
 <!-- Mobile Sticky Booking Bottom Bar -->
 <div class="lg:hidden fixed bottom-0 left-0 w-full bg-white/95 backdrop-blur-md border-t border-slate-200 p-4 z-40 flex items-center justify-between shadow-2xl">
   <div>
-    <span class="text-[10px] text-slate-400 block font-bengali">জনপ্রতি</span>
+    <span class="text-[10px] text-slate-400 block trans-target" data-en="Per person" data-bn="জনপ্রতি">Per person</span>
     <span class="text-xl font-extrabold text-sky-600">৳{{ tour.current_price|floatformat:0 }}</span>
   </div>
   <a href="{% url 'bookings:create' %}?tour={{ tour.slug }}" 
-     class="px-6 py-3 rounded-xl bg-sky-500 hover:bg-sky-400 text-white text-xs font-extrabold font-bengali shadow-md">
-    বুক করুন
+     class="px-6 py-3 rounded-xl bg-sky-500 hover:bg-sky-400 text-white text-xs font-extrabold shadow-md">
+    <span class="trans-target" data-en="Book Now" data-bn="বুক করুন">Book Now</span>
   </a>
 </div>
 {% endblock %}

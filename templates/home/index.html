@@ -32,36 +32,36 @@
             <span class="text-[10px] font-bold tracking-widest text-sky-300 uppercase trans-target"
                   data-en="EXPLORE • EXPERIENCE • DISCOVER"
                   data-bn="অভিযান • অভিজ্ঞতা • আবিষ্কার">
-              অভিযান • অভিজ্ঞতা • আবিষ্কার
+              EXPLORE • EXPERIENCE • DISCOVER
             </span>
           </div>
         </div>
 
-        <!-- Main Bengali Headline -->
-        <h1 id="hero-title" class="font-bengali text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-[1.2] trans-target"
-            data-en="Explore Unseen Bangladesh With Fresh Eyes"
-            data-bn="অদেখা বাংলাকে নতুন চোখে দেখা">
-          অদেখা বাংলাকে নতুন চোখে দেখা
+        <!-- Main Headline -->
+        <h1 id="hero-title" class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-[1.2] trans-target"
+            data-en="{{ site_setting.hero_headline|default:'Explore Unseen Bangladesh With Fresh Eyes' }}"
+            data-bn="{{ site_setting.hero_headline_bn|default:'অদেখা বাংলাকে নতুন চোখে দেখা' }}">
+          {{ site_setting.hero_headline|default:"Explore Unseen Bangladesh With Fresh Eyes" }}
         </h1>
 
         <!-- Subtitle -->
-        <p id="hero-subtitle" class="font-bengali text-base sm:text-lg text-slate-300 max-w-2xl mx-auto lg:mx-0 leading-relaxed font-normal trans-target"
-           data-en="Discover mountains, cloud valleys, Sundarbans mangrove safari, and Saint Martin coral island with BhromonGhuri. Safe and thrilling travel every step of the way."
-           data-bn="ভ্রমণঘুড়ির সাথে আবিষ্কার করুন পাহাড়, মেঘের উপত্যকা, সুন্দরবনের ম্যানগ্রোভ আর সেন্টমার্টিনের প্রবাল দ্বীপ। প্রতিটি পদক্ষেপে নিরাপদ ও রোমাঞ্চকর ভ্রমণ।">
-          ভ্রমণঘুড়ির সাথে আবিষ্কার করুন পাহাড়, মেঘের উপত্যকা, সুন্দরবনের ম্যানগ্রোভ আর সেন্টমার্টিনের প্রবাল দ্বীপ। প্রতিটি পদক্ষেপে নিরাপদ ও রোমাঞ্চকর ভ্রমণ।
+        <p id="hero-subtitle" class="text-base sm:text-lg text-slate-300 max-w-2xl mx-auto lg:mx-0 leading-relaxed font-normal trans-target"
+           data-en="{{ site_setting.hero_subheadline|default:'Discover mountains, cloud valleys, Sundarbans mangrove safari, and Saint Martin coral island with BhromonGhuri. Safe and thrilling travel every step of the way.' }}"
+           data-bn="{{ site_setting.hero_subheadline_bn|default:'ভ্রমণঘুড়ির সাথে আবিষ্কার করুন পাহাড়, মেঘের উপত্যকা, সুন্দরবনের ম্যানগ্রোভ আর সেন্টমার্টিনের প্রবাল দ্বীপ। প্রতিটি পদক্ষেপে নিরাপদ ও রোমাঞ্চকর ভ্রমণ।' }}">
+          {{ site_setting.hero_subheadline|default:"Discover mountains, cloud valleys, Sundarbans mangrove safari, and Saint Martin coral island with BhromonGhuri. Safe and thrilling travel every step of the way." }}
         </p>
 
         <!-- CTAs -->
         <div id="hero-cta-group" class="flex flex-col sm:flex-row items-center justify-center lg:justify-start space-y-4 sm:space-y-0 sm:space-x-4 pt-2">
           <a href="{% url 'tours:list' %}" 
-             class="magnetic-btn w-full sm:w-auto px-8 py-4 rounded-full bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-400 hover:to-cyan-400 text-white font-bold text-sm shadow-xl shadow-sky-500/30 transition-all duration-300 flex items-center justify-center space-x-3 font-bengali">
+             class="magnetic-btn w-full sm:w-auto px-8 py-4 rounded-full bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-400 hover:to-cyan-400 text-white font-bold text-sm shadow-xl shadow-sky-500/30 transition-all duration-300 flex items-center justify-center space-x-3">
             <i data-lucide="compass" class="w-5 h-5"></i>
-            <span class="trans-target" data-en="Explore Tour Packages" data-bn="ট্যুর প্যাকেজগুলো দেখুন">ট্যুর প্যাকেজগুলো দেখুন</span>
+            <span class="trans-target" data-en="Explore Tour Packages" data-bn="ট্যুর প্যাকেজগুলো দেখুন">Explore Tour Packages</span>
           </a>
           <a href="{% url 'stories:list' %}" 
-             class="w-full sm:w-auto px-8 py-4 rounded-full bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 text-slate-200 hover:text-white font-semibold text-sm transition-all duration-300 flex items-center justify-center space-x-2 font-bengali">
+             class="w-full sm:w-auto px-8 py-4 rounded-full bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 text-slate-200 hover:text-white font-semibold text-sm transition-all duration-300 flex items-center justify-center space-x-2">
             <i data-lucide="book-open" class="w-4 h-4 text-sky-400"></i>
-            <span class="trans-target" data-en="Read Travel Stories" data-bn="ভ্রমণ গল্প পড়ুন">ভ্রমণ গল্প পড়ুন</span>
+            <span class="trans-target" data-en="Read Travel Stories" data-bn="ভ্রমণ গল্প পড়ুন">Read Travel Stories</span>
           </a>
         </div>
 
@@ -71,12 +71,12 @@
             <div class="pl-3 text-sky-400">
               <i data-lucide="search" class="w-5 h-5"></i>
             </div>
-            <input type="text" name="q" placeholder="কোথায় ভ্রমণ করতে চান? যেমন: সাজেক, বান্দরবান..." 
+            <input type="text" name="q" placeholder="Where do you want to travel? e.g. Sajek, Bandarban..." 
                    data-en-placeholder="Where do you want to travel? e.g. Sajek, Bandarban..." 
                    data-bn-placeholder="কোথায় ভ্রমণ করতে চান? যেমন: সাজেক, বান্দরবান..."
-                   class="bg-transparent text-sm text-white placeholder-slate-400 w-full focus:outline-none font-bengali px-2 py-1">
-            <button type="submit" class="px-5 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-bold text-xs transition-colors font-bengali flex-shrink-0">
-              <span class="trans-target" data-en="Search" data-bn="খুঁজুন">খুঁজুন</span>
+                   class="bg-transparent text-sm text-white placeholder-slate-400 w-full focus:outline-none px-2 py-1">
+            <button type="submit" class="px-5 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-bold text-xs transition-colors flex-shrink-0">
+              <span class="trans-target" data-en="Search" data-bn="খুঁজুন">Search</span>
             </button>
           </form>
         </div>
@@ -112,8 +112,8 @@
               <!-- Bottom Destination Tag inside photo -->
               <div class="absolute bottom-4 left-4 right-4 flex items-center justify-between text-white pointer-events-none">
                 <div>
-                  <span class="text-[11px] font-bold tracking-wider text-sky-300 uppercase trans-target" data-en="FEATURED DESTINATION" data-bn="জনপ্রিয় গন্তব্য">জনপ্রিয় গন্তব্য</span>
-                  <h3 class="text-base font-bold font-bengali trans-target" data-en="Sajek Valley — Kingdom of Clouds" data-bn="সাজেক ভ্যালি — মেঘের রাজ্য">সাজেক ভ্যালি — মেঘের রাজ্য</h3>
+                  <span class="text-[11px] font-bold tracking-wider text-sky-300 uppercase trans-target" data-en="FEATURED DESTINATION" data-bn="জনপ্রিয় গন্তব্য">FEATURED DESTINATION</span>
+                  <h3 class="text-base font-bold trans-target" data-en="Sajek Valley — Kingdom of Clouds" data-bn="সাজেক ভ্যালি — মেঘের রাজ্য">Sajek Valley — Kingdom of Clouds</h3>
                 </div>
                 <div class="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30 p-1">
                   <img src="{% static 'images/logo.png' %}" alt="ভ্রমণঘুড়ি" class="w-full h-full object-contain">
@@ -125,12 +125,12 @@
           <!-- Floating badge indicators -->
           <div class="absolute -top-3 -right-2 px-3.5 py-2 rounded-2xl glass-dark border border-white/15 text-xs font-semibold text-white shadow-xl flex items-center space-x-2 animate-float">
             <span class="text-amber-400">★ 4.9</span>
-            <span class="font-bengali text-slate-200 trans-target" data-en="Traveler Rating" data-bn="ভ্রমণকারীদের রেটিং">ভ্রমণকারীদের রেটিং</span>
+            <span class="text-slate-200 trans-target" data-en="Traveler Rating" data-bn="ভ্রমণকারীদের রেটিং">Traveler Rating</span>
           </div>
 
           <div class="absolute -bottom-4 -left-2 px-4 py-2.5 rounded-2xl glass-dark border border-white/15 text-xs font-semibold text-white shadow-xl flex items-center space-x-2 animate-float" style="animation-delay: 1.5s;">
             <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i>
-            <span class="font-bengali text-slate-200 trans-target" data-en="100% Verified & Safe" data-bn="১০০% নিরাপদ ভ্রমণ">১০০% নিরাপদ ভ্রমণ</span>
+            <span class="text-slate-200 trans-target" data-en="100% Verified & Safe" data-bn="১০০% নিরাপদ ভ্রমণ">100% Verified & Safe</span>
           </div>
 
         </div>
@@ -141,7 +141,7 @@
 
     <!-- Scroll down indicator -->
     <div class="absolute bottom-4 left-1/2 -translate-x-1/2 text-slate-500 flex flex-col items-center space-y-1">
-      <span class="text-[10px] tracking-widest uppercase font-semibold text-slate-400 trans-target" data-en="SCROLL" data-bn="নিচে দেখুন">নিচে দেখুন</span>
+      <span class="text-[10px] tracking-widest uppercase font-semibold text-slate-400 trans-target" data-en="SCROLL" data-bn="নিচে দেখুন">SCROLL</span>
       <i data-lucide="chevron-down" class="w-4 h-4 animate-bounce text-sky-400"></i>
     </div>
   </section>
@@ -156,22 +156,22 @@
         
         <div class="pt-4 sm:pt-0">
           <p class="text-3xl sm:text-4xl font-extrabold text-sky-600 tracking-tight">{{ site_setting.total_tours_count|default:"60+" }}</p>
-          <p class="font-bengali text-xs sm:text-sm text-slate-500 font-semibold mt-1 trans-target" data-en="Successful Tour Packages" data-bn="সফল ট্যুর প্যাকেজ">সফল ট্যুর প্যাকেজ</p>
+          <p class="text-xs sm:text-sm text-slate-500 font-semibold mt-1 trans-target" data-en="Successful Tour Packages" data-bn="সফল ট্যুর প্যাকেজ">Successful Tour Packages</p>
         </div>
 
         <div class="pt-4 sm:pt-0">
           <p class="text-3xl sm:text-4xl font-extrabold text-emerald-600 tracking-tight">{{ site_setting.total_travelers_count|default:"2,400+" }}</p>
-          <p class="font-bengali text-xs sm:text-sm text-slate-500 font-semibold mt-1 trans-target" data-en="Satisfied Travelers" data-bn="সন্তুষ্ট ভ্রমণকারী">সন্তুষ্ট ভ্রমণকারী</p>
+          <p class="text-xs sm:text-sm text-slate-500 font-semibold mt-1 trans-target" data-en="Satisfied Travelers" data-bn="সন্তুষ্ট ভ্রমণকারী">Satisfied Travelers</p>
         </div>
 
         <div class="pt-4 sm:pt-0">
           <p class="text-3xl sm:text-4xl font-extrabold text-amber-500 tracking-tight">{{ site_setting.average_rating|default:"4.9" }}★</p>
-          <p class="font-bengali text-xs sm:text-sm text-slate-500 font-semibold mt-1 trans-target" data-en="Average Review Rating" data-bn="গড় রেটিং রিভিউ">গড় রেটিং রিভিউ</p>
+          <p class="text-xs sm:text-sm text-slate-500 font-semibold mt-1 trans-target" data-en="Average Review Rating" data-bn="গড় রেটিং রিভিউ">Average Review Rating</p>
         </div>
 
         <div class="pt-4 sm:pt-0">
           <p class="text-3xl sm:text-4xl font-extrabold text-indigo-600 tracking-tight">{{ site_setting.destinations_count|default:"28+" }}</p>
-          <p class="font-bengali text-xs sm:text-sm text-slate-500 font-semibold mt-1 trans-target" data-en="Thrilling Destinations" data-bn="রোমাঞ্চকর গন্তব্য">রোমাঞ্চকর গন্তব্য</p>
+          <p class="text-xs sm:text-sm text-slate-500 font-semibold mt-1 trans-target" data-en="Thrilling Destinations" data-bn="রোমাঞ্চকর গন্তব্য">Thrilling Destinations</p>
         </div>
 
       </div>
@@ -190,17 +190,17 @@
           <span class="text-xs font-bold tracking-widest text-sky-600 uppercase trans-target"
                 data-en="EXPLORE OUR JOURNEYS"
                 data-bn="আমাদের অসাধারণ ট্যুরসমূহ">
-            আমাদের অসাধারণ ট্যুরসমূহ
+            EXPLORE OUR JOURNEYS
           </span>
-          <h2 class="font-bengali text-3xl sm:text-4xl font-extrabold text-slate-900 trans-target"
+          <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 trans-target"
               data-en="Our Best Tour Packages"
               data-bn="আমাদের সেরা ট্যুর প্যাকেজসমূহ">
-            আমাদের সেরা ট্যুর প্যাকেজসমূহ
+            Our Best Tour Packages
           </h2>
         </div>
         <a href="{% url 'tours:list' %}" 
-           class="mt-4 md:mt-0 inline-flex items-center space-x-2 text-sm font-bold text-sky-600 hover:text-sky-700 font-bengali group">
-          <span class="trans-target" data-en="View All Tours" data-bn="সবগুলো ট্যুর দেখুন">সবগুলো ট্যুর দেখুন</span>
+           class="mt-4 md:mt-0 inline-flex items-center space-x-2 text-sm font-bold text-sky-600 hover:text-sky-700 group">
+          <span class="trans-target" data-en="View All Tours" data-bn="সবগুলো ট্যুর দেখুন">View All Tours</span>
           <i data-lucide="arrow-right" class="w-4 h-4 transform group-hover:translate-x-1 transition-transform"></i>
         </a>
       </div>
@@ -228,17 +228,17 @@
         <span class="text-xs font-bold tracking-widest text-sky-600 uppercase trans-target"
               data-en="WHERE DO YOU WANT TO GO?"
               data-bn="আপনার পছন্দের গন্তব্য">
-          আপনার পছন্দের গন্তব্য
+          WHERE DO YOU WANT TO GO?
         </span>
-        <h2 class="font-bengali text-3xl sm:text-4xl font-extrabold text-slate-900 trans-target"
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 trans-target"
             data-en="Popular Attractions & Destinations"
             data-bn="জনপ্রিয় দর্শনীয় স্থান ও গন্তব্য">
-          জনপ্রিয় দর্শনীয় স্থান ও গন্তব্য
+          Popular Attractions & Destinations
         </h2>
-        <p class="font-bengali text-sm text-slate-600 trans-target"
+        <p class="text-sm text-slate-600 trans-target"
            data-en="Mountain peaks, azure sea, mangrove forest, or peaceful backwaters—visit your favorite places with complete peace of mind."
            data-bn="পাহাড়ের চূড়া, নীল সমুদ্র, ম্যানগ্রোভ অরণ্য কিংবা শান্ত জলরাশি—আপনার পছন্দের স্থানে ঘুরে আসুন নিরাপদে।">
-          পাহাড়ের চূড়া, নীল সমুদ্র, ম্যানগ্রোভ অরণ্য কিংবা শান্ত জলরাশি—আপনার পছন্দের স্থানে ঘুরে আসুন নিরাপদে।
+          Mountain peaks, azure sea, mangrove forest, or peaceful backwaters—visit your favorite places with complete peace of mind.
         </p>
       </div>
 
@@ -265,16 +265,16 @@
           <span class="text-xs font-bold tracking-widest text-sky-400 uppercase trans-target"
                 data-en="UPCOMING JOURNEYS"
                 data-bn="আসন্ন যাত্রাসমূহ">
-            আসন্ন যাত্রাসমূহ
+            UPCOMING JOURNEYS
           </span>
-          <h2 class="font-bengali text-3xl sm:text-4xl font-extrabold text-white trans-target"
+          <h2 class="text-3xl sm:text-4xl font-extrabold text-white trans-target"
               data-en="Upcoming Journey Schedule & Seats"
               data-bn="আসন্ন যাত্রার সূচি ও আসন সংখ্যা">
-            আসন্ন যাত্রার সূচি ও আসন সংখ্যা
+            Upcoming Journey Schedule & Seats
           </h2>
         </div>
-        <a href="{% url 'tours:list' %}" class="mt-4 md:mt-0 text-sm font-bold text-sky-400 hover:text-white font-bengali">
-          <span class="trans-target" data-en="View All Dates →" data-bn="সব তারিখ দেখুন →">সব তারিখ দেখুন →</span>
+        <a href="{% url 'tours:list' %}" class="mt-4 md:mt-0 text-sm font-bold text-sky-400 hover:text-white">
+          <span class="trans-target" data-en="View All Dates →" data-bn="সব তারিখ দেখুন →">View All Dates →</span>
         </a>
       </div>
 
@@ -288,23 +288,25 @@
             </span>
             <span class="text-xs font-semibold text-emerald-400 flex items-center space-x-1">
               <i data-lucide="users" class="w-3.5 h-3.5"></i>
-              <span>{{ dt.available_seats }}টি বাকি</span>
+              <span class="trans-target" data-en="{{ dt.available_seats }} seats left" data-bn="{{ dt.available_seats }}টি বাকি">{{ dt.available_seats }} seats left</span>
             </span>
           </div>
-          <h4 class="font-bengali text-base font-bold text-white line-clamp-1">
-            {{ dt.tour.bangla_title|default:dt.tour.title }}
+          <h4 class="text-base font-bold text-white line-clamp-1 trans-target"
+              data-en="{{ dt.tour.title }}"
+              data-bn="{{ dt.tour.bangla_title|default:dt.tour.title }}">
+            {{ dt.tour.title }}
           </h4>
           <p class="text-xs text-slate-400 flex items-center space-x-1">
             <i data-lucide="map-pin" class="w-3.5 h-3.5 text-sky-400"></i>
-            <span>{{ dt.tour.destination.name }}</span>
+            <span class="trans-target" data-en="{{ dt.tour.destination.name }}" data-bn="{{ dt.tour.destination.bangla_name|default:dt.tour.destination.name }}">{{ dt.tour.destination.name }}</span>
           </p>
         </div>
 
         <div class="pt-3 border-t border-slate-800 flex items-center justify-between">
           <span class="text-lg font-bold text-sky-400">৳{{ dt.effective_price|floatformat:0 }}</span>
           <a href="{% url 'bookings:create' %}?tour={{ dt.tour.slug }}&date={{ dt.id }}" 
-             class="px-3.5 py-1.5 rounded-lg bg-sky-500 hover:bg-sky-400 text-white text-xs font-bold font-bengali transition-colors">
-            বুক করুন
+             class="px-3.5 py-1.5 rounded-lg bg-sky-500 hover:bg-sky-400 text-white text-xs font-bold transition-colors">
+            <span class="trans-target" data-en="Book Now" data-bn="বুক করুন">Book Now</span>
           </a>
         </div>
       </div>
@@ -326,16 +328,16 @@
         <span class="text-xs font-bold tracking-widest text-sky-600 uppercase trans-target"
               data-en="AUTHENTIC TRAVEL LOGS"
               data-bn="ভ্রমণ কাহিনী ও বাস্তব অভিজ্ঞতা">
-          ভ্রমণ কাহিনী ও বাস্তব অভিজ্ঞতা
+          AUTHENTIC TRAVEL LOGS
         </span>
-        <h2 class="font-bengali text-3xl sm:text-4xl font-extrabold text-slate-900 trans-target"
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 trans-target"
             data-en="Travel Stories & Genuine Experiences"
             data-bn="ভ্রমণের গল্প ও বাস্তব অভিজ্ঞতা">
-          ভ্রমণের গল্প ও বাস্তব অভিজ্ঞতা
+          Travel Stories & Genuine Experiences
         </h2>
       </div>
-      <a href="{% url 'stories:list' %}" class="mt-4 md:mt-0 text-sm font-bold text-sky-600 hover:text-sky-700 font-bengali">
-        <span class="trans-target" data-en="Read All Stories →" data-bn="সব গল্প পড়ুন →">সব গল্প পড়ুন →</span>
+      <a href="{% url 'stories:list' %}" class="mt-4 md:mt-0 text-sm font-bold text-sky-600 hover:text-sky-700">
+        <span class="trans-target" data-en="Read All Stories →" data-bn="সব গল্প পড়ুন →">Read All Stories →</span>
       </a>
     </div>
 
@@ -359,12 +361,12 @@
       <span class="text-xs font-bold tracking-widest text-sky-600 uppercase trans-target"
             data-en="PHOTO & VIDEO GALLERY"
             data-bn="ছবি ও ভিডিও গ্যালারি">
-        ছবি ও ভিডিও গ্যালারি
+        PHOTO & VIDEO GALLERY
       </span>
-      <h2 class="font-bengali text-3xl font-extrabold text-slate-900 trans-target"
+      <h2 class="text-3xl font-extrabold text-slate-900 trans-target"
           data-en="Memories of Beautiful Bangladesh"
           data-bn="স্মৃতির ফ্রেমে বাঁধা বাংলাদেশের সৌন্দর্য">
-        স্মৃতির ফ্রেমে বাঁধা বাংলাদেশের সৌন্দর্য
+        Memories of Beautiful Bangladesh
       </h2>
     </div>
 
@@ -379,7 +381,7 @@
         </div>
         {% endif %}
         <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity p-4 flex flex-col justify-end text-white">
-          <p class="font-bengali text-xs font-bold">{{ item.title }}</p>
+          <p class="text-xs font-bold">{{ item.title }}</p>
           <p class="text-[10px] text-slate-300">{{ item.destination.name }}</p>
         </div>
       </div>
@@ -387,9 +389,9 @@
     </div>
 
     <div class="mt-8 text-center">
-      <a href="{% url 'gallery:index' %}" class="inline-flex items-center space-x-2 px-6 py-3 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs font-bengali transition-colors">
+      <a href="{% url 'gallery:index' %}" class="inline-flex items-center space-x-2 px-6 py-3 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition-colors">
         <i data-lucide="grid" class="w-4 h-4"></i>
-        <span class="trans-target" data-en="Explore Full Gallery" data-bn="পুরো গ্যালারি এক্সপ্লোর করুন">পুরো গ্যালারি এক্সপ্লোর করুন</span>
+        <span class="trans-target" data-en="Explore Full Gallery" data-bn="পুরো গ্যালারি এক্সপ্লোর করুন">Explore Full Gallery</span>
       </a>
     </div>
 
@@ -407,12 +409,12 @@
       <span class="text-xs font-bold tracking-widest text-sky-600 uppercase trans-target"
             data-en="TRAVELER TESTIMONIALS"
             data-bn="ভ্রমণকারীদের মন্তব্য">
-        ভ্রমণকারীদের মন্তব্য
+        TRAVELER TESTIMONIALS
       </span>
-      <h2 class="font-bengali text-3xl font-extrabold text-slate-900 trans-target"
+      <h2 class="text-3xl font-extrabold text-slate-900 trans-target"
           data-en="Words of Joy from Travelers"
           data-bn="ভ্রমণকারীদের ভালোলাগার কথা">
-        ভ্রমণকারীদের ভালোলাগার কথা
+        Words of Joy from Travelers
       </h2>
     </div>
 
@@ -425,7 +427,7 @@
             <i data-lucide="star" class="w-4 h-4 fill-amber-500"></i>
             {% endfor %}
           </div>
-          <p class="font-bengali text-sm text-slate-700 leading-relaxed italic">
+          <p class="text-sm text-slate-700 leading-relaxed italic">
             "{{ t.review }}"
           </p>
         </div>
@@ -435,8 +437,8 @@
             {{ t.customer_name|slice:":1" }}
           </div>
           <div>
-            <h4 class="font-bengali font-bold text-sm text-slate-900">{{ t.customer_name }}</h4>
-            <p class="font-bengali text-xs text-slate-500">{{ t.tour_name }}</p>
+            <h4 class="font-bold text-sm text-slate-900">{{ t.customer_name }}</h4>
+            <p class="text-xs text-slate-500">{{ t.tour_name }}</p>
           </div>
         </div>
       </div>
@@ -454,11 +456,11 @@
   <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
     
     <div class="text-center mb-12 space-y-2">
-      <span class="text-xs font-bold tracking-widest text-sky-600 uppercase">
+      <span class="text-xs font-bold tracking-widest text-sky-600 uppercase trans-target" data-en="HAVE QUESTIONS?" data-bn="প্রশ্ন আছে কি?">
         HAVE QUESTIONS?
       </span>
-      <h2 class="font-bengali text-3xl font-extrabold text-slate-900">
-        সচরাচর জিজ্ঞাসিত প্রশ্নসমূহ (FAQ)
+      <h2 class="text-3xl font-extrabold text-slate-900 trans-target" data-en="Frequently Asked Questions (FAQ)" data-bn="সচরাচর জিজ্ঞাসিত প্রশ্নসমূহ (FAQ)">
+        Frequently Asked Questions (FAQ)
       </h2>
     </div>
 

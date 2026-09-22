@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}পেমেন্ট ভেরিফিকেশনে রয়েছে — ভ্রমণঘুড়ি{% endblock %}
+{% block title %}Payment Under Verification — BhromonGhuri{% endblock %}
 
 {% block content %}
 <div class="bg-slate-900 text-white pt-32 pb-12">
@@ -11,16 +11,16 @@
     </div>
     <span class="text-xs font-bold tracking-widest text-amber-400 uppercase trans-target"
           data-en="PAYMENT SUBMITTED • UNDER VERIFICATION"
-          data-bn="পেমেন্ট জমা সম্পন্ন • ভেরিফিকেশন চলছে">পেমেন্ট জমা সম্পন্ন • ভেরিফিকেশন চলছে</span>
+          data-bn="পেমেন্ট জমা সম্পন্ন • ভেরিফিকেশন চলছে">PAYMENT SUBMITTED • UNDER VERIFICATION</span>
     <h1 class="font-bengali text-3xl sm:text-4xl font-extrabold text-white trans-target"
         data-en="Your Payment is Under Verification"
         data-bn="আপনার পেমেন্ট ভেরিফিকেশনের অধীনে রয়েছে">
-      আপনার পেমেন্ট ভেরিফিকেশনের অধীনে রয়েছে
+      Your Payment is Under Verification
     </h1>
     <p class="font-bengali text-sm text-slate-300 max-w-xl mx-auto trans-target"
        data-en="Your payment details have been submitted. Our team will verify them shortly and send your confirmation and PDF voucher to your email."
        data-bn="আপনার পেমেন্ট তথ্য সফলভাবে জমা হয়েছে। আমাদের অ্যাডমিন টিম দ্রুত এটি যাচাই করে আপনার বুকিং অনুমোদন ও ভাউচার ইমেইলে পাঠাবে।">
-      আপনার পেমেন্ট তথ্য সফলভাবে জমা হয়েছে। আমাদের অ্যাডমিন টিম দ্রুত এটি যাচাই করে আপনার বুকিং অনুমোদন ও ভাউচার ইমেইলে পাঠাবে।
+      Your payment details have been submitted. Our team will verify them shortly and send your confirmation and PDF voucher to your email.
     </p>
   </div>
 </div>
@@ -33,59 +33,59 @@
       
       <div class="flex items-center justify-between border-b border-slate-100 pb-4">
         <div>
-          <span class="text-xs text-slate-400 block trans-target" data-en="Booking Reference ID" data-bn="বুকিং রেফারেন্স নম্বর">বুকিং রেফারেন্স নম্বর</span>
+          <span class="text-xs text-slate-400 block trans-target" data-en="Booking Reference ID" data-bn="বুকিং রেফারেন্স নম্বর">Booking Reference ID</span>
           <span class="text-xl font-mono font-black text-slate-900">{{ booking.booking_reference }}</span>
         </div>
         <span class="px-3.5 py-1.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-300 flex items-center space-x-1">
           <i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i>
-          <span class="trans-target" data-en="Pending Verification" data-bn="ভেরিফিকেশন অপেক্ষমাণ">ভেরিফিকেশন অপেক্ষমাণ</span>
+          <span class="trans-target" data-en="Pending Verification" data-bn="ভেরিফিকেশন অপেক্ষমাণ">Pending Verification</span>
         </span>
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs sm:text-sm text-slate-600">
         <div>
-          <span class="text-slate-400 block text-xs trans-target" data-en="Tour Package:" data-bn="ট্যুর প্যাকেজ:">ট্যুর প্যাকেজ:</span>
-          <span class="font-bold text-slate-900 trans-target" data-en="{{ booking.tour.title }}" data-bn="{{ booking.tour.bangla_title|default:booking.tour.title }}">{{ booking.tour.bangla_title|default:booking.tour.title }}</span>
+          <span class="text-slate-400 block text-xs trans-target" data-en="Tour Package:" data-bn="ট্যুর প্যাকেজ:">Tour Package:</span>
+          <span class="font-bold text-slate-900 trans-target" data-en="{{ booking.tour.title }}" data-bn="{{ booking.tour.bangla_title|default:booking.tour.title }}">{{ booking.tour.title }}</span>
         </div>
 
         <div>
-          <span class="text-slate-400 block text-xs trans-target" data-en="Travel Date:" data-bn="ভ্রমণের তারিখ:">ভ্রমণের তারিখ:</span>
+          <span class="text-slate-400 block text-xs trans-target" data-en="Travel Date:" data-bn="ভ্রমণের তারিখ:">Travel Date:</span>
           <span class="font-bold text-sky-600">
             {% if booking.tour_date %}
               {{ booking.tour_date.start_date|date:"d M Y" }}
             {% else %}
-              <span class="trans-target" data-en="Flexible" data-bn="ফ্লেক্সিবল">ফ্লেক্সিবল</span>
+              <span class="trans-target" data-en="Flexible" data-bn="ফ্লেক্সিবল">Flexible</span>
             {% endif %}
           </span>
         </div>
 
         <div>
-          <span class="text-slate-400 block text-xs trans-target" data-en="Customer Name:" data-bn="গ্রাহকের নাম:">গ্রাহকের নাম:</span>
+          <span class="text-slate-400 block text-xs trans-target" data-en="Customer Name:" data-bn="গ্রাহকের নাম:">Customer Name:</span>
           <span class="font-bold text-slate-900">{{ booking.customer_name }}</span>
         </div>
 
         <div>
-          <span class="text-slate-400 block text-xs trans-target" data-en="Travelers:" data-bn="যাত্রী সংখ্যা:">যাত্রী সংখ্যা:</span>
-          <span class="font-bold text-slate-900">{{ booking.num_travelers }} <span class="trans-target" data-en="persons" data-bn="জন">জন</span></span>
+          <span class="text-slate-400 block text-xs trans-target" data-en="Travelers:" data-bn="যাত্রী সংখ্যা:">Travelers:</span>
+          <span class="font-bold text-slate-900">{{ booking.num_travelers }} <span class="trans-target" data-en="persons" data-bn="জন">persons</span></span>
         </div>
 
         <div>
-          <span class="text-slate-400 block text-xs trans-target" data-en="Payment Method:" data-bn="পেমেন্ট মাধ্যম:">পেমেন্ট মাধ্যম:</span>
-          <span class="font-bold text-slate-900">{{ payment.get_payment_method_display|default:'বিকাশ / নগদ' }}</span>
+          <span class="text-slate-400 block text-xs trans-target" data-en="Payment Method:" data-bn="পেমেন্ট মাধ্যম:">Payment Method:</span>
+          <span class="font-bold text-slate-900">{{ payment.get_payment_method_display|default:'bKash / Nagad' }}</span>
         </div>
 
         <div>
-          <span class="text-slate-400 block text-xs trans-target" data-en="Sender Number:" data-bn="প্রেরক নম্বর:">প্রেরক নম্বর:</span>
+          <span class="text-slate-400 block text-xs trans-target" data-en="Sender Number:" data-bn="প্রেরক নম্বর:">Sender Number:</span>
           <span class="font-bold text-slate-900">{{ payment.sender_number|default:booking.customer_phone }}</span>
         </div>
 
         <div>
-          <span class="text-slate-400 block text-xs trans-target" data-en="Transaction ID:" data-bn="লেনদেন নম্বর:">লেনদেন নম্বর:</span>
+          <span class="text-slate-400 block text-xs trans-target" data-en="Transaction ID:" data-bn="লেনদেন নম্বর:">Transaction ID:</span>
           <span class="font-mono font-bold text-sky-700 bg-sky-50 px-2 py-0.5 rounded">{{ payment.transaction_id }}</span>
         </div>
 
         <div>
-          <span class="text-slate-400 block text-xs trans-target" data-en="Paid Amount:" data-bn="পরিশোধিত টাকা:">পরিশোধিত টাকা:</span>
+          <span class="text-slate-400 block text-xs trans-target" data-en="Paid Amount:" data-bn="পরিশোধিত টাকা:">Paid Amount:</span>
           <span class="font-extrabold text-slate-900 text-base">৳{{ booking.total_amount|floatformat:0 }}</span>
         </div>
       </div>
@@ -94,14 +94,14 @@
       <div class="p-4 rounded-2xl bg-sky-50 border border-sky-200 text-xs text-sky-900 space-y-1">
         <p class="font-bold flex items-center space-x-1.5">
           <i data-lucide="info" class="w-4 h-4 text-sky-600"></i>
-          <span class="trans-target" data-en="What happens next?" data-bn="পরবর্তী পদক্ষেপ">পরবর্তী পদক্ষেপ</span>
+          <span class="trans-target" data-en="What happens next?" data-bn="পরবর্তী পদক্ষেপ">What happens next?</span>
         </p>
         <p class="trans-target" 
            data-en="1. Once our admin team confirms the transaction details, your booking status becomes Confirmed. 2. A formal PDF confirmation voucher will be emailed to your inbox. 3. You can track live status anytime with your reference number."
            data-bn="১. আমাদের অ্যাডমিন টিম লেনদেন তথ্য যাচাই করার সাথে সাথে আপনার বুকিং অনুমোদন ও নিশ্চিত হয়ে যাবে। ২. কনফার্মেশনের পর আপনার ইমেইলে স্বয়ংক্রিয়ভাবে অফিসিয়াল ভাউচার পাঠানো হবে। ৩. যেকোনো সময় আমাদের বুকিং ট্র্যাকার থেকে লাইভ স্ট্যাটাস দেখতে পারবেন।">
-          ১. আমাদের অ্যাডমিন টিম লেনদেন তথ্য যাচাই করার সাথে সাথে আপনার বুকিং অনুমোদন ও নিশ্চিত হয়ে যাবে。<br/>
-          ২. কনফার্মেশনের পর আপনার ইমেইল (<strong>{{ booking.customer_email }}</strong>)-এ স্বয়ংক্রিয়ভাবে অফিসিয়াল ভাউচার পাঠানো হবে।<br/>
-          ৩. যেকোনো সময় আমাদের বুকিং ট্র্যাকার থেকে লাইভ স্ট্যাটাস দেখতে পারবেন।
+          1. Once our admin team confirms the transaction details, your booking status becomes Confirmed.<br/>
+          2. A formal PDF confirmation voucher will be emailed to your inbox (<strong>{{ booking.customer_email }}</strong>).<br/>
+          3. You can track live status anytime using your reference number.
         </p>
       </div>
 
@@ -110,13 +110,13 @@
         <a href="{% url 'bookings:lookup' %}?ref={{ booking.booking_reference }}" 
            class="flex-1 py-3 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs text-center transition-colors flex items-center justify-center space-x-2">
           <i data-lucide="search" class="w-4 h-4"></i>
-          <span class="trans-target" data-en="Track Booking Status" data-bn="বুকিং স্ট্যাটাস ট্র্যাক করুন">বুকিং স্ট্যাটাস ট্র্যাক করুন</span>
+          <span class="trans-target" data-en="Track Booking Status" data-bn="বুকিং স্ট্যাটাস ট্র্যাক করুন">Track Booking Status</span>
         </a>
 
         <a href="{% url 'core:home' %}" 
            class="flex-1 py-3 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs text-center transition-colors flex items-center justify-center space-x-2">
           <i data-lucide="home" class="w-4 h-4"></i>
-          <span class="trans-target" data-en="Return to Home" data-bn="হোম পেজে ফিরুন">হোম পেজে ফিরুন</span>
+          <span class="trans-target" data-en="Return to Home" data-bn="হোম পেজে ফিরুন">Return to Home</span>
         </a>
       </div>
 
@@ -124,8 +124,12 @@
 
     <!-- Helpline Card -->
     <div class="bg-white rounded-2xl p-4 border border-slate-200/80 text-center font-bengali text-xs text-slate-500">
-      জরুরি সহায়তা ও যেকোনো প্রশ্নে আমাদের হেল্পলাইনে সরাসরি যোগাযোগ করুন: 
-      <strong class="text-slate-900">+8801518919370, +8801855939459</strong>
+      <span class="trans-target"
+            data-en="For urgent support and queries, contact our helpline directly:"
+            data-bn="জরুরি সহায়তা ও যেকোনো প্রশ্নে আমাদের হেল্পলাইনে সরাসরি যোগাযোগ করুন:">
+        For urgent support and queries, contact our helpline directly:
+      </span>
+      <strong class="text-slate-900 ml-1">+8801518919370, +8801855939459</strong>
     </div>
 
   </div>

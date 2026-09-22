@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}গল্প সফলভাবে জমা হয়েছে — ভ্রমণঘুড়ি{% endblock %}
+{% block title %}Story Submitted Successfully — BhromonGhuri{% endblock %}
 
 {% block content %}
 <section class="min-h-screen bg-slate-50 pt-36 pb-20 flex items-center justify-center">
@@ -13,38 +13,44 @@
       </div>
 
       <div class="space-y-2">
-        <span class="text-xs font-bold uppercase tracking-widest text-emerald-600">SUBMISSION RECEIVED</span>
-        <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900">
-          ধন্যবাদ! আপনার ভ্রমণ গল্পটি সফলভাবে জমা হয়েছে
+        <span class="text-xs font-bold uppercase tracking-widest text-emerald-600 trans-target" data-en="SUBMISSION RECEIVED" data-bn="সাবমিশন গৃহীত হয়েছে">SUBMISSION RECEIVED</span>
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 trans-target"
+            data-en="Thank You! Your Travel Story Has Been Submitted"
+            data-bn="ধন্যবাদ! আপনার ভ্রমণ গল্পটি সফলভাবে জমা হয়েছে">
+          Thank You! Your Travel Story Has Been Submitted
         </h1>
-        <p class="text-sm text-slate-600 leading-relaxed pt-2">
-          আপনার গল্পটি পর্যালোচনার জন্য <strong>Pending Approval</strong> স্ট্যাটাসে জমা হয়েছে। আমাদের অ্যাডমিন টিম যাচাই ও অনুমোদনের পর এটি ওয়েবসাইটে প্রকাশিত হবে।
+        <p class="text-sm text-slate-600 leading-relaxed pt-2 trans-target"
+           data-en="Your story has been received in Pending Approval status. Our editorial team will review it before publishing it live on the site."
+           data-bn="আপনার গল্পটি পর্যালোচনার জন্য Pending Approval স্ট্যাটাসে জমা হয়েছে। আমাদের অ্যাডমিন টিম যাচাই ও অনুমোদনের পর এটি ওয়েবসাইটে প্রকাশিত হবে।">
+          Your story has been received in Pending Approval status. Our editorial team will review it before publishing it live on the site.
         </p>
       </div>
 
       <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100 text-left space-y-2 text-xs text-slate-600">
         <div class="flex justify-between">
-          <span class="text-slate-400">শিরোনাম:</span>
+          <span class="text-slate-400 trans-target" data-en="Title:" data-bn="শিরোনাম:">Title:</span>
           <span class="font-bold text-slate-800">{{ story.title }}</span>
         </div>
         <div class="flex justify-between">
-          <span class="text-slate-400">লেখক:</span>
+          <span class="text-slate-400 trans-target" data-en="Author:" data-bn="লেখক:">Author:</span>
           <span class="font-bold text-slate-800">{{ story.author_name }}</span>
         </div>
         <div class="flex justify-between">
-          <span class="text-slate-400">স্ট্যাটাস:</span>
-          <span class="px-2 py-0.5 rounded-md bg-amber-100 text-amber-800 font-bold">অপেক্ষমাণ (Pending Verification)</span>
+          <span class="text-slate-400 trans-target" data-en="Status:" data-bn="স্ট্যাটাস:">Status:</span>
+          <span class="px-2 py-0.5 rounded-md bg-amber-100 text-amber-800 font-bold trans-target" data-en="Pending Verification" data-bn="অপেক্ষমাণ (Pending Verification)">Pending Verification</span>
         </div>
       </div>
 
       <div class="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
         <a href="{% url 'stories:list' %}" 
-           class="w-full sm:w-auto px-6 py-3 rounded-full bg-slate-900 hover:bg-sky-600 text-white font-bold text-xs transition-colors">
-          অন্যান্য গল্পগুলো দেখুন
+           class="w-full sm:w-auto px-6 py-3 rounded-full bg-slate-900 hover:bg-sky-600 text-white font-bold text-xs transition-colors trans-target"
+           data-en="Browse All Stories" data-bn="অন্যান্য গল্পগুলো দেখুন">
+          Browse All Stories
         </a>
         <a href="{% url 'core:home' %}" 
-           class="w-full sm:w-auto px-6 py-3 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition-colors">
-          হোমপেজে ফিরে যান
+           class="w-full sm:w-auto px-6 py-3 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition-colors trans-target"
+           data-en="Return to Homepage" data-bn="হোমপেজে ফিরে যান">
+          Return to Homepage
         </a>
       </div>
 

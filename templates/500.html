@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}সার্ভার ত্রুটি (500) — ভ্রমণঘুড়ি{% endblock %}
+{% block title %}Server Error (500) — BhromonGhuri{% endblock %}
 
 {% block content %}
 <div class="min-h-[75vh] flex items-center justify-center pt-28 pb-16 bg-slate-50 text-center px-4">
@@ -10,16 +10,20 @@
       <i data-lucide="alert-triangle" class="w-8 h-8"></i>
     </div>
     <span class="text-xs font-bold tracking-widest text-rose-600 uppercase font-sans">ERROR 500</span>
-    <h1 class="font-bengali text-3xl font-extrabold text-slate-900">
-      সাময়িক সার্ভার ত্রুটি
+    <h1 class="font-bengali text-3xl font-extrabold text-slate-900 trans-target"
+        data-en="Temporary Server Error"
+        data-bn="সাময়িক সার্ভার ত্রুটি">
+      Temporary Server Error
     </h1>
-    <p class="font-bengali text-sm text-slate-600">
-      আমাদের কারিগরি দল দ্রুত সমস্যাটি সমাধানের চেষ্টা করছে। অনুগ্রহ করে কিছুক্ষণ পর পুনরায় চেষ্টা করুন।
+    <p class="font-bengali text-sm text-slate-600 trans-target"
+       data-en="Our engineering team is actively working to resolve this issue. Please try again in a few moments."
+       data-bn="আমাদের কারিগরি দল দ্রুত সমস্যাটি সমাধানের চেষ্টা করছে। অনুগ্রহ করে কিছুক্ষণ পর পুনরায় চেষ্টা করুন।">
+      Our engineering team is actively working to resolve this issue. Please try again in a few moments.
     </p>
     <div>
       <a href="{% url 'core:home' %}" class="inline-flex items-center space-x-2 px-6 py-3 rounded-full bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs font-bengali shadow-md">
         <i data-lucide="home" class="w-4 h-4"></i>
-        <span>হোম পেজে ফিরে যান</span>
+        <span class="trans-target" data-en="Return to Homepage" data-bn="হোম পেজে ফিরে যান">Return to Homepage</span>
       </a>
     </div>
   </div>

@@ -1,19 +1,24 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}আপনার গল্প শেয়ার করুন — ভ্রমণ কাহিনী — ভ্রমণঘুড়ি{% endblock %}
+{% block title %}Share Your Story — BhromonGhuri{% endblock %}
 
 {% block content %}
 <!-- Hero Section -->
 <section class="bg-slate-900 text-white pt-32 pb-16 relative overflow-hidden">
   <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(14,165,233,0.25),transparent_70%)]"></div>
   <div class="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-3">
-    <span class="text-xs font-bold tracking-widest text-sky-400 uppercase">COMMUNITY STORIES</span>
-    <h1 class="font-bengali text-3xl sm:text-5xl font-extrabold text-white">
-      আপনার ভ্রমণ গল্প শেয়ার করুন
+    <span class="text-xs font-bold tracking-widest text-sky-400 uppercase trans-target"
+          data-en="COMMUNITY STORIES" data-bn="কমিউনিটি গল্প">COMMUNITY STORIES</span>
+    <h1 class="font-bengali text-3xl sm:text-5xl font-extrabold text-white trans-target"
+        data-en="Share Your Travel Story"
+        data-bn="আপনার ভ্রমণ গল্প শেয়ার করুন">
+      Share Your Travel Story
     </h1>
-    <p class="font-bengali text-sm sm:text-base text-slate-300 max-w-2xl mx-auto leading-relaxed">
-      আপনার রোমাঞ্চকর ভ্রমণ অনুভূতি ও দারুণ ছবিগুলো ছড়িয়ে দিন সবার মাঝে। অ্যাডমিন অনুমোদনের পর আপনার গল্পটি ভ্রমণঘুড়ি জার্নালে প্রকাশিত হবে।
+    <p class="font-bengali text-sm sm:text-base text-slate-300 max-w-2xl mx-auto leading-relaxed trans-target"
+       data-en="Spread your thrilling travel experiences and stunning memories with travelers everywhere. Once verified by our team, your story will be published on the BhromonGhuri Journal."
+       data-bn="আপনার রোমাঞ্চকর ভ্রমণ অনুভূতি ও দারুণ ছবিগুলো ছড়িয়ে দিন সবার মাঝে। অ্যাডমিন অনুমোদনের পর আপনার গল্পটি ভ্রমণঘুড়ি জার্নালে প্রকাশিত হবে।">
+      Spread your thrilling travel experiences and stunning memories with travelers everywhere. Once verified by our team, your story will be published on the BhromonGhuri Journal.
     </p>
   </div>
 </section>
@@ -29,24 +34,27 @@
         <!-- Story Title -->
         <div>
           <label class="block text-sm font-bold text-slate-700 mb-1.5">
-            গল্পের শিরোনাম (Title) <span class="text-rose-500">*</span>
+            <span class="trans-target" data-en="Story Title" data-bn="গল্পের শিরোনাম">Story Title</span> <span class="text-rose-500">*</span>
           </label>
           <input type="text" 
                  name="title" 
                  required 
                  value="{{ title|default:'' }}"
-                 placeholder="যেমন: সাজেক ভ্যালিতে মেঘের সাথে প্রথম দেখা"
+                 placeholder="e.g.: First encounter with the sea of clouds in Sajek Valley"
+                 data-en-placeholder="e.g.: First encounter with the sea of clouds in Sajek Valley"
+                 data-bn-placeholder="যেমন: সাজেক ভ্যালিতে মেঘের সাথে প্রথম দেখা"
                  class="w-full px-4 py-3.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-all">
         </div>
 
         <!-- Destination Tag -->
         <div>
-          <label class="block text-sm font-bold text-slate-700 mb-1.5">
-            গন্তব্য বা স্থান (Destination Tag)
+          <label class="block text-sm font-bold text-slate-700 mb-1.5 trans-target"
+                 data-en="Destination Tag" data-bn="গন্তব্য বা স্থান">
+            Destination Tag
           </label>
           <select name="destination" 
                   class="w-full px-4 py-3.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-all">
-            <option value="">— যেকোনো স্থান / সাধারণ ভ্রমণ —</option>
+            <option value="">— Any Destination / General Travel —</option>
             {% for dest in destinations %}
               <option value="{{ dest.id }}" {% if selected_dest == dest.id|stringformat:'s' %}selected{% endif %}>
                 {{ dest.name }} ({{ dest.division }})
@@ -59,23 +67,26 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label class="block text-sm font-bold text-slate-700 mb-1.5">
-              আপনার নাম (Author Name) <span class="text-rose-500">*</span>
+              <span class="trans-target" data-en="Author Name" data-bn="আপনার নাম">Author Name</span> <span class="text-rose-500">*</span>
             </label>
             <input type="text" 
                    name="author_name" 
                    required
                    value="{{ author_name|default:'' }}"
-                   placeholder="আপনার পূর্ণ নাম"
+                   placeholder="Your full name"
+                   data-en-placeholder="Your full name"
+                   data-bn-placeholder="আপনার পূর্ণ নাম"
                    class="w-full px-4 py-3.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 transition-all">
           </div>
           <div>
-            <label class="block text-sm font-bold text-slate-700 mb-1.5">
-              ইমেইল (Email Address)
+            <label class="block text-sm font-bold text-slate-700 mb-1.5 trans-target"
+                   data-en="Email Address" data-bn="ইমেইল ঠিকানা">
+              Email Address
             </label>
             <input type="email" 
                    name="author_email" 
                    value="{{ author_email|default:'' }}"
-                   placeholder="example@mail.com"
+                   placeholder="example@mail.com" 
                    class="w-full px-4 py-3.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 transition-all">
           </div>
         </div>
@@ -83,12 +94,14 @@
         <!-- Story Description / Content -->
         <div>
           <label class="block text-sm font-bold text-slate-700 mb-1.5">
-            ভ্রমণের অনুভূতি ও বিস্তারিত গল্প (Description) <span class="text-rose-500">*</span>
+            <span class="trans-target" data-en="Travel Experience & Detailed Story" data-bn="ভ্রমণের অনুভূতি ও বিস্তারিত গল্প">Travel Experience & Detailed Story</span> <span class="text-rose-500">*</span>
           </label>
           <textarea name="content" 
                     rows="8" 
                     required
-                    placeholder="কোথায় গিয়েছিলেন, কেমন ছিল অভিজ্ঞতা, স্মরণীয় মুহূর্তগুলো কিংবা ভ্রমণ টিপস শেয়ার করুন..."
+                    placeholder="Where did you go, how was your experience, memorable moments and travel tips..."
+                    data-en-placeholder="Where did you go, how was your experience, memorable moments and travel tips..."
+                    data-bn-placeholder="কোথায় গিয়েছিলেন, কেমন ছিল অভিজ্ঞতা, স্মরণীয় মুহূর্তগুলো কিংবা ভ্রমণ টিপস শেয়ার করুন..."
                     class="w-full px-4 py-3.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 leading-relaxed transition-all">{{ content|default:'' }}</textarea>
         </div>
 
@@ -99,8 +112,8 @@
               <i data-lucide="image-plus" class="w-6 h-6"></i>
             </div>
             <div>
-              <p class="text-sm font-bold text-slate-800">ভ্রমণের ছবি আপলোড করুন (Photo Upload)</p>
-              <p class="text-xs text-slate-500 mt-0.5">সর্বোচ্চ ৫ থেকে ১০টি ছবি সিলেক্ট করুন (JPG, PNG, WebP)</p>
+              <p class="text-sm font-bold text-slate-800 trans-target" data-en="Upload Travel Photos" data-bn="ভ্রমণের ছবি আপলোড করুন">Upload Travel Photos</p>
+              <p class="text-xs text-slate-500 mt-0.5 trans-target" data-en="Select between 5 to 10 photos (JPG, PNG, WebP)" data-bn="সর্বোচ্চ ৫ থেকে ১০টি ছবি সিলেক্ট করুন (JPG, PNG, WebP)">Select between 5 to 10 photos (JPG, PNG, WebP)</p>
             </div>
             
             <input type="file" 
@@ -114,11 +127,11 @@
             <label for="photo-input" 
                    class="cursor-pointer px-5 py-2.5 rounded-xl bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 text-xs font-bold shadow-sm transition-colors flex items-center space-x-1.5">
               <i data-lucide="upload" class="w-4 h-4 text-sky-600"></i>
-              <span>ছবি নির্বাচন করুন</span>
+              <span class="trans-target" data-en="Select Photos" data-bn="ছবি নির্বাচন করুন">Select Photos</span>
             </label>
 
             <div x-show="filesCount > 0" class="text-xs font-semibold text-sky-600 pt-2" style="display: none;">
-              <span x-text="filesCount"></span>টি ছবি নির্বাচিত হয়েছে
+              <span x-text="filesCount"></span> <span class="trans-target" data-en="photos selected" data-bn="টি ছবি নির্বাচিত হয়েছে">photos selected</span>
             </div>
           </div>
         </div>
@@ -126,21 +139,24 @@
         <!-- Pending Moderation Notice -->
         <div class="p-4 rounded-xl bg-sky-50 border border-sky-200/80 flex items-start space-x-3 text-xs text-sky-900 leading-relaxed">
           <i data-lucide="info" class="w-4 h-4 text-sky-600 flex-shrink-0 mt-0.5"></i>
-          <span>
-            <strong>সতর্কতা:</strong> আপনার জমা দেওয়া গল্পটি তাৎক্ষণিকভাবে সংরক্ষিত হবে এবং <strong>Pending</strong> স্ট্যাটাসে থাকবে। ভ্রমণঘুড়ির অ্যাডমিন পর্যালোচনা শেষে গল্পটি ওয়েবসাইটে লাইভ হবে।
+          <span class="trans-target"
+                data-en="Notice: Your submitted story will be recorded and remain in Pending status. It will go live once reviewed and approved by the BhromonGhuri editorial team."
+                data-bn="সতর্কতা: আপনার জমা দেওয়া গল্পটি তাৎক্ষণিকভাবে সংরক্ষিত হবে এবং Pending স্ট্যাটাসে থাকবে। ভ্রমণঘুড়ির অ্যাডমিন পর্যালোচনা শেষে গল্পটি ওয়েবসাইটে লাইভ হবে।">
+            Notice: Your submitted story will be recorded and remain in Pending status. It will go live once reviewed and approved by the BhromonGhuri editorial team.
           </span>
         </div>
 
         <!-- Submit Button -->
         <div class="pt-2 flex items-center justify-between">
-          <a href="{% url 'stories:list' %}" class="text-xs text-slate-500 hover:text-slate-800 font-bold">
-            ← গল্প তালিকায় ফিরে যান
+          <a href="{% url 'stories:list' %}" class="text-xs text-slate-500 hover:text-slate-800 font-bold trans-target"
+             data-en="← Back to Stories List" data-bn="← গল্প তালিকায় ফিরে যান">
+            ← Back to Stories List
           </a>
 
           <button type="submit" 
                   class="px-8 py-3.5 rounded-full bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-400 hover:to-cyan-400 text-white font-bold text-sm shadow-lg shadow-sky-500/25 transition-all duration-300 flex items-center space-x-2">
             <i data-lucide="send" class="w-4 h-4"></i>
-            <span>গল্প সাবমিট করুন (Submit Story)</span>
+            <span class="trans-target" data-en="Submit Story" data-bn="গল্প সাবমিট করুন (Submit Story)">Submit Story</span>
           </button>
         </div>
 

@@ -9,8 +9,10 @@ class SiteSetting(models.Model):
     site_name = models.CharField(max_length=100, default="ভ্রমণঘুড়ি (Bhromonghuri)")
     site_tagline_bn = models.CharField(max_length=200, default="নতুন জায়গা, নতুন গল্প, নতুন অনুভূতি")
     site_tagline_en = models.CharField(max_length=200, default="Explore • Experience • Discover")
-    hero_headline = models.CharField(max_length=255, default="অদেখা বাংলাকে নতুন চোখে দেখা")
-    hero_subheadline = models.TextField(default="ভ্রমণঘুড়ির সাথে আবিষ্কার করুন পাহাড়, সমুদ্র, মেঘের দেশ আর সবুজ বনানীর অপূর্ব সৌন্দর্য। প্রতিটি পদক্ষেপে নিরাপদ ও রোমাঞ্চকর ভ্রমণ।")
+    hero_headline = models.CharField(max_length=255, default="Explore Unseen Bangladesh With Fresh Eyes")
+    hero_headline_bn = models.CharField(max_length=255, default="অদেখা বাংলাকে নতুন চোখে দেখা", blank=True)
+    hero_subheadline = models.TextField(default="Discover mountains, cloud valleys, Sundarbans mangrove safari, and Saint Martin coral island with BhromonGhuri. Safe and thrilling travel every step of the way.")
+    hero_subheadline_bn = models.TextField(default="ভ্রমণঘুড়ির সাথে আবিষ্কার করুন পাহাড়, সমুদ্র, মেঘের দেশ আর সবুজ বনানীর অপূর্ব সৌন্দর্য। প্রতিটি পদক্ষেপে নিরাপদ ও রোমাঞ্চকর ভ্রমণ।", blank=True)
     
     phone = models.CharField(max_length=60, default="+8801518919370, 01855939459")
     email = models.EmailField(default="bhromonghuri@gmail.com")

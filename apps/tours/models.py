@@ -8,6 +8,7 @@ class Destination(models.Model):
     slug = models.SlugField(max_length=160, unique=True, blank=True)
     tagline = models.CharField(max_length=200, blank=True)
     description = models.TextField()
+    bangla_description = models.TextField(blank=True)
     cover_image = models.ImageField(upload_to='destinations/covers/', blank=True, null=True)
     is_featured = models.BooleanField(default=True)
     order = models.PositiveIntegerField(default=0)
@@ -62,7 +63,9 @@ class Tour(models.Model):
     max_travelers = models.PositiveIntegerField(default=20)
     
     short_description = models.TextField(help_text="Short teaser for cards and search results")
+    bangla_short_description = models.TextField(blank=True, help_text="Bengali teaser for cards and search results")
     description = models.TextField(help_text="Full itinerary and overview")
+    bangla_description = models.TextField(blank=True, help_text="Bengali full itinerary and overview")
     cover_image = models.ImageField(upload_to='tours/covers/', blank=True, null=True)
     video_url = models.URLField(blank=True, help_text="YouTube or Vimeo preview link")
     
@@ -159,7 +162,9 @@ class TourItinerary(models.Model):
     tour = models.ForeignKey(Tour, on_delete=models.CASCADE, related_name='itineraries')
     day_number = models.PositiveSmallIntegerField(default=1)
     title = models.CharField(max_length=255)
+    bangla_title = models.CharField(max_length=255, blank=True)
     description = models.TextField()
+    bangla_description = models.TextField(blank=True)
     meals = models.CharField(max_length=150, blank=True, help_text="e.g. Breakfast, Lunch, Dinner")
     stay_info = models.CharField(max_length=150, blank=True, help_text="e.g. Eco Resort Sajek")
 
@@ -192,6 +197,7 @@ class TourInclusion(models.Model):
     """Included and Excluded items."""
     tour = models.ForeignKey(Tour, on_delete=models.CASCADE, related_name='inclusions')
     item = models.CharField(max_length=255)
+    bangla_item = models.CharField(max_length=255, blank=True)
     is_included = models.BooleanField(default=True, help_text="Checked = Included (✓), Unchecked = Excluded (✕)")
 
     class Meta:

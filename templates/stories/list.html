@@ -1,24 +1,29 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}ভ্রমণ গল্প ও অভিজ্ঞতা — ভ্রমণঘুড়ি{% endblock %}
+{% block title %}Travel Stories & Experiences — BhromonGhuri{% endblock %}
 
 {% block content %}
 <section class="bg-slate-900 text-white pt-32 pb-16 relative overflow-hidden">
   <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(14,165,233,0.3),transparent_70%)]"></div>
   <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-3">
-    <span class="text-xs font-bold tracking-widest text-sky-400 uppercase">TRAVEL CHRONICLES</span>
-    <h1 class="font-bengali text-4xl sm:text-5xl font-extrabold text-white">
-      ভ্রমণের বাস্তব গল্প ও রোমাঞ্চকর কাহিনী
+    <span class="text-xs font-bold tracking-widest text-sky-400 uppercase trans-target"
+          data-en="TRAVEL CHRONICLES" data-bn="ভ্রমণ কাহিনী">TRAVEL CHRONICLES</span>
+    <h1 class="font-bengali text-4xl sm:text-5xl font-extrabold text-white trans-target"
+        data-en="Real Travel Stories & Thrilling Adventures"
+        data-bn="ভ্রমণের বাস্তব গল্প ও রোমাঞ্চকর কাহিনী">
+      Real Travel Stories & Thrilling Adventures
     </h1>
-    <p class="font-bengali text-sm text-slate-300 max-w-2xl mx-auto">
-      পাহাড়ের বাঁকে মেঘের সাথে আলিঙ্গন, হাওরের বুকে জোছনা রাত কিংবা ম্যানগ্রোভের রোমাঞ্চকর ট্রেইল—ভ্রমণকারীদের কলমে আঁকা অনুভূতি।
+    <p class="font-bengali text-sm text-slate-300 max-w-2xl mx-auto trans-target"
+       data-en="Embracing clouds over mountain curves, moonlit nights across haors, or mysterious mangrove trails — authentic journeys penned by travelers."
+       data-bn="পাহাড়ের বাঁকে মেঘের সাথে আলিঙ্গন, হাওরের বুকে জোছনা রাত কিংবা ম্যানগ্রোভের রোমাঞ্চকর ট্রেইল—ভ্রমণকারীদের কলমে আঁকা অনুভূতি।">
+      Embracing clouds over mountain curves, moonlit nights across haors, or mysterious mangrove trails — authentic journeys penned by travelers.
     </p>
     <div class="pt-2">
       <a href="{% url 'stories:submit' %}" 
          class="magnetic-btn inline-flex items-center space-x-2 px-6 py-3 rounded-full bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-400 hover:to-cyan-400 text-white font-bold text-xs sm:text-sm shadow-lg shadow-sky-500/25 transition-all font-bengali">
         <i data-lucide="edit-3" class="w-4 h-4"></i>
-        <span>আপনার গল্প শেয়ার করুন (Share Your Story)</span>
+        <span class="trans-target" data-en="Share Your Story" data-bn="আপনার গল্প শেয়ার করুন (Share Your Story)">Share Your Story</span>
       </a>
     </div>
   </div>
@@ -38,8 +43,9 @@
           <i data-lucide="feather" class="w-16 h-16 text-sky-400/30"></i>
         </div>
         {% endif %}
-        <span class="absolute top-4 left-4 px-3.5 py-1 rounded-full text-xs font-bold bg-sky-500 text-white shadow-md">
-          ফিচার্ড গল্প
+        <span class="absolute top-4 left-4 px-3.5 py-1 rounded-full text-xs font-bold bg-sky-500 text-white shadow-md trans-target"
+              data-en="Featured Story" data-bn="ফিচার্ড গল্প">
+          Featured Story
         </span>
       </div>
 
@@ -63,7 +69,7 @@
         <div>
           <a href="{% url 'stories:detail' featured_story.slug %}" 
              class="inline-flex items-center space-x-2 px-6 py-3 rounded-full bg-slate-900 hover:bg-sky-600 text-white font-bold text-xs transition-colors font-bengali">
-            <span>পুরো গল্পটি পড়ুন</span>
+            <span class="trans-target" data-en="Read Full Story" data-bn="পুরো গল্পটি পড়ুন">Read Full Story</span>
             <i data-lucide="arrow-right" class="w-4 h-4"></i>
           </a>
         </div>

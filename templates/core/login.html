@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}লগইন — ভ্রমণঘুড়ি{% endblock %}
+{% block title %}Sign In — BhromonGhuri{% endblock %}
 
 {% block content %}
 <div class="min-h-screen bg-slate-950 text-white pt-32 pb-20 flex items-center justify-center relative overflow-hidden">
@@ -21,10 +21,10 @@
 
       <div class="space-y-1">
         <h1 class="text-2xl sm:text-3xl font-extrabold text-white trans-target" data-en="Welcome to BhromonGhuri" data-bn="ভ্রমণঘুড়িতে স্বাগতম">
-          ভ্রমণঘুড়িতে স্বাগতম
+          Welcome to BhromonGhuri
         </h1>
         <p class="text-xs text-slate-400 trans-target" data-en="Sign in to manage your bookings and share travel stories." data-bn="আপনার ভ্রমণ অভিজ্ঞতা সংরক্ষণ ও বুকিং পরিচালনার জন্য প্রবেশ করুন।">
-          আপনার ভ্রমণ অভিজ্ঞতা সংরক্ষণ ও বুকিং পরিচালনার জন্য প্রবেশ করুন।
+          Sign in to manage your bookings and share travel stories.
         </p>
       </div>
 
@@ -39,7 +39,7 @@
             <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 10.03 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
             <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
           </svg>
-          <span class="font-semibold trans-target" data-en="Continue with Google" data-bn="গুগল দিয়ে প্রবেশ করুন">গুগল দিয়ে প্রবেশ করুন</span>
+          <span class="font-semibold trans-target" data-en="Continue with Google" data-bn="গুগল দিয়ে প্রবেশ করুন">Continue with Google</span>
         </a>
       </div>
 
@@ -48,18 +48,18 @@
         <div class="p-4 rounded-2xl bg-slate-800/60 border border-white/10 text-left space-y-2">
           <div class="flex items-center space-x-2 text-emerald-400 font-bold text-xs">
             <i data-lucide="shield-check" class="w-4 h-4"></i>
-            <span class="trans-target" data-en="Official Google Authentication" data-bn="অফিশিয়াল গুগল অথেনটিকেশন">অফিশিয়াল গুগল অথেনটিকেশন</span>
+            <span class="trans-target" data-en="Official Google Authentication" data-bn="অফিশিয়াল গুগল অথেনটিকেশন">Official Google Authentication</span>
           </div>
           <p class="text-[12px] text-slate-300 leading-relaxed">
-            <span class="trans-target" data-en="Sign in directly with your authentic Google account. Instant access without manual admin approval. Fake or unverified email addresses are strictly blocked." data-bn="আপনার ভেরিফাইড গুগল একাউন্ট দিয়ে সরাসরি প্রবেশ করুন। কোনো অ্যাডমিন অনুমোদনের অপেক্ষা নেই। নকল বা ভুয়া ইমেইল কঠোরভাবে প্রতিহত করা হয়।">আপনার ভেরিফাইড গুগল একাউন্ট দিয়ে সরাসরি প্রবেশ করুন। কোনো অ্যাডমিন অনুমোদনের অপেক্ষা নেই। নকল বা ভুয়া ইমেইল কঠোরভাবে প্রতিহত করা হয়।</span>
+            <span class="trans-target" data-en="Sign in directly with your authentic Google account. Instant access without manual admin approval. Fake or unverified email addresses are strictly blocked." data-bn="আপনার ভেরিফাইড গুগল একাউন্ট দিয়ে সরাসরি প্রবেশ করুন। কোনো অ্যাডমিন অনুমোদনের অপেক্ষা নেই। নকল বা ভুয়া ইমেইল কঠোরভাবে প্রতিহত করা হয়।">Sign in directly with your authentic Google account. Instant access without manual admin approval. Fake or unverified email addresses are strictly blocked.</span>
           </p>
         </div>
       </div>
 
       <p class="text-xs text-slate-400 pt-2">
-        <span class="trans-target" data-en="Don't have an account?" data-bn="অ্যাকাউন্ট নেই?">অ্যাকাউন্ট নেই?</span> 
+        <span class="trans-target" data-en="Don't have an account?" data-bn="অ্যাকাউন্ট নেই?">Don't have an account?</span> 
         <a href="{% url 'core:register' %}?next={{ next|default:'/' }}" class="text-sky-400 hover:text-sky-300 font-bold">
-          <span class="trans-target" data-en="Register with Google" data-bn="গুগল দিয়ে বিনামূল্যে নিবন্ধন করুন">গুগল দিয়ে বিনামূল্যে নিবন্ধন করুন</span>
+          <span class="trans-target" data-en="Register with Google" data-bn="গুগল দিয়ে বিনামূল্যে নিবন্ধন করুন">Register with Google</span>
         </a>
       </p>
 

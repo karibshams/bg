@@ -8,8 +8,10 @@
         <a href="{% url 'core:home' %}" class="inline-flex items-center space-x-3 group">
           <img src="{% static 'images/logo-navbar.png' %}" alt="ভ্রমণঘুড়ি" class="h-12 sm:h-14 w-auto object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-[0_2px_12px_rgba(56,189,248,0.25)]">
         </a>
-        <p class="font-bengali text-sm text-slate-400 leading-relaxed max-w-sm">
-          {{ site_setting.hero_subheadline|default:"ভ্রমণঘুড়ির সাথে আবিষ্কার করুন পাহাড়, সমুদ্র, মেঘের দেশ আর সবুজ বনানীর অপূর্ব সৌন্দর্য। প্রতিটি পদক্ষেপে নিরাপদ ও রোমাঞ্চকর ভ্রমণ।" }}
+        <p class="text-sm text-slate-400 leading-relaxed max-w-sm trans-target" 
+           data-en="{{ site_setting.hero_subheadline|default:'Discover mountains, cloud valleys, Sundarbans mangrove safari, and Saint Martin coral island with BhromonGhuri. Safe and thrilling travel every step of the way.' }}" 
+           data-bn="{{ site_setting.hero_subheadline_bn|default:'ভ্রমণঘুড়ির সাথে আবিষ্কার করুন পাহাড়, সমুদ্র, মেঘের দেশ আর সবুজ বনানীর অপূর্ব সৌন্দর্য। প্রতিটি পদক্ষেপে নিরাপদ ও রোমাঞ্চকর ভ্রমণ।' }}">
+          {{ site_setting.hero_subheadline|default:"Discover mountains, cloud valleys, Sundarbans mangrove safari, and Saint Martin coral island with BhromonGhuri. Safe and thrilling travel every step of the way." }}
         </p>
         <!-- Social Media Icons (High-visibility, Authentic Brand SVGs) -->
         <div class="flex items-center space-x-3 pt-3">
@@ -64,34 +66,34 @@
       </div>
 
       <!-- Quick Links -->
-      <div class="space-y-3 font-bengali">
-        <h4 class="text-white font-semibold text-base mb-4 tracking-wide trans-target" data-en="Quick Links" data-bn="দ্রুত লিঙ্ক">দ্রুত লিঙ্ক</h4>
+      <div class="space-y-3">
+        <h4 class="text-white font-semibold text-base mb-4 tracking-wide trans-target" data-en="Quick Links" data-bn="দ্রুত লিঙ্ক">Quick Links</h4>
         <ul class="space-y-2.5 text-sm text-slate-400">
-          <li><a href="{% url 'tours:list' %}" class="hover:text-sky-400 transition-colors trans-target" data-en="All Tour Packages" data-bn="সকল ট্যুর প্যাকেজ">সকল ট্যুর প্যাকেজ</a></li>
-          <li><a href="/#destinations" class="hover:text-sky-400 transition-colors trans-target" data-en="Popular Destinations" data-bn="জনপ্রিয় গন্তব্যসমূহ">জনপ্রিয় গন্তব্যসমূহ</a></li>
-          <li><a href="{% url 'stories:list' %}" class="hover:text-sky-400 transition-colors trans-target" data-en="Travel Stories & Tips" data-bn="ভ্রমণ গল্প ও অভিজ্ঞতা">ভ্রমণ গল্প ও অভিজ্ঞতা</a></li>
-          <li><a href="{% url 'gallery:index' %}" class="hover:text-sky-400 transition-colors trans-target" data-en="Photo Gallery" data-bn="ফটো গ্যালারি">ফটো গ্যালারি</a></li>
-          <li><a href="{% url 'bookings:lookup' %}" class="hover:text-sky-400 transition-colors trans-target" data-en="Track Booking Status" data-bn="বুকিং স্ট্যাটাস চেক">বুকিং স্ট্যাটাস চেক</a></li>
+          <li><a href="{% url 'tours:list' %}" class="hover:text-sky-400 transition-colors trans-target" data-en="All Tour Packages" data-bn="সকল ট্যুর প্যাকেজ">All Tour Packages</a></li>
+          <li><a href="/#destinations" class="hover:text-sky-400 transition-colors trans-target" data-en="Popular Destinations" data-bn="জনপ্রিয় গন্তব্যসমূহ">Popular Destinations</a></li>
+          <li><a href="{% url 'stories:list' %}" class="hover:text-sky-400 transition-colors trans-target" data-en="Travel Stories & Tips" data-bn="ভ্রমণ গল্প ও অভিজ্ঞতা">Travel Stories & Tips</a></li>
+          <li><a href="{% url 'gallery:index' %}" class="hover:text-sky-400 transition-colors trans-target" data-en="Photo Gallery" data-bn="ফটো গ্যালারি">Photo Gallery</a></li>
+          <li><a href="{% url 'bookings:lookup' %}" class="hover:text-sky-400 transition-colors trans-target" data-en="Track Booking Status" data-bn="বুকিং স্ট্যাটাস চেক">Track Booking Status</a></li>
         </ul>
       </div>
 
       <!-- Company & Support -->
-      <div class="space-y-3 font-bengali">
-        <h4 class="text-white font-semibold text-base mb-4 tracking-wide trans-target" data-en="Information & Support" data-bn="তথ্য ও সহায়তা">তথ্য ও সহায়তা</h4>
+      <div class="space-y-3">
+        <h4 class="text-white font-semibold text-base mb-4 tracking-wide trans-target" data-en="Information & Support" data-bn="তথ্য ও সহায়তা">Information & Support</h4>
         <ul class="space-y-2.5 text-sm text-slate-400">
-          <li><a href="{% url 'core:about' %}" class="hover:text-sky-400 transition-colors trans-target" data-en="About Us" data-bn="আমাদের সম্পর্কে">আমাদের সম্পর্কে</a></li>
-          <li><a href="/#faqs" class="hover:text-sky-400 transition-colors trans-target" data-en="Frequently Asked Questions" data-bn="সচরাচর জিজ্ঞাসা">সচরাচর জিজ্ঞাসা</a></li>
-          <li><a href="{% url 'core:contact' %}" class="hover:text-sky-400 transition-colors trans-target" data-en="Contact Us" data-bn="যোগাযোগ করুন">যোগাযোগ করুন</a></li>
+          <li><a href="{% url 'core:about' %}" class="hover:text-sky-400 transition-colors trans-target" data-en="About Us" data-bn="আমাদের সম্পর্কে">About Us</a></li>
+          <li><a href="/#faqs" class="hover:text-sky-400 transition-colors trans-target" data-en="Frequently Asked Questions" data-bn="সচরাচর জিজ্ঞাসা">Frequently Asked Questions</a></li>
+          <li><a href="{% url 'core:contact' %}" class="hover:text-sky-400 transition-colors trans-target" data-en="Contact Us" data-bn="যোগাযোগ করুন">Contact Us</a></li>
           <li><a href="/admin/" class="hover:text-sky-400 transition-colors flex items-center space-x-1">
             <i data-lucide="lock" class="w-3.5 h-3.5"></i>
-            <span class="trans-target" data-en="Admin Control Panel" data-bn="অ্যাডমিন প্যানেল">অ্যাডমিন প্যানেল</span>
+            <span class="trans-target" data-en="Admin Control Panel" data-bn="অ্যাডমিন প্যানেল">Admin Control Panel</span>
           </a></li>
         </ul>
       </div>
 
       <!-- Contact Details -->
-      <div class="space-y-3 font-bengali">
-        <h4 class="text-white font-semibold text-base mb-4 tracking-wide trans-target" data-en="Contact" data-bn="যোগাযোগ">যোগাযোগ</h4>
+      <div class="space-y-3">
+        <h4 class="text-white font-semibold text-base mb-4 tracking-wide trans-target" data-en="Contact" data-bn="যোগাযোগ">Contact</h4>
         <ul class="space-y-3 text-sm text-slate-400">
           <li class="flex items-start space-x-2.5">
             <i data-lucide="phone" class="w-4 h-4 text-sky-400 flex-shrink-0 mt-1"></i>
@@ -104,7 +106,7 @@
           <li class="flex items-start space-x-2.5">
             <i data-lucide="map-pin" class="w-4 h-4 text-sky-400 flex-shrink-0 mt-1"></i>
             <a href="https://maps.app.goo.gl/Cv52esJKLkZu2ouj9" target="_blank" rel="noopener" class="hover:text-sky-400 transition-colors trans-target" data-en="View Location on Google Maps" data-bn="গুগল ম্যাপে লোকেশন দেখুন">
-              গুগল ম্যাপে লোকেশন দেখুন
+              View Location on Google Maps
             </a>
           </li>
         </ul>
@@ -113,10 +115,10 @@
     </div>
 
     <!-- Bottom copyright -->
-    <div class="border-t border-slate-800 pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 font-bengali">
-      <p class="trans-target" data-en="© 2026 BhromonGhuri. All rights reserved." data-bn="© ২০২৬ ভ্রমণঘুড়ি। সর্বস্বত্ব সংরক্ষিত।">© ২০২৬ ভ্রমণঘুড়ি। সর্বস্বত্ব সংরক্ষিত।</p>
+    <div class="border-t border-slate-800 pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500">
+      <p class="trans-target" data-en="© 2026 BhromonGhuri. All rights reserved." data-bn="© ২০২৬ ভ্রমণঘুড়ি। সর্বস্বত্ব সংরক্ষিত।">© 2026 BhromonGhuri. All rights reserved.</p>
       <div class="flex items-center space-x-4 mt-3 sm:mt-0 text-slate-400">
-        <span class="trans-target" data-en="Safe Travel • Modern Experience • Responsible Tourism" data-bn="নিরাপদ ভ্রমণ • আধুনিক অভিজ্ঞতা • দায়িত্বশীল পর্যটন">নিরাপদ ভ্রমণ • আধুনিক অভিজ্ঞতা • দায়িত্বশীল পর্যটন</span>
+        <span class="trans-target" data-en="Safe Travel • Modern Experience • Responsible Tourism" data-bn="নিরাপদ ভ্রমণ • আধুনিক অভিজ্ঞতা • দায়িত্বশীল পর্যটন">Safe Travel • Modern Experience • Responsible Tourism</span>
       </div>
     </div>
   </div>
