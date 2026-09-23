@@ -41,9 +41,13 @@ def submit_payment_view(request, reference):
         return redirect('payments:checkout', reference=reference)
 
     booking = get_object_or_404(Booking, booking_reference=reference)
-    payment_method = request.POST.get('payment_method', 'BKASH')
+    payment_method = request.POST.get('payment_method', 'BKASH').upper()
     sender_number = request.POST.get('sender_number', '').strip()
     transaction_id = request.POST.get('transaction_id', '').strip()
+
+    if payment_method not in ['BKASH', 'NAGAD']:
+        messages.error(request, "ব্যাংক পেমেন্ট অপশনটি আপাতত স্থগিত রয়েছে (পরবর্তীতে যুক্ত করা হবে)। অনুগ্রহ করে বিকাশ অথবা নগদ নম্বরে (01855939459) পেমেন্ট করুন।")
+        return redirect('payments:checkout', reference=reference)
 
     if not sender_number:
         messages.error(request, "অনুগ্রহ করে আপনার প্রেরক নম্বর (Sender Mobile / Account Number) লিখুন।")

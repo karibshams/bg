@@ -30,6 +30,8 @@ class Command(BaseCommand):
         setting.hero_subheadline = "Discover mountains, cloud valleys, Sundarbans mangrove safari, and Saint Martin coral island with BhromonGhuri. Safe and thrilling travel every step of the way."
         setting.hero_subheadline_bn = "ভ্রমণঘুড়ির সাথে আবিষ্কার করুন পাহাড়, মেঘের উপত্যকা, সুন্দরবনের ম্যানগ্রোভ আর সেন্টমার্টিনের প্রবাল দ্বীপ। প্রতিটি পদক্ষেপে নিরাপদ ও রোমাঞ্চকর ভ্রমণ।"
         setting.phone = "+8801518919370, 01855939459"
+        setting.bkash_number = "01855939459 (Personal / Send Money)"
+        setting.nagad_number = "01855939459 (Personal / Send Money)"
         setting.email = "bhromonghuri@gmail.com"
         setting.address = "House 42, Road 11, Banani, Dhaka - 1213, Bangladesh"
         setting.facebook_url = "https://www.facebook.com/share/g/19km9RqB1g/"

@@ -23,7 +23,7 @@
 
 <div class="py-12 bg-slate-50 min-h-screen" x-data="{ 
     selectedMethod: 'BKASH',
-    bkashNum: '{{ site_setting.bkash_number|default:'01518919370' }}',
+    bkashNum: '{{ site_setting.bkash_number|default:'01855939459' }}',
     nagadNum: '{{ site_setting.nagad_number|default:'01855939459' }}',
     copied: false,
     copyNumber(num) {
@@ -55,7 +55,7 @@
                 bK
               </div>
               <span class="font-bold text-slate-900 text-sm">bKash</span>
-              <span class="text-[10px] text-slate-500 trans-target" data-en="bKash (Personal)" data-bn="বিকাশ (Personal)">bKash (Personal)</span>
+              <span class="text-[10px] text-slate-500 trans-target" data-en="bKash (01855939459)" data-bn="বিকাশ (01855939459)">bKash (01855939459)</span>
             </button>
 
             <!-- Nagad -->
@@ -66,18 +66,22 @@
                 ন
               </div>
               <span class="font-bold text-slate-900 text-sm">Nagad</span>
-              <span class="text-[10px] text-slate-500 trans-target" data-en="Nagad (Personal)" data-bn="নগদ (Personal)">Nagad (Personal)</span>
+              <span class="text-[10px] text-slate-500 trans-target" data-en="Nagad (01855939459)" data-bn="নগদ (01855939459)">Nagad (01855939459)</span>
             </button>
 
-            <!-- Card / Bank -->
-            <button type="button" @click="selectedMethod = 'CARD'"
-                    class="p-4 rounded-2xl border text-center transition-all flex flex-col items-center justify-center space-y-2 focus:outline-none"
-                    :class="selectedMethod === 'CARD' ? 'border-sky-500 bg-sky-50/50 shadow-md ring-2 ring-sky-500/30' : 'border-slate-200 hover:border-slate-300'">
-              <div class="w-10 h-10 rounded-full bg-sky-600 text-white flex items-center justify-center">
-                <i data-lucide="credit-card" class="w-5 h-5"></i>
+            <!-- Bank Payment (Temporarily On Hold / Suspended) -->
+            <button type="button" @click="selectedMethod = 'BANK'"
+                    class="p-4 rounded-2xl border text-center transition-all flex flex-col items-center justify-center space-y-2 focus:outline-none relative group"
+                    :class="selectedMethod === 'BANK' ? 'border-amber-400 bg-amber-50/70 shadow-md ring-2 ring-amber-400/30' : 'border-slate-200 bg-slate-50/80 hover:border-amber-300'">
+              <span class="absolute top-2 right-2 px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-amber-100 text-amber-800 border border-amber-300 uppercase tracking-wider trans-target"
+                    data-en="On Hold" data-bn="স্থগিত">
+                On Hold
+              </span>
+              <div class="w-10 h-10 rounded-full bg-slate-200 text-slate-500 flex items-center justify-center group-hover:bg-amber-100 group-hover:text-amber-800 transition-colors">
+                <i data-lucide="building-2" class="w-5 h-5"></i>
               </div>
-              <span class="font-bold text-slate-900 text-sm">Card/Bank</span>
-              <span class="text-[10px] text-slate-500 trans-target" data-en="Card / Helpline" data-bn="কার্ড / হেল্পলাইন">Card / Helpline</span>
+              <span class="font-bold text-slate-700 text-sm trans-target" data-en="Bank Payment" data-bn="ব্যাংক পেমেন্ট">Bank Payment</span>
+              <span class="text-[10px] text-amber-700 font-semibold trans-target" data-en="Temporarily On Hold" data-bn="সাময়িকভাবে স্থগিত">Temporarily On Hold</span>
             </button>
 
           </div>
@@ -92,11 +96,11 @@
               </button>
             </div>
             <div class="text-xl font-mono font-extrabold text-slate-900" x-text="bkashNum">
-              {{ site_setting.bkash_number }}
+              {{ site_setting.bkash_number|default:'01855939459' }}
             </div>
             <ol class="text-xs text-slate-700 space-y-1.5 list-decimal list-inside">
               <li>Open your bKash app and select <strong>Send Money</strong>.</li>
-              <li>Enter the official bKash number shown above.</li>
+              <li>Enter the official bKash number shown above (<strong>01855939459</strong>).</li>
               <li>Enter amount: <strong class="text-[#E2136E]">৳{{ booking.total_amount|floatformat:0 }}</strong></li>
               <li>Enter reference: <strong>{{ booking.booking_reference }}</strong></li>
               <li>After payment, enter your <strong>TrxID</strong> and <strong>bKash number</strong> in the form below.</li>
@@ -120,11 +124,11 @@
               </button>
             </div>
             <div class="text-xl font-mono font-extrabold text-slate-900" x-text="nagadNum">
-              {{ site_setting.nagad_number }}
+              {{ site_setting.nagad_number|default:'01855939459' }}
             </div>
             <ol class="text-xs text-slate-700 space-y-1.5 list-decimal list-inside">
               <li>Open your Nagad app and select <strong>Send Money</strong>.</li>
-              <li>Enter the official Nagad number shown above.</li>
+              <li>Enter the official Nagad number shown above (<strong>01855939459</strong>).</li>
               <li>Enter amount: <strong class="text-[#F7941D]">৳{{ booking.total_amount|floatformat:0 }}</strong></li>
               <li>Enter reference: <strong>{{ booking.booking_reference }}</strong></li>
               <li>After payment, enter your <strong>TrxID</strong> and <strong>Nagad number</strong> in the form below.</li>
@@ -138,22 +142,27 @@
             </div>
           </div>
 
-          <!-- Card / Bank Info Panel -->
-          <div x-show="selectedMethod === 'CARD'" class="p-5 rounded-2xl bg-sky-50 border border-sky-200 space-y-2">
-            <h4 class="font-bold text-sky-900 text-sm trans-target" data-en="Bank Transfer or Card Payment Support" data-bn="ব্যাংক ট্রান্সফার বা কার্ড পেমেন্ট সহায়তা">Bank Transfer or Card Payment Support</h4>
-            <p class="text-xs text-slate-600 trans-target"
-               data-en="For direct bank deposit or international card assistance, please call our helpline or message on WhatsApp:"
-               data-bn="সরাসরি ব্যাংক অ্যাকাউন্ট বা কার্ডে পেমেন্ট করতে অনুগ্রহ করে আমাদের হেল্পলাইনে কল করুন অথবা হোয়াটসঅ্যাপে বার্তা পাঠান:">
-              For direct bank deposit or international card assistance, please call our helpline or message on WhatsApp:
-            </p>
-            <div class="text-sm font-mono font-bold text-sky-700">
-              {{ site_setting.phone }}
+          <!-- Bank On Hold Notice Panel -->
+          <div x-show="selectedMethod === 'BANK'" class="p-6 rounded-2xl bg-amber-50/90 border border-amber-300 space-y-3">
+            <div class="flex items-center space-x-2 text-amber-900 font-bold text-sm">
+              <i data-lucide="alert-circle" class="w-5 h-5 text-amber-600 flex-shrink-0"></i>
+              <span class="trans-target" data-en="Bank Payment is Temporarily On Hold" data-bn="ব্যাংক পেমেন্ট অপশনটি আপাতত স্থগিত রয়েছে">Bank Payment is Temporarily On Hold</span>
             </div>
-            <p class="text-xs text-slate-500 trans-target"
-               data-en="After completing the transfer, enter the bank deposit slip number or transaction ID below."
-               data-bn="পেমেন্ট সম্পন্ন করার পর ব্যাংক ডিপোজিট স্লিপ নম্বর বা ট্রানজেকশন আইডি নিচে দিয়ে সাবমিট করুন।">
-              After completing the transfer, enter the bank deposit slip number or transaction ID below.
+            <p class="text-xs text-amber-800 leading-relaxed trans-target"
+               data-en="The bank payment option is currently suspended/on hold and will be integrated soon. Please complete your payment directly using our official bKash or Nagad accounts (01855939459)."
+               data-bn="ব্যাংক পেমেন্ট অপশনটি আপাতত স্থগিত/হোল্ড রয়েছে (পরবর্তীতে যুক্ত করা হবে)। অনুগ্রহ করে আমাদের অফিশিয়াল বিকাশ অথবা নগদ নম্বর (01855939459) ব্যবহার করে পেমেন্ট সম্পন্ন করুন।">
+              The bank payment option is currently suspended/on hold and will be integrated soon. Please complete your payment directly using our official bKash or Nagad accounts (01855939459).
             </p>
+            <div class="pt-2 flex flex-wrap gap-2">
+              <button type="button" @click="selectedMethod = 'BKASH'" class="px-4 py-2 rounded-xl bg-[#E2136E] text-white text-xs font-bold shadow hover:bg-[#c20f5e] transition-colors flex items-center space-x-1.5">
+                <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                <span class="trans-target" data-en="Pay via bKash (01855939459)" data-bn="বিকাশে পে করুন (01855939459)">Pay via bKash (01855939459)</span>
+              </button>
+              <button type="button" @click="selectedMethod = 'NAGAD'" class="px-4 py-2 rounded-xl bg-[#F7941D] text-white text-xs font-bold shadow hover:bg-[#d97c12] transition-colors flex items-center space-x-1.5">
+                <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                <span class="trans-target" data-en="Pay via Nagad (01855939459)" data-bn="নগদে পে করুন (01855939459)">Pay via Nagad (01855939459)</span>
+              </button>
+            </div>
           </div>
 
           <!-- Verification Submission Form -->
@@ -199,8 +208,16 @@
               </p>
             </div>
 
+            <div x-show="selectedMethod === 'BANK'" class="p-3.5 rounded-xl bg-amber-50 border border-amber-300 text-xs text-amber-900 font-semibold text-center space-y-1">
+              <p class="trans-target" data-en="Bank payment option is temporarily on hold. Please choose bKash or Nagad above to submit your payment details." data-bn="ব্যাংক পেমেন্ট অপশনটি আপাতত স্থগিত রয়েছে। পেমেন্ট তথ্য সাবমিট করতে দয়া করে উপরে বিকাশ অথবা নগদ বেছে নিন।">
+                Bank payment option is temporarily on hold. Please choose bKash or Nagad above to submit your payment details.
+              </p>
+            </div>
+
             <button type="submit" 
-                    class="w-full py-4 rounded-2xl bg-sky-600 hover:bg-sky-500 text-white font-extrabold text-center shadow-lg shadow-sky-600/25 transition-all block font-bengali text-base trans-target"
+                    :disabled="selectedMethod === 'BANK'"
+                    :class="selectedMethod === 'BANK' ? 'opacity-50 cursor-not-allowed bg-slate-400' : 'bg-sky-600 hover:bg-sky-500 shadow-lg shadow-sky-600/25'"
+                    class="w-full py-4 rounded-2xl text-white font-extrabold text-center transition-all block font-bengali text-base trans-target"
                     data-en="Submit for Verification →" data-bn="পেমেন্ট তথ্য সাবমিট করুন (Submit for Verification)">
               Submit for Verification →
             </button>

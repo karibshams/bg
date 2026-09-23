@@ -23,7 +23,7 @@ class Problem5DynamicTourPaymentTestCase(TestCase):
     def setUp(self):
         self.client = Client()
         self.site_setting = SiteSetting.load()
-        self.site_setting.bkash_number = "01518919370 (Personal / Send Money)"
+        self.site_setting.bkash_number = "01855939459 (Personal / Send Money)"
         self.site_setting.nagad_number = "01855939459 (Personal / Send Money)"
         self.site_setting.save()
 
@@ -252,3 +252,73 @@ class Problem5DynamicTourPaymentTestCase(TestCase):
         self.assertEqual(response['Content-Type'], 'application/pdf')
         self.assertIn(f'attachment; filename="BhromonGhuri_Voucher_{booking.booking_reference}.pdf"', response['Content-Disposition'])
         self.assertTrue(response.content.startswith(b"%PDF"))
+
+    def test_problem5_official_payment_numbers_and_bank_on_hold_display(self):
+        """
+        Problem 5 Verification:
+        1. Official number for bKash and Nagad is set to 01855939459.
+        2. Checkout page explicitly displays 01855939459 for both bKash and Nagad.
+        3. Bank Payment option is prominently flagged as On Hold (স্থগিত).
+        """
+        booking = Booking.objects.create(
+            tour=self.tour,
+            tour_date=self.tour_date,
+            customer_name="Payment Tester",
+            customer_email="tester@example.com",
+            customer_phone="01712345678",
+            num_travelers=2,
+            unit_price=6500.00,
+            status='PENDING'
+        )
+        url = reverse('payments:checkout', kwargs={'reference': booking.booking_reference})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        content = response.content.decode('utf-8')
+
+        # Check official number 01855939459
+        self.assertIn("01855939459", content)
+        self.assertIn("bKash (01855939459)", content)
+        self.assertIn("Nagad (01855939459)", content)
+
+        # Check Bank Payment is marked On Hold / স্থগিত
+        self.assertIn("Bank Payment", content)
+        self.assertIn("On Hold", content)
+        self.assertIn("Temporarily On Hold", content)
+
+    def test_problem5_bank_payment_submission_rejected(self):
+        """
+        Problem 5 Verification:
+        Bank payment option is suspended / on hold. Submitting with payment_method='BANK'
+        must be rejected and guide the user to pay via bKash or Nagad (01855939459).
+        """
+        booking = Booking.objects.create(
+            tour=self.tour,
+            tour_date=self.tour_date,
+            customer_name="Bank Payer",
+            customer_email="bankpayer@example.com",
+            customer_phone="01712345678",
+            num_travelers=2,
+            unit_price=6500.00,
+            status='PENDING'
+        )
+        post_data = {
+            'payment_method': 'BANK',
+            'sender_number': '01712345678',
+            'transaction_id': 'BANK-TRX-123'
+        }
+        response = self.client.post(
+            reverse('payments:submit', kwargs={'reference': booking.booking_reference}),
+            post_data,
+            follow=True
+        )
+        # Should redirect back to checkout with message
+        self.assertEqual(response.status_code, 200)
+        content = response.content.decode('utf-8')
+        self.assertIn("ব্যাংক পেমেন্ট অপশনটি আপাতত স্থগিত রয়েছে", content)
+        self.assertIn("01855939459", content)
+
+        # Booking should remain PENDING (not PENDING_VERIFICATION)
+        booking.refresh_from_db()
+        self.assertEqual(booking.status, 'PENDING')
+        self.assertFalse(Payment.objects.filter(transaction_id='BANK-TRX-123').exists())
+
