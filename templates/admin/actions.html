@@ -1,0 +1,160 @@
+{% load i18n %}
+<div class="actions admin-bulk-actions-toolbar">
+  <div class="actions-wrapper">
+    <div class="actions-left-group">
+      <div class="actions-heading-badge">
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        <span>Bulk Actions</span>
+      </div>
+
+      {% block actions-form %}
+      <div class="action-select-container">
+        <select name="action" class="admin-action-select" required aria-label="{% translate 'Select action' %}">
+          <option value="" selected disabled>— Choose Bulk Action —</option>
+          {% for entry in action_form.fields.action.choices %}
+            {% if entry.0 %}
+              <option value="{{ entry.0 }}">
+                {% if entry.0 == 'delete_selected' %}
+                  🗑️ {{ entry.1 }}
+                {% elif 'approve' in entry.0 or 'confirm' in entry.0 %}
+                  ✓ {{ entry.1 }}
+                {% elif 'reject' in entry.0 or 'cancel' in entry.0 %}
+                  ✗ {{ entry.1 }}
+                {% else %}
+                  ⚡ {{ entry.1 }}
+                {% endif %}
+              </option>
+            {% endif %}
+          {% endfor %}
+        </select>
+        {% for field in action_form %}
+          {% if field.name != 'action' %}
+            {{ field }}
+          {% endif %}
+        {% endfor %}
+      </div>
+      {% endblock %}
+
+      {% block actions-submit %}
+      <button type="submit" class="button btn-execute-action" title="{% translate 'Run the selected action' %}" name="index" value="{{ action_index|default:0 }}">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        <span>Apply Action</span>
+      </button>
+      {% endblock %}
+
+      <!-- Direct Delete Selected Items Button -->
+      <button type="button" class="btn-bulk-delete" title="Delete all selected items directly from this table view" onclick="executeAdminBulkDelete(this, '{{ action_index|default:0 }}')">
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+        <span>Delete Selected Items</span>
+      </button>
+
+      <!-- Quick Action shortcuts for common workflows -->
+      {% for entry in action_form.fields.action.choices %}
+        {% if entry.0 == 'approve_payments' %}
+          <button type="button" class="btn-quick-action btn-quick-approve" onclick="executeAdminQuickAction(this, 'approve_payments', '{{ action_index|default:0 }}')" title="Approve all selected payments">
+            ✓ Quick Approve
+          </button>
+        {% elif entry.0 == 'reject_payments' %}
+          <button type="button" class="btn-quick-action btn-quick-reject" onclick="executeAdminQuickAction(this, 'reject_payments', '{{ action_index|default:0 }}')" title="Reject all selected payments">
+            ✗ Quick Reject
+          </button>
+        {% elif entry.0 == 'mark_confirmed' %}
+          <button type="button" class="btn-quick-action btn-quick-approve" onclick="executeAdminQuickAction(this, 'mark_confirmed', '{{ action_index|default:0 }}')" title="Confirm all selected bookings">
+            ✓ Quick Confirm
+          </button>
+        {% elif entry.0 == 'approve_selected_stories' %}
+          <button type="button" class="btn-quick-action btn-quick-approve" onclick="executeAdminQuickAction(this, 'approve_selected_stories', '{{ action_index|default:0 }}')" title="Approve all selected stories">
+            ✓ Quick Approve
+          </button>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    <div class="actions-right-group">
+      {% block actions-counter %}
+      {% if actions_selection_counter %}
+        <span class="action-counter" data-actions-icnt="{{ cl.result_list|length }}">
+          <span class="counter-dot"></span>
+          {{ selection_note }}
+        </span>
+        {% if cl.result_count != cl.result_list|length %}
+          <span class="all hidden">{{ selection_note_all }}</span>
+          <span class="question hidden">
+            <a href="#" title="{% translate 'Click here to select the objects across all pages' %}">
+              {% blocktranslate with cl.result_count as total_count %}Select all {{ total_count }} {{ module_name }}{% endblocktranslate %}
+            </a>
+          </span>
+          <span class="clear hidden"><a href="#">{% translate 'Clear selection' %}</a></span>
+        {% endif %}
+      {% endif %}
+      {% endblock %}
+    </div>
+  </div>
+</div>
+
+<script>
+if (typeof window.executeAdminBulkDelete === 'undefined') {
+  window.executeAdminBulkDelete = function(btn, indexVal) {
+    var form = btn.closest('form') || document.getElementById('changelist-form');
+    if (!form) return;
+    var checked = form.querySelectorAll('#result_list tbody input.action-select:checked');
+    if (checked.length === 0) {
+      alert('Please select at least one row from the table below using the checkboxes before deleting.');
+      return;
+    }
+    var actionSelect = form.querySelector('select[name="action"]');
+    if (actionSelect) {
+      actionSelect.value = 'delete_selected';
+    }
+    var hiddenIndex = form.querySelector('input[name="index"]') || form.querySelector('button[name="index"]');
+    if (hiddenIndex) {
+      hiddenIndex.value = indexVal || '0';
+    }
+    form.submit();
+  };
+
+  window.executeAdminQuickAction = function(btn, actionName, indexVal) {
+    var form = btn.closest('form') || document.getElementById('changelist-form');
+    if (!form) return;
+    var checked = form.querySelectorAll('#result_list tbody input.action-select:checked');
+    if (checked.length === 0) {
+      alert('Please select at least one row from the table below using the checkboxes.');
+      return;
+    }
+    var actionSelect = form.querySelector('select[name="action"]');
+    if (actionSelect) {
+      actionSelect.value = actionName;
+    }
+    var hiddenIndex = form.querySelector('input[name="index"]') || form.querySelector('button[name="index"]');
+    if (hiddenIndex) {
+      hiddenIndex.value = indexVal || '0';
+    }
+    form.submit();
+  };
+
+  document.addEventListener('DOMContentLoaded', function() {
+    function updateCounterAppearance() {
+      var checked = document.querySelectorAll('#result_list tbody input.action-select:checked');
+      var counters = document.querySelectorAll('.action-counter');
+      counters.forEach(function(c) {
+        if (checked.length > 0) {
+          c.classList.add('has-selection');
+        } else {
+          c.classList.remove('has-selection');
+        }
+      });
+    }
+
+    var resultList = document.getElementById('result_list');
+    if (resultList) {
+      resultList.addEventListener('change', updateCounterAppearance);
+      var toggle = document.getElementById('action-toggle');
+      if (toggle) {
+        toggle.addEventListener('change', function() {
+          setTimeout(updateCounterAppearance, 60);
+        });
+      }
+    }
+  });
+}
+</script>
