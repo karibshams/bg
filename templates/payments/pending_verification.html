@@ -25,24 +25,108 @@
   </div>
 </div>
 
-<div class="py-12 bg-slate-50 min-h-screen">
+<div class="py-12 bg-slate-50 min-h-screen" x-data="{
+    copied: false,
+    copyRef() {
+        navigator.clipboard.writeText('{{ booking.booking_reference }}');
+        this.copied = true;
+        setTimeout(() => { this.copied = false; }, 2500);
+    }
+}">
   <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
     
     <!-- Submission Details Card -->
     <div class="bg-white rounded-3xl shadow-xl border border-slate-200/80 p-8 space-y-6 font-bengali">
       
-      <div class="flex items-center justify-between border-b border-slate-100 pb-4">
-        <div>
-          <span class="text-xs text-slate-400 block trans-target" data-en="Booking Reference ID" data-bn="বুকিং রেফারেন্স নম্বর">Booking Reference ID</span>
-          <span class="text-xl font-mono font-black text-slate-900">{{ booking.booking_reference }}</span>
+      <!-- Booking Reference ID Header with Copy Button -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-5">
+        <div class="space-y-1">
+          <span class="text-xs font-semibold text-slate-400 block uppercase tracking-wider trans-target" data-en="Booking Reference ID" data-bn="বুকিং রেফারেন্স নম্বর">Booking Reference ID</span>
+          <div class="flex items-center space-x-2">
+            <span class="text-xl sm:text-2xl font-mono font-black text-sky-700 bg-sky-50 border border-sky-200 px-3 py-1 rounded-xl tracking-wide select-all">{{ booking.booking_reference }}</span>
+            <button type="button" @click="copyRef()" 
+                    class="px-3.5 py-1.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs flex items-center space-x-1.5 shadow-sm transition-all focus:outline-none"
+                    title="Copy Booking Reference ID">
+              <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+              <span x-text="copied ? 'Copied!' : 'Copy'">Copy</span>
+            </button>
+          </div>
         </div>
-        <span class="px-3.5 py-1.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-300 flex items-center space-x-1">
-          <i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i>
-          <span class="trans-target" data-en="Pending Verification" data-bn="ভেরিফিকেশন অপেক্ষমাণ">Pending Verification</span>
-        </span>
+
+        <div>
+          {% if booking.status == 'CONFIRMED' %}
+          <span class="px-3.5 py-1.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 flex items-center space-x-1">
+            <i data-lucide="check-circle" class="w-3.5 h-3.5 text-emerald-600"></i>
+            <span class="trans-target" data-en="Confirmed" data-bn="অনুমোদিত / নিশ্চিত">Confirmed</span>
+          </span>
+          {% elif booking.status == 'REJECTED' %}
+          <span class="px-3.5 py-1.5 rounded-full text-xs font-bold bg-rose-100 text-rose-800 border border-rose-300 flex items-center space-x-1">
+            <i data-lucide="x-circle" class="w-3.5 h-3.5 text-rose-600"></i>
+            <span class="trans-target" data-en="Rejected" data-bn="প্রত্যাখ্যাত">Rejected</span>
+          </span>
+          {% else %}
+          <span class="px-3.5 py-1.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-300 flex items-center space-x-1">
+            <i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i>
+            <span class="trans-target" data-en="Pending Verification" data-bn="ভেরিফিকেশন অপেক্ষমাণ">Pending Verification</span>
+          </span>
+          {% endif %}
+        </div>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs sm:text-sm text-slate-600">
+      <!-- Mandatory Reference ID Notice -->
+      <div class="p-4 rounded-2xl bg-amber-50 border border-amber-300 text-amber-950 text-xs flex items-start space-x-3 shadow-sm">
+        <i data-lucide="bookmark" class="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5"></i>
+        <div class="space-y-1">
+          <p class="font-bold text-amber-900 trans-target"
+             data-en="Mandatory Notice: Please Save Your Booking Reference ID!"
+             data-bn="জরুরি নোটিশ: বুকিং রেফারেন্স আইডিটি সংরক্ষণ করা বাধ্যতামূলক!">
+            Mandatory Notice: Please Save Your Booking Reference ID!
+          </p>
+          <p class="leading-relaxed trans-target"
+             data-en="You must copy and save your Booking Reference ID to check your payment verification status and download your tour voucher via 'Track Booking'."
+             data-bn="ভেরিফিকেশন স্ট্যাটাস ট্র্যাক করতে বা 'Track Booking' পেজ থেকে ট্যুর ভাউচার সংগ্রহ করতে এই রেফারেন্স নম্বরটি সংরক্ষণ করা বাধ্যতামূলক।">
+            You must copy and save your Booking Reference ID to check your payment verification status and download your tour voucher via 'Track Booking'.
+          </p>
+        </div>
+      </div>
+
+      <!-- Accurate Payment Notice -->
+      <div class="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-900 text-xs space-y-1.5 shadow-sm">
+        <div class="flex items-center space-x-2 font-bold text-rose-800">
+          <i data-lucide="shield-alert" class="w-4 h-4 text-rose-600 flex-shrink-0"></i>
+          <span class="trans-target"
+                data-en="Accurate Payment Notice — Strict Verification Policy"
+                data-bn="সঠিক পেমেন্ট নোটিশ — কঠোর ভেরিফিকেশন নীতিমালা">
+            Accurate Payment Notice — Strict Verification Policy
+          </span>
+        </div>
+        <p class="leading-relaxed trans-target"
+           data-en="The sender's mobile banking number and Transaction ID (TrxID) must be 100% valid. Any incorrect, mismatched, or fake transaction details will result in immediate rejection of the booking."
+           data-bn="প্রেরক মোবাইল ব্যাংকিং নম্বর এবং ট্রানজেকশন আইডি (TrxID) ১০০% সঠিক ও নির্ভুল হতে হবে; যেকোনো ভুল বা ভুয়া তথ্য প্রদান করলে বুকিং তাৎক্ষণিকভাবে বাতিল/প্রত্যাখ্যাত (Immediate Rejection) হবে।">
+          The sender's mobile banking number and Transaction ID (TrxID) must be 100% valid. Any incorrect, mismatched, or fake transaction details will result in immediate rejection of the booking.
+        </p>
+      </div>
+
+      <!-- Rejection Specific Reason Notice (If Rejected) -->
+      {% if booking.status == 'REJECTED' %}
+      <div class="p-4 rounded-2xl bg-rose-100 border border-rose-300 text-rose-950 text-xs space-y-2">
+        <div class="flex items-center space-x-2 font-bold text-rose-900 text-sm">
+          <i data-lucide="x-circle" class="w-5 h-5 text-rose-600 flex-shrink-0"></i>
+          <span class="trans-target" data-en="Booking Rejected" data-bn="বুকিং প্রত্যাখ্যাত হয়েছে">Booking Rejected</span>
+        </div>
+        <p class="text-xs text-rose-900">
+          <span class="font-bold trans-target" data-en="Specific Reason:" data-bn="প্রত্যাখ্যানের কারণ:">Specific Reason:</span>
+          <span class="font-semibold">{{ booking.rejection_reason|default:"Transaction details could not be verified or invalid details submitted." }}</span>
+        </p>
+        <p class="text-[11px] text-rose-800 trans-target"
+           data-en="For questions or follow-up regarding this rejection, contact our helpline at +8801518919370, +8801855939459."
+           data-bn="এই বিষয়ে যেকোনো তথ্যের জন্য বা সহায়তার জন্য আমাদের হেল্পলাইনে সরাসরি যোগাযোগ করুন: +8801518919370, +8801855939459।">
+          For questions or follow-up regarding this rejection, contact our helpline at +8801518919370, +8801855939459.
+        </p>
+      </div>
+      {% endif %}
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs sm:text-sm text-slate-600 pt-2">
         <div>
           <span class="text-slate-400 block text-xs trans-target" data-en="Tour Package:" data-bn="ট্যুর প্যাকেজ:">Tour Package:</span>
           <span class="font-bold text-slate-900 trans-target" data-en="{{ booking.tour.title }}" data-bn="{{ booking.tour.bangla_title|default:booking.tour.title }}">{{ booking.tour.title }}</span>
@@ -76,7 +160,7 @@
 
         <div>
           <span class="text-slate-400 block text-xs trans-target" data-en="Sender Number:" data-bn="প্রেরক নম্বর:">Sender Number:</span>
-          <span class="font-bold text-slate-900">{{ payment.sender_number|default:booking.customer_phone }}</span>
+          <span class="font-bold text-slate-900 font-mono">{{ payment.sender_number|default:booking.customer_phone }}</span>
         </div>
 
         <div>

@@ -153,6 +153,9 @@ class PaymentGatewayService:
             })
             payment.save()
 
-            # Cancel booking and recalculate seats
-            booking.cancel_booking()
+            # Reject booking and record specific rejection reason
+            reason = "ভুল বা অসত্য ট্রানজেকশন তথ্য প্রদানের কারণে বুকিংটি বাতিল করা হয়েছে (Invalid or unverified transaction details)."
+            if response_data and isinstance(response_data, dict):
+                reason = response_data.get('reason') or response_data.get('rejection_reason') or reason
+            booking.reject_booking(reason=reason)
             return False

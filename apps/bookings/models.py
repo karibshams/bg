@@ -8,6 +8,7 @@ class Booking(models.Model):
     STATUS_PENDING_VERIFICATION = 'PENDING_VERIFICATION'
     STATUS_CONFIRMED = 'CONFIRMED'
     STATUS_CANCELLED = 'CANCELLED'
+    STATUS_REJECTED = 'REJECTED'
     STATUS_COMPLETED = 'COMPLETED'
 
     STATUS_CHOICES = [
@@ -15,6 +16,7 @@ class Booking(models.Model):
         (STATUS_PENDING_VERIFICATION, 'Pending Verification'),
         (STATUS_CONFIRMED, 'Confirmed'),
         (STATUS_CANCELLED, 'Cancelled'),
+        (STATUS_REJECTED, 'Rejected'),
         (STATUS_COMPLETED, 'Completed'),
     ]
 
@@ -32,6 +34,7 @@ class Booking(models.Model):
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
     
     special_requests = models.TextField(blank=True)
+    rejection_reason = models.TextField(blank=True, default='', help_text="Specific reason if the booking was rejected")
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDING')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -65,6 +68,15 @@ class Booking(models.Model):
         """Marks booking cancelled and restores seats on the tour batch."""
         self.status = self.STATUS_CANCELLED
         self.save(update_fields=['status', 'updated_at'])
+        if self.tour_date:
+            self.tour_date.update_available_seats()
+
+    def reject_booking(self, reason=""):
+        """Marks booking rejected with specific reason and restores seats on the tour batch."""
+        self.status = self.STATUS_REJECTED
+        if reason:
+            self.rejection_reason = reason
+        self.save(update_fields=['status', 'rejection_reason', 'updated_at'])
         if self.tour_date:
             self.tour_date.update_available_seats()
 

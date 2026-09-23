@@ -33,7 +33,7 @@ class BookingAdmin(admin.ModelAdmin):
         'payments__sender_number'
     )
     readonly_fields = ('booking_reference', 'created_at', 'updated_at')
-    actions = ['mark_confirmed', 'mark_cancelled']
+    actions = ['mark_confirmed', 'mark_rejected', 'mark_cancelled']
 
     def tour_title(self, obj):
         return obj.tour.bangla_title or obj.tour.title
@@ -71,7 +71,8 @@ class BookingAdmin(admin.ModelAdmin):
             'PENDING': '#f59e0b',
             'PENDING_VERIFICATION': '#f97316',
             'CONFIRMED': '#10b981',
-            'CANCELLED': '#ef4444',
+            'CANCELLED': '#64748b',
+            'REJECTED': '#ef4444',
             'COMPLETED': '#6366f1',
         }
         labels = {
@@ -79,6 +80,7 @@ class BookingAdmin(admin.ModelAdmin):
             'PENDING_VERIFICATION': 'Pending Verification (অপেক্ষমাণ)',
             'CONFIRMED': 'Confirmed (নিশ্চিত)',
             'CANCELLED': 'Cancelled',
+            'REJECTED': 'Rejected (বাতিল/প্রত্যাখ্যাত)',
             'COMPLETED': 'Completed',
         }
         color = colors.get(obj.status, '#64748b')
@@ -92,16 +94,24 @@ class BookingAdmin(admin.ModelAdmin):
     def approve_action(self, obj):
         if obj.status in ['PENDING', 'PENDING_VERIFICATION']:
             approve_url = reverse('admin:booking_approve_single', args=[obj.id])
+            reject_url = reverse('admin:booking_reject_single', args=[obj.id])
             return format_html(
-                '<a href="{}" style="background-color: #10b981; color: white; padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: 800; text-decoration: none; display: inline-block; box-shadow: 0 1px 3px rgba(0,0,0,0.15);">'
-                '✓ Approve (অনুমোদন করুন)'
-                '</a>',
-                approve_url
+                '<div style="display: flex; gap: 4px; align-items: center;">'
+                '<a href="{}" style="background-color: #10b981; color: white; padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 800; text-decoration: none; display: inline-block; box-shadow: 0 1px 2px rgba(0,0,0,0.1);">'
+                '✓ Approve'
+                '</a>'
+                '<a href="{}" style="background-color: #ef4444; color: white; padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 800; text-decoration: none; display: inline-block; box-shadow: 0 1px 2px rgba(0,0,0,0.1);" onclick="return confirm(\'Are you sure you want to reject this booking due to invalid or unverified details?\');">'
+                '✗ Reject'
+                '</a>'
+                '</div>',
+                approve_url, reject_url
             )
         elif obj.status == 'CONFIRMED':
             return format_html('<span style="color: #10b981; font-weight: bold; font-size: 11px;">✓ অনুমোদিত (Approved)</span>')
+        elif obj.status == 'REJECTED':
+            return format_html('<span style="color: #ef4444; font-weight: bold; font-size: 11px;">✗ প্রত্যাখ্যাত (Rejected)</span>')
         return "-"
-    approve_action.short_description = "অনুমোদন অ্যাকশন (Action)"
+    approve_action.short_description = "অ্যাকশন (Action)"
 
     def voucher_link(self, obj):
         if obj.status == 'CONFIRMED':
@@ -114,6 +124,7 @@ class BookingAdmin(admin.ModelAdmin):
         urls = super().get_urls()
         custom_urls = [
             path('<int:booking_id>/approve-quick/', self.admin_site.admin_view(self.approve_single_booking), name='booking_approve_single'),
+            path('<int:booking_id>/reject-quick/', self.admin_site.admin_view(self.reject_single_booking), name='booking_reject_single'),
         ]
         return custom_urls + urls
 
@@ -140,6 +151,26 @@ class BookingAdmin(admin.ModelAdmin):
         )
         return redirect('admin:bookings_booking_changelist')
 
+    def reject_single_booking(self, request, booking_id):
+        booking = get_object_or_404(Booking, id=booking_id)
+        reason = "অসত্য বা অমিল পেমেন্ট ট্রানজেকশন তথ্যের কারণে অ্যাডমিন কর্তৃক বুকিংটি বাতিল করা হয়েছে (Incorrect or unverified payment details)."
+        payment = booking.payments.order_by('-created_at').first()
+        if payment:
+            PaymentGatewayService.process_confirmation(payment, success=False, response_data={
+                'rejected_by': request.user.username,
+                'source': 'BookingAdmin Quick Reject',
+                'reason': reason
+            })
+        else:
+            booking.reject_booking(reason=reason)
+
+        self.message_user(
+            request,
+            f"✗ বুকিং {booking.booking_reference} ({booking.customer_name}) বাতিল ও প্রত্যাখ্যাত করা হয়েছে।",
+            level=messages.WARNING
+        )
+        return redirect('admin:bookings_booking_changelist')
+
     @admin.action(description="✓ Approve Selected Bookings (অনুমোদন ও আসন আপডেট)")
     def mark_confirmed(self, request, queryset):
         count = 0
@@ -159,6 +190,23 @@ class BookingAdmin(admin.ModelAdmin):
             request,
             f"✓ {count}টি বুকিং সফলভাবে অনুমোদিত হয়েছে এবং আসন সংখ্যা আপডেট করা হয়েছে।",
             level=messages.SUCCESS
+        )
+
+    @admin.action(description="✗ Reject Selected Bookings (প্রত্যাখ্যান ও আসন ফেরত)")
+    def mark_rejected(self, request, queryset):
+        count = 0
+        for b in queryset:
+            payment = b.payments.order_by('-created_at').first()
+            reason = "অসত্য বা অমিল পেমেন্ট ট্রানজেকশন তথ্যের কারণে অ্যাডমিন কর্তৃক বুকিংটি বাতিল করা হয়েছে (Incorrect or unverified payment details)."
+            if payment:
+                PaymentGatewayService.process_confirmation(payment, success=False, response_data={'reason': reason})
+            else:
+                b.reject_booking(reason=reason)
+            count += 1
+        self.message_user(
+            request,
+            f"✗ {count}টি বুকিং প্রত্যাখ্যাত করা হয়েছে।",
+            level=messages.WARNING
         )
 
     @admin.action(description="✗ Cancel Selected Bookings (বাতিল ও আসন ফেরত)")

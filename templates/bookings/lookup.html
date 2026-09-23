@@ -21,9 +21,34 @@
   </div>
 </div>
 
-<div class="py-12 bg-slate-50 min-h-screen">
-  <div class="max-w-xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 font-bengali">
+<div class="py-12 bg-slate-50 min-h-screen" x-data="{
+    copied: false,
+    copyRef(ref) {
+        navigator.clipboard.writeText(ref);
+        this.copied = true;
+        setTimeout(() => { this.copied = false; }, 2500);
+    }
+}">
+  <div class="max-w-xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 font-bengali">
     
+    <!-- Mandatory Reference ID Notice -->
+    <div class="p-4 rounded-2xl bg-amber-50 border border-amber-300 text-amber-950 text-xs flex items-start space-x-3 shadow-sm">
+      <i data-lucide="bookmark" class="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5"></i>
+      <div class="space-y-1">
+        <span class="font-bold text-amber-900 block trans-target"
+              data-en="Mandatory Notice: Save Your Booking Reference ID"
+              data-bn="জরুরি নোটিশ: বুকিং রেফারেন্স আইডিটি সংরক্ষণ করা বাধ্যতামূলক">
+          Mandatory Notice: Save Your Booking Reference ID
+        </span>
+        <span class="trans-target leading-relaxed text-amber-800"
+              data-en="Always save your Booking Reference ID (e.g., BG-2026-XXXXXX). You will need this ID to check your live verification status and download your tour vouchers."
+              data-bn="বুকিং সম্পন্ন করার সময় প্রাপ্ত রেফারেন্স আইডি (যেমন: BG-2026-XXXXXX) সর্বদা সংরক্ষণ করুন। স্ট্যাটাস যাচাই এবং ভাউচার পাওয়ার জন্য এই নম্বরটি আবশ্যক।">
+          Always save your Booking Reference ID (e.g., BG-2026-XXXXXX). You will need this ID to check your live verification status and download your tour vouchers.
+        </span>
+      </div>
+    </div>
+
+    <!-- Search Form Card -->
     <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-slate-200">
       <form action="{% url 'bookings:lookup' %}" method="GET" class="space-y-4">
         <div>
@@ -44,16 +69,66 @@
     {% if searched %}
       {% if booking %}
       <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-lg border border-slate-200 space-y-4">
-        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-          <span class="text-xs text-slate-400 trans-target" data-en="Current Status" data-bn="বর্তমান স্ট্যাটাস">Current Status</span>
-          <span class="px-3 py-1 rounded-full text-xs font-bold 
+        
+        <!-- Header with Reference ID and Status Badge -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
+          <div class="flex items-center space-x-2">
+            <span class="font-mono font-bold text-slate-900 text-base">{{ booking.booking_reference }}</span>
+            <button type="button" @click="copyRef('{{ booking.booking_reference }}')" 
+                    class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold flex items-center space-x-1 transition-colors"
+                    title="Copy Reference ID">
+              <i data-lucide="copy" class="w-3 h-3"></i>
+              <span x-text="copied ? 'Copied!' : 'Copy'">Copy</span>
+            </button>
+          </div>
+          <span class="px-3 py-1 rounded-full text-xs font-bold self-start sm:self-auto
             {% if booking.status == 'CONFIRMED' %}bg-emerald-100 text-emerald-800 border border-emerald-300
             {% elif booking.status == 'PENDING_VERIFICATION' %}bg-amber-100 text-amber-800 border border-amber-300
-            {% elif booking.status == 'CANCELLED' %}bg-rose-100 text-rose-800 border border-rose-300
+            {% elif booking.status == 'REJECTED' %}bg-rose-100 text-rose-800 border border-rose-300
+            {% elif booking.status == 'CANCELLED' %}bg-slate-100 text-slate-800 border border-slate-300
             {% else %}bg-slate-100 text-slate-800 border border-slate-300{% endif %}">
             {{ booking.get_status_display }}
           </span>
         </div>
+
+        <!-- Status Context Banners -->
+        {% if booking.status == 'CONFIRMED' %}
+        <div class="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-900 space-y-1">
+          <p class="font-bold flex items-center space-x-1.5 text-emerald-800">
+            <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-600"></i>
+            <span class="trans-target" data-en="Payment Verified & Booking Confirmed!" data-bn="পেমেন্ট যাচাই সম্পন্ন ও বুকিং নিশ্চিত হয়েছে!">Payment Verified & Booking Confirmed!</span>
+          </p>
+          <p class="trans-target text-emerald-800" data-en="Your payment has been successfully verified. You can download your official PDF voucher or view the online voucher below." data-bn="আপনার পেমেন্ট সফলভাবে যাচাই ও নিশ্চিত হয়েছে। নিচে থেকে আপনার অফিশিয়াল পিডিএফ ভাউচার ডাউনলোড করুন বা অনলাইন ভাউচার দেখুন।">
+            Your payment has been successfully verified. You can download your official PDF voucher or view the online voucher below.
+          </p>
+        </div>
+        {% elif booking.status == 'PENDING_VERIFICATION' %}
+        <div class="p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-900 space-y-1">
+          <p class="font-bold flex items-center space-x-1.5 text-amber-800">
+            <i data-lucide="clock" class="w-4 h-4 text-amber-600"></i>
+            <span class="trans-target" data-en="Payment Under Verification" data-bn="পেমেন্ট ভেরিফিকেশন চলছে">Payment Under Verification</span>
+          </p>
+          <p class="trans-target text-amber-800" data-en="Our admin team is currently reviewing your payment details. Once verified, your status will update to Confirmed." data-bn="আমাদের টিম আপনার প্রেরিত পেমেন্ট তথ্য যাচাই করছে। যাচাই সম্পন্ন হওয়া মাত্রই বুকিং নিশ্চিত হবে।">
+            Our admin team is currently reviewing your payment details. Once verified, your status will update to Confirmed.
+          </p>
+        </div>
+        {% elif booking.status == 'REJECTED' %}
+        <div class="p-4 rounded-2xl bg-rose-50 border border-rose-300 text-rose-950 text-xs space-y-2">
+          <div class="flex items-center space-x-1.5 font-bold text-rose-800">
+            <i data-lucide="x-circle" class="w-4 h-4 text-rose-600"></i>
+            <span class="trans-target" data-en="Booking Rejected / Not Approved" data-bn="বুকিং প্রত্যাখ্যাত / বাতিল করা হয়েছে">Booking Rejected / Not Approved</span>
+          </div>
+          <p class="text-xs text-rose-900 leading-relaxed">
+            <span class="font-bold trans-target" data-en="Specific Reason:" data-bn="প্রত্যাখ্যানের কারণ:">Specific Reason:</span>
+            <span class="font-semibold">{{ booking.rejection_reason|default:"Transaction details could not be verified or invalid information was submitted." }}</span>
+          </p>
+          <p class="text-[11px] text-rose-800 trans-target"
+             data-en="Follow-up Contact: If you believe this is an error or need immediate assistance, please contact our support hotline: +8801518919370, +8801855939459."
+             data-bn="যোগাযোগ: যদি আপনার মনে হয় এটি ভুলবশত হয়েছে, অনুগ্রহ করে তাৎক্ষণিকভাবে আমাদের হেল্পলাইনে যোগাযোগ করুন: +8801518919370, +8801855939459।">
+            Follow-up Contact: If you believe this is an error or need immediate assistance, please contact our support hotline: +8801518919370, +8801855939459.
+          </p>
+        </div>
+        {% endif %}
 
         <div class="space-y-2 text-sm text-slate-700">
           <p>
@@ -90,6 +165,12 @@
                class="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-white text-xs font-bold text-center block shadow transition-colors trans-target"
                data-en="View Verification Status →" data-bn="ভেরিফিকেশন স্ট্যাটাস দেখুন →">
               View Verification Status →
+            </a>
+          {% elif booking.status == 'REJECTED' %}
+            <a href="{% url 'payments:checkout' booking.booking_reference %}" 
+               class="w-full py-2.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold text-center block shadow transition-colors trans-target"
+               data-en="Re-submit Payment Details →" data-bn="সঠিক তথ্য দিয়ে পুনরায় চেষ্টা করুন →">
+              Re-submit Payment Details →
             </a>
           {% else %}
             <a href="{% url 'payments:checkout' booking.booking_reference %}" 
