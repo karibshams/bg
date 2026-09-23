@@ -352,51 +352,316 @@
 
 
 <!-- ========================================== -->
-<!-- 7. PHOTO GALLERY PREVIEW                   -->
+<!-- 7. DYNAMIC PHOTO GALLERY SLIDER             -->
 <!-- ========================================== -->
-<section class="py-20 bg-white">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<section class="py-20 bg-slate-950 text-white relative overflow-hidden" 
+         x-data="{
+           active: 0,
+           total: {{ gallery_items|length|default:1 }},
+           autoplay: true,
+           paused: false,
+           progress: 0,
+           timer: null,
+           lightbox: false,
+           activeSrc: '',
+           activeTitle: '',
+           activeCategory: '',
+           activeDest: '',
+           activeCaption: '',
+           init() {
+             this.startAutoplay();
+           },
+           startAutoplay() {
+             if (this.timer) clearInterval(this.timer);
+             this.timer = setInterval(() => {
+               if (this.autoplay && !this.paused && !this.lightbox) {
+                 this.next();
+               }
+             }, 5000);
+           },
+           next() {
+             this.active = (this.active + 1) % this.total;
+             this.onSlideChange();
+           },
+           prev() {
+             this.active = (this.active - 1 + this.total) % this.total;
+             this.onSlideChange();
+           },
+           goTo(idx) {
+             this.active = idx;
+             this.onSlideChange();
+           },
+           toggleAutoplay() {
+             this.autoplay = !this.autoplay;
+           },
+           onSlideChange() {
+             if (window.lucide) {
+               this.$nextTick(() => { window.lucide.createIcons(); });
+             }
+           },
+           openLightbox(src, title, cat, dest, caption) {
+             this.activeSrc = src;
+             this.activeTitle = title;
+             this.activeCategory = cat;
+             this.activeDest = dest;
+             this.activeCaption = caption;
+             this.lightbox = true;
+           }
+         }"
+         @mouseenter="paused = true"
+         @mouseleave="paused = false"
+         @keydown.right.window="if (!lightbox) next()"
+         @keydown.left.window="if (!lightbox) prev()"
+         @keydown.escape.window="lightbox = false">
+  
+  <!-- Subtle decorative ambient background glows -->
+  <div class="absolute -top-40 -left-40 w-96 h-96 bg-sky-600/10 rounded-full blur-3xl pointer-events-none"></div>
+  <div class="absolute -bottom-40 -right-40 w-96 h-96 bg-cyan-600/10 rounded-full blur-3xl pointer-events-none"></div>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-8 font-bengali">
     
-    <div class="text-center max-w-2xl mx-auto mb-12 space-y-2">
-      <span class="text-xs font-bold tracking-widest text-sky-600 uppercase trans-target"
-            data-en="PHOTO & VIDEO GALLERY"
-            data-bn="ছবি ও ভিডিও গ্যালারি">
-        PHOTO & VIDEO GALLERY
-      </span>
-      <h2 class="text-3xl font-extrabold text-slate-900 trans-target"
-          data-en="Memories of Beautiful Bangladesh"
-          data-bn="স্মৃতির ফ্রেমে বাঁধা বাংলাদেশের সৌন্দর্য">
-        Memories of Beautiful Bangladesh
-      </h2>
+    <!-- Section Header -->
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-800/80 pb-6">
+      <div class="space-y-2">
+        <div class="flex items-center space-x-2">
+          <span class="w-2 h-2 rounded-full bg-sky-400 animate-ping"></span>
+          <span class="text-xs font-bold tracking-widest text-sky-400 uppercase font-sans trans-target"
+                data-en="EXCLUSIVE PHOTO GALLERY"
+                data-bn="এক্সক্লুসিভ ফটো গ্যালারি">
+            EXCLUSIVE PHOTO GALLERY
+          </span>
+        </div>
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight trans-target"
+            data-en="Memories of Beautiful Bangladesh"
+            data-bn="স্মৃতির ফ্রেমে বাঁধা বাংলাদেশের রূপকথা">
+          Memories of Beautiful Bangladesh
+        </h2>
+        <p class="text-xs sm:text-sm text-slate-400 max-w-xl trans-target"
+           data-en="Explore breathtaking moments from all our journeys captured across mountains, coral islands, haors, and mangrove forests."
+           data-bn="পাহাড়, মেঘের উপত্যকা, প্রবাল দ্বীপ ও সুন্দরবনের রোমাঞ্চকর সব স্মৃতিময় আলোকচিত্র।">
+          Explore breathtaking moments from all our journeys captured across mountains, coral islands, haors, and mangrove forests.
+        </p>
+      </div>
+
+      <!-- Header Controls: Slide Counter, Autoplay Toggle, Link to All -->
+      <div class="flex items-center space-x-3">
+        <!-- Live Slide Counter Badge -->
+        <div class="px-4 py-1.5 rounded-full bg-slate-900 border border-slate-700/80 text-xs font-mono font-bold text-sky-400 shadow-inner flex items-center space-x-1.5">
+          <i data-lucide="image" class="w-3.5 h-3.5 text-sky-400"></i>
+          <span><span x-text="String(active + 1).padStart(2, '0')">01</span> / <span x-text="String(total).padStart(2, '0')">{{ gallery_items|length }}</span></span>
+        </div>
+
+        <!-- Autoplay Pause / Play Toggle -->
+        <button type="button" @click="toggleAutoplay()" 
+                class="p-2 rounded-full bg-slate-900 hover:bg-slate-800 border border-slate-700/80 text-slate-300 hover:text-white transition-colors"
+                :title="autoplay ? 'Pause Slideshow' : 'Start Slideshow'">
+          <i :data-lucide="autoplay ? 'pause' : 'play'" class="w-4 h-4"></i>
+        </button>
+
+        <!-- View Full Gallery Link -->
+        <a href="{% url 'gallery:index' %}" 
+           class="inline-flex items-center space-x-1.5 px-4 py-2 rounded-full bg-sky-500 hover:bg-sky-400 text-white font-bold text-xs shadow-md transition-colors">
+          <span class="trans-target" data-en="Full Gallery" data-bn="পুরো গ্যালারি">Full Gallery</span>
+          <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+        </a>
+      </div>
     </div>
 
-    <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+    <!-- Main Showcase Stage (Cinema Slider Viewport) -->
+    <div class="relative w-full rounded-3xl overflow-hidden shadow-2xl border border-slate-800/80 bg-slate-900 min-h-[460px] sm:min-h-[520px] lg:min-h-[580px] flex items-stretch">
+      
       {% for item in gallery_items %}
-      <div class="relative group rounded-2xl overflow-hidden h-56 bg-slate-900 shadow-sm hover:shadow-xl transition-all">
+      <div x-show="active === {{ forloop.counter0 }}" 
+           x-transition:enter="transition ease-out duration-700"
+           x-transition:enter-start="opacity-0 scale-95"
+           x-transition:enter-end="opacity-100 scale-100"
+           x-transition:leave="transition ease-in duration-300 absolute inset-0"
+           x-transition:leave-start="opacity-100 scale-100"
+           x-transition:leave-end="opacity-0 scale-105"
+           class="w-full h-full absolute inset-0 select-none">
+        
+        <!-- Photo Media -->
         {% if item.image %}
-        <img src="{{ item.image.url }}" alt="{{ item.title }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+        <img src="{{ item.image.url }}" alt="{{ item.title }}" 
+             class="w-full h-full object-cover">
         {% else %}
-        <div class="w-full h-full bg-gradient-to-tr from-slate-900 via-sky-950 to-slate-800 flex items-center justify-center">
-          <i data-lucide="camera" class="w-8 h-8 text-sky-400/40"></i>
+        <div class="w-full h-full bg-gradient-to-tr from-slate-950 via-slate-900 to-sky-950 flex items-center justify-center">
+          <i data-lucide="camera" class="w-16 h-16 text-sky-400/30"></i>
         </div>
         {% endif %}
-        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity p-4 flex flex-col justify-end text-white">
-          <p class="text-xs font-bold">{{ item.title }}</p>
-          <p class="text-[10px] text-slate-300">{{ item.destination.name }}</p>
+
+        <!-- Cinematic Gradient Overlays -->
+        <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent"></div>
+        <div class="absolute inset-0 bg-gradient-to-r from-slate-950/80 via-transparent to-transparent hidden md:block"></div>
+
+        <!-- Slide Overlay Content: Labels, Titles, Destination, and Category -->
+        <div class="absolute inset-0 p-6 sm:p-10 lg:p-14 flex flex-col justify-between text-white pointer-events-none">
+          
+          <!-- Top Row: Category Tag, Destination Tag, and Expand Lightbox -->
+          <div class="flex flex-wrap items-center justify-between gap-3 pointer-events-auto">
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-sky-500/90 text-white shadow-lg backdrop-blur-md border border-sky-400/40 flex items-center space-x-1.5">
+                <i data-lucide="tag" class="w-3.5 h-3.5"></i>
+                <span>{{ item.get_category_display }}</span>
+              </span>
+
+              {% if item.destination %}
+              <span class="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-slate-900/80 backdrop-blur-md text-slate-200 border border-white/10 flex items-center space-x-1.5 shadow-md">
+                <i data-lucide="map-pin" class="w-3.5 h-3.5 text-sky-400"></i>
+                <span class="trans-target" 
+                      data-en="{{ item.destination.name }}" 
+                      data-bn="{{ item.destination.bangla_name|default:item.destination.name }}">
+                  {{ item.destination.name }}
+                </span>
+              </span>
+              {% endif %}
+            </div>
+
+            <button type="button" 
+                    @click="openLightbox('{% if item.image %}{{ item.image.url }}{% endif %}', '{{ item.title|escapejs }}', '{{ item.get_category_display|escapejs }}', '{{ item.destination.name|default:''|escapejs }}', '{{ item.caption|escapejs }}')" 
+                    class="px-3.5 py-1.5 rounded-full bg-slate-900/80 hover:bg-sky-500 text-white border border-white/20 backdrop-blur-md text-xs font-bold transition-all flex items-center space-x-1.5 shadow-lg hover:scale-105 active:scale-95">
+              <i data-lucide="maximize-2" class="w-3.5 h-3.5"></i>
+              <span class="trans-target" data-en="Full View" data-bn="বড় করে দেখুন">Full View</span>
+            </button>
+          </div>
+
+          <!-- Bottom Row: Specific Title, Caption, and Tour Action -->
+          <div class="max-w-3xl space-y-3 pointer-events-auto">
+            <div class="space-y-1">
+              <span class="text-[11px] font-mono font-bold tracking-widest text-sky-400 uppercase drop-shadow block">
+                PHOTO {{ forloop.counter }} • {{ item.get_category_display }}
+              </span>
+              <h3 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight leading-tight drop-shadow-md trans-target"
+                  data-en="{{ item.title }}"
+                  data-bn="{{ item.bangla_title|default:item.title }}">
+                {{ item.title }}
+              </h3>
+            </div>
+
+            {% if item.caption %}
+            <p class="text-xs sm:text-sm text-slate-200 leading-relaxed max-w-2xl drop-shadow trans-target"
+               data-en="{{ item.caption }}"
+               data-bn="{{ item.bangla_caption|default:item.caption }}">
+              {{ item.caption }}
+            </p>
+            {% endif %}
+
+            {% if item.tour %}
+            <div class="pt-2">
+              <a href="{% url 'tours:detail' item.tour.slug %}" 
+                 class="inline-flex items-center space-x-2 px-5 py-2.5 rounded-2xl bg-white/10 hover:bg-sky-500 text-white backdrop-blur-md border border-white/20 text-xs font-bold transition-all shadow-md hover:scale-105">
+                <span class="trans-target" 
+                      data-en="View {{ item.destination.name|default:'Tour' }} Packages →" 
+                      data-bn="{{ item.destination.name|default:'ট্যুর' }} প্যাকেজ দেখুন →">
+                  View {{ item.destination.name|default:'Tour' }} Packages →
+                </span>
+              </a>
+            </div>
+            {% endif %}
+          </div>
+
         </div>
+
       </div>
       {% endfor %}
+
+      <!-- Navigation Arrows: Previous & Next -->
+      <button type="button" @click="prev()" 
+              class="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-slate-950/70 hover:bg-sky-500 text-white backdrop-blur-md border border-white/20 flex items-center justify-center transition-all shadow-xl hover:scale-110 active:scale-95 focus:outline-none"
+              title="Previous Photo (←)">
+        <i data-lucide="chevron-left" class="w-6 h-6"></i>
+      </button>
+
+      <button type="button" @click="next()" 
+              class="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-slate-950/70 hover:bg-sky-500 text-white backdrop-blur-md border border-white/20 flex items-center justify-center transition-all shadow-xl hover:scale-110 active:scale-95 focus:outline-none"
+              title="Next Photo (→)">
+        <i data-lucide="chevron-right" class="w-6 h-6"></i>
+      </button>
+
+      <!-- Autoplay Bottom Subtle Progress Bar -->
+      <div class="absolute bottom-0 left-0 right-0 h-1 bg-white/10 z-20">
+        <div class="h-full bg-sky-400 transition-all duration-300"
+             :style="`width: ${((active + 1) / total) * 100}%`"></div>
+      </div>
+
     </div>
 
-    <div class="mt-8 text-center">
-      <a href="{% url 'gallery:index' %}" class="inline-flex items-center space-x-2 px-6 py-3 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition-colors">
-        <i data-lucide="grid" class="w-4 h-4"></i>
-        <span class="trans-target" data-en="Explore Full Gallery" data-bn="পুরো গ্যালারি এক্সপ্লোর করুন">Explore Full Gallery</span>
-      </a>
+    <!-- Sequential Thumbnail Filmstrip & Indicator Strip -->
+    <div class="space-y-3 pt-2">
+      <div class="flex items-center justify-between text-xs text-slate-400">
+        <span class="trans-target" data-en="Click any photo thumbnail to jump to slide:" data-bn="যেকোনো ফটোতে ক্লিক করে সরাসরি দেখুন:">
+          Click any photo thumbnail to jump to slide:
+        </span>
+        <span class="font-mono text-[11px] text-sky-400 font-bold trans-target" data-en="Use arrow keys (← / →) to navigate" data-bn="কিবোর্ড তীর চিহ্ন দিয়ে পরিবর্তন করুন">
+          Use arrow keys (← / →) to navigate
+        </span>
+      </div>
+
+      <!-- Scrollable Filmstrip -->
+      <div class="flex items-center space-x-3 overflow-x-auto pb-3 pt-1 scrollbar-thin scrollbar-thumb-slate-800">
+        {% for item in gallery_items %}
+        <button type="button" @click="goTo({{ forloop.counter0 }})" 
+                class="flex-shrink-0 relative rounded-2xl overflow-hidden transition-all duration-300 focus:outline-none group text-left w-32 sm:w-36 h-20 sm:h-24 bg-slate-900"
+                :class="active === {{ forloop.counter0 }} ? 'ring-4 ring-sky-500 scale-105 shadow-xl border-2 border-white' : 'opacity-60 hover:opacity-100 border border-slate-800'">
+          {% if item.image %}
+          <img src="{{ item.image.url }}" alt="{{ item.title }}" class="w-full h-full object-cover">
+          {% else %}
+          <div class="w-full h-full bg-slate-800 flex items-center justify-center">
+            <i data-lucide="camera" class="w-5 h-5 text-slate-600"></i>
+          </div>
+          {% endif %}
+          <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent p-2 flex flex-col justify-end">
+            <span class="text-[9px] font-mono text-sky-300 font-bold uppercase truncate">{{ item.destination.name|default:item.get_category_display }}</span>
+            <span class="text-[10px] text-white font-bold leading-tight line-clamp-1 trans-target"
+                  data-en="{{ item.title }}"
+                  data-bn="{{ item.bangla_title|default:item.title }}">
+              {{ item.title }}
+            </span>
+          </div>
+        </button>
+        {% endfor %}
+      </div>
     </div>
 
   </div>
+
+  <!-- Full-Screen Lightbox Modal for Slider -->
+  <div x-show="lightbox" 
+       x-transition:enter="transition ease-out duration-300"
+       x-transition:enter-start="opacity-0"
+       x-transition:enter-end="opacity-100"
+       x-transition:leave="transition ease-in duration-200"
+       x-transition:leave-start="opacity-100"
+       x-transition:leave-end="opacity-0"
+       class="fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-2xl flex items-center justify-center p-4 sm:p-8"
+       style="display: none;">
+    
+    <!-- Lightbox Close Button -->
+    <button @click="lightbox = false" 
+            class="absolute top-6 right-6 text-slate-400 hover:text-white p-3 rounded-full bg-slate-900 border border-slate-800 hover:border-slate-700 shadow-xl focus:outline-none transition-all hover:scale-105">
+      <i data-lucide="x" class="w-6 h-6"></i>
+    </button>
+
+    <!-- Modal Content -->
+    <div class="max-w-5xl w-full flex flex-col items-center space-y-4" @click.away="lightbox = false">
+      <template x-if="activeSrc">
+        <img :src="activeSrc" :alt="activeTitle" class="max-h-[75vh] w-auto rounded-3xl shadow-2xl object-contain border border-slate-800/80">
+      </template>
+
+      <div class="text-center font-bengali text-white space-y-1.5 max-w-2xl px-4">
+        <div class="flex items-center justify-center space-x-2 text-xs font-bold text-sky-400">
+          <span x-text="activeCategory"></span>
+          <span x-show="activeDest">•</span>
+          <span x-show="activeDest" x-text="activeDest"></span>
+        </div>
+        <h3 class="text-xl sm:text-2xl font-bold tracking-tight text-white" x-text="activeTitle"></h3>
+        <p class="text-xs sm:text-sm text-slate-300" x-text="activeCaption"></p>
+      </div>
+    </div>
+  </div>
+
 </section>
+
 
 
 <!-- ========================================== -->

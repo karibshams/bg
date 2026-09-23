@@ -24,33 +24,200 @@
 
 <section class="py-12 bg-slate-50 min-h-screen" 
          x-data="{
+           viewMode: 'slider',
+           active: 0,
+           total: {{ items|length|default:1 }},
            lightbox: false,
            activeTitle: '',
            activeCaption: '',
            activeSrc: '',
-           open(title, caption, src) {
+           activeCat: '',
+           activeDest: '',
+           next() {
+             this.active = (this.active + 1) % this.total;
+             if (window.lucide) this.$nextTick(() => { window.lucide.createIcons(); });
+           },
+           prev() {
+             this.active = (this.active - 1 + this.total) % this.total;
+             if (window.lucide) this.$nextTick(() => { window.lucide.createIcons(); });
+           },
+           goTo(idx) {
+             this.active = idx;
+             if (window.lucide) this.$nextTick(() => { window.lucide.createIcons(); });
+           },
+           open(title, caption, src, cat, dest) {
              this.activeTitle = title;
              this.activeCaption = caption;
              this.activeSrc = src;
+             this.activeCat = cat || '';
+             this.activeDest = dest || '';
              this.lightbox = true;
            }
          }">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 font-bengali">
     
-    <!-- Category Tabs -->
-    <div class="flex flex-wrap items-center justify-center gap-2 font-bengali">
-      {% for code, label in categories %}
-      <a href="?category={{ code }}" 
-         class="px-4 py-2 rounded-full text-xs font-bold transition-colors {% if selected_category == code %}bg-sky-500 text-white shadow-md{% else %}bg-white border border-slate-200 text-slate-700 hover:bg-slate-100{% endif %}">
-        {{ label }}
-      </a>
-      {% endfor %}
+    <!-- Controls Bar: Category Filter Tabs & View Mode Switcher -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-4 sm:p-5 rounded-3xl shadow-sm border border-slate-200">
+      
+      <!-- Category Tabs -->
+      <div class="flex flex-wrap items-center gap-2">
+        {% for code, label in categories %}
+        <a href="?category={{ code }}" 
+           class="px-4 py-2 rounded-full text-xs font-bold transition-colors {% if selected_category == code %}bg-sky-500 text-white shadow-md{% else %}bg-slate-100 hover:bg-slate-200 text-slate-700{% endif %}">
+          {{ label }}
+        </a>
+        {% endfor %}
+      </div>
+
+      <!-- View Mode Switcher -->
+      <div class="flex items-center space-x-2 bg-slate-100 p-1.5 rounded-2xl border border-slate-200 self-start md:self-auto">
+        <button type="button" @click="viewMode = 'slider'" 
+                :class="viewMode === 'slider' ? 'bg-sky-600 text-white shadow-md font-bold' : 'text-slate-600 hover:text-slate-900 font-medium'"
+                class="px-3.5 py-1.5 rounded-xl text-xs flex items-center space-x-1.5 transition-all">
+          <i data-lucide="play-circle" class="w-4 h-4"></i>
+          <span class="trans-target" data-en="Slider View" data-bn="স্লাইডার ভিউ">Slider View</span>
+        </button>
+        <button type="button" @click="viewMode = 'grid'" 
+                :class="viewMode === 'grid' ? 'bg-sky-600 text-white shadow-md font-bold' : 'text-slate-600 hover:text-slate-900 font-medium'"
+                class="px-3.5 py-1.5 rounded-xl text-xs flex items-center space-x-1.5 transition-all">
+          <i data-lucide="layout-grid" class="w-4 h-4"></i>
+          <span class="trans-target" data-en="Grid View" data-bn="গ্রিড ভিউ">Grid View</span>
+        </button>
+      </div>
+
     </div>
 
-    <!-- Masonry Grid -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <!-- VIEW 1: DYNAMIC SEQUENTIAL PHOTO SLIDER -->
+    <div x-show="viewMode === 'slider'" x-transition.duration.300ms class="space-y-6">
+      
+      <!-- Main Showcase Cinema Stage -->
+      <div class="relative w-full rounded-3xl overflow-hidden shadow-2xl border border-slate-800 bg-slate-950 min-h-[460px] sm:min-h-[540px] lg:min-h-[600px] flex items-stretch">
+        
+        {% for item in items %}
+        <div x-show="active === {{ forloop.counter0 }}" 
+             x-transition:enter="transition ease-out duration-500"
+             x-transition:enter-start="opacity-0 scale-95"
+             x-transition:enter-end="opacity-100 scale-100"
+             x-transition:leave="transition ease-in duration-300 absolute inset-0"
+             x-transition:leave-start="opacity-100 scale-100"
+             x-transition:leave-end="opacity-0 scale-105"
+             class="w-full h-full absolute inset-0 select-none">
+          
+          <!-- Image -->
+          {% if item.image %}
+          <img src="{{ item.image.url }}" alt="{{ item.title }}" class="w-full h-full object-cover">
+          {% else %}
+          <div class="w-full h-full bg-slate-900 flex items-center justify-center">
+            <i data-lucide="image" class="w-16 h-16 text-slate-700"></i>
+          </div>
+          {% endif %}
+
+          <!-- Gradients -->
+          <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent"></div>
+          <div class="absolute inset-0 bg-gradient-to-r from-slate-950/80 via-transparent to-transparent hidden md:block"></div>
+
+          <!-- Slide Labels & Titles Overlay -->
+          <div class="absolute inset-0 p-6 sm:p-10 lg:p-14 flex flex-col justify-between text-white pointer-events-none">
+            
+            <div class="flex flex-wrap items-center justify-between gap-3 pointer-events-auto">
+              <div class="flex items-center space-x-2">
+                <span class="px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-sky-500 text-white shadow-lg backdrop-blur-md border border-sky-400/40">
+                  {{ item.get_category_display }}
+                </span>
+                {% if item.destination %}
+                <span class="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-slate-900/80 backdrop-blur-md text-slate-200 border border-white/10 flex items-center space-x-1.5">
+                  <i data-lucide="map-pin" class="w-3.5 h-3.5 text-sky-400"></i>
+                  <span class="trans-target" data-en="{{ item.destination.name }}" data-bn="{{ item.destination.bangla_name|default:item.destination.name }}">{{ item.destination.name }}</span>
+                </span>
+                {% endif %}
+              </div>
+
+              <button type="button" 
+                      @click="open('{{ item.title|escapejs }}', '{{ item.caption|escapejs }}', '{% if item.image %}{{ item.image.url }}{% endif %}', '{{ item.get_category_display|escapejs }}', '{{ item.destination.name|default:''|escapejs }}')" 
+                      class="px-3.5 py-1.5 rounded-full bg-slate-900/80 hover:bg-sky-500 text-white border border-white/20 backdrop-blur-md text-xs font-bold transition-all flex items-center space-x-1.5 shadow-lg">
+                <i data-lucide="maximize-2" class="w-3.5 h-3.5"></i>
+                <span class="trans-target" data-en="Full View" data-bn="বড় করে দেখুন">Full View</span>
+              </button>
+            </div>
+
+            <div class="max-w-3xl space-y-3 pointer-events-auto">
+              <span class="text-[11px] font-mono font-bold tracking-widest text-sky-400 uppercase drop-shadow block">
+                PHOTO {{ forloop.counter }} OF {{ items|length }}
+              </span>
+              <h3 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight leading-tight drop-shadow-md trans-target"
+                  data-en="{{ item.title }}"
+                  data-bn="{{ item.bangla_title|default:item.title }}">
+                {{ item.title }}
+              </h3>
+              {% if item.caption %}
+              <p class="text-xs sm:text-sm text-slate-200 leading-relaxed max-w-2xl drop-shadow trans-target"
+                 data-en="{{ item.caption }}"
+                 data-bn="{{ item.bangla_caption|default:item.caption }}">
+                {{ item.caption }}
+              </p>
+              {% endif %}
+
+              {% if item.tour %}
+              <div class="pt-2">
+                <a href="{% url 'tours:detail' item.tour.slug %}" 
+                   class="inline-flex items-center space-x-2 px-5 py-2.5 rounded-2xl bg-white/10 hover:bg-sky-500 text-white backdrop-blur-md border border-white/20 text-xs font-bold transition-all shadow-md">
+                  <span class="trans-target" data-en="View Tour Packages →" data-bn="ট্যুর প্যাকেজ দেখুন →">View Tour Packages →</span>
+                </a>
+              </div>
+              {% endif %}
+            </div>
+
+          </div>
+
+        </div>
+        {% endfor %}
+
+        <!-- Navigation Arrows -->
+        <button type="button" @click="prev()" 
+                class="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-slate-950/70 hover:bg-sky-500 text-white backdrop-blur-md border border-white/20 flex items-center justify-center transition-all shadow-xl hover:scale-110 active:scale-95 focus:outline-none"
+                title="Previous Photo">
+          <i data-lucide="chevron-left" class="w-6 h-6"></i>
+        </button>
+
+        <button type="button" @click="next()" 
+                class="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-slate-950/70 hover:bg-sky-500 text-white backdrop-blur-md border border-white/20 flex items-center justify-center transition-all shadow-xl hover:scale-110 active:scale-95 focus:outline-none"
+                title="Next Photo">
+          <i data-lucide="chevron-right" class="w-6 h-6"></i>
+        </button>
+
+        <!-- Slide Counter Floating Badge -->
+        <div class="absolute bottom-4 right-6 z-20 px-3.5 py-1.5 rounded-full bg-slate-950/80 backdrop-blur-md border border-white/20 text-xs font-mono font-bold text-sky-400">
+          <span x-text="String(active + 1).padStart(2, '0')">01</span> / <span x-text="String(total).padStart(2, '0')">{{ items|length }}</span>
+        </div>
+
+      </div>
+
+      <!-- Thumbnail Filmstrip Strip -->
+      <div class="flex items-center space-x-3 overflow-x-auto pb-3 pt-1 scrollbar-thin">
+        {% for item in items %}
+        <button type="button" @click="goTo({{ forloop.counter0 }})" 
+                class="flex-shrink-0 relative rounded-2xl overflow-hidden transition-all duration-300 focus:outline-none text-left w-28 sm:w-32 h-16 sm:h-20 bg-slate-900"
+                :class="active === {{ forloop.counter0 }} ? 'ring-4 ring-sky-500 scale-105 shadow-xl border-2 border-white' : 'opacity-60 hover:opacity-100 border border-slate-300'">
+          {% if item.image %}
+          <img src="{{ item.image.url }}" alt="{{ item.title }}" class="w-full h-full object-cover">
+          {% endif %}
+          <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent p-1.5 flex flex-col justify-end">
+            <span class="text-[9px] text-white font-bold leading-tight line-clamp-1 trans-target"
+                  data-en="{{ item.title }}"
+                  data-bn="{{ item.bangla_title|default:item.title }}">
+              {{ item.title }}
+            </span>
+          </div>
+        </button>
+        {% endfor %}
+      </div>
+
+    </div>
+
+    <!-- VIEW 2: MASONRY GRID -->
+    <div x-show="viewMode === 'grid'" x-transition.duration.300ms class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
       {% for item in items %}
-      <div @click="open('{{ item.title }}', '{{ item.caption }}', '{% if item.image %}{{ item.image.url }}{% endif %}')"
+      <div @click="open('{{ item.title|escapejs }}', '{{ item.caption|escapejs }}', '{% if item.image %}{{ item.image.url }}{% endif %}', '{{ item.get_category_display|escapejs }}', '{{ item.destination.name|default:''|escapejs }}')"
            class="cursor-pointer group relative rounded-3xl overflow-hidden bg-slate-900 shadow-sm hover:shadow-2xl transition-all duration-300 h-72">
         {% if item.image %}
         <img src="{{ item.image.url }}" alt="{{ item.title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
@@ -66,9 +233,9 @@
         <!-- Hover Overlay -->
         <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity p-6 flex flex-col justify-end text-white font-bengali">
           <span class="text-[11px] text-sky-400 font-bold uppercase tracking-wider mb-1">{{ item.get_category_display }}</span>
-          <h3 class="text-base font-bold">{{ item.title }}</h3>
+          <h3 class="text-base font-bold trans-target" data-en="{{ item.title }}" data-bn="{{ item.bangla_title|default:item.title }}">{{ item.title }}</h3>
           {% if item.caption %}
-          <p class="text-xs text-slate-300 mt-1 line-clamp-2">{{ item.caption }}</p>
+          <p class="text-xs text-slate-300 mt-1 line-clamp-2 trans-target" data-en="{{ item.caption }}" data-bn="{{ item.bangla_caption|default:item.caption }}">{{ item.caption }}</p>
           {% endif %}
         </div>
       </div>
