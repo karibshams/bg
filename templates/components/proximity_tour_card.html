@@ -19,6 +19,8 @@
   <div class="relative h-48 overflow-hidden bg-slate-900">
     {% if item.tour.cover_image %}
     <img src="{{ item.tour.cover_image.url }}" alt="{{ item.tour.title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+    {% elif item.tour.destination.cover_image %}
+    <img src="{{ item.tour.destination.cover_image.url }}" alt="{{ item.tour.title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
     {% else %}
     <img src="{% static 'images/hero-sajek.jpg' %}" alt="{{ item.tour.title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
     {% endif %}

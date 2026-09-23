@@ -8,9 +8,11 @@
 <div class="relative min-h-[55vh] flex items-end bg-slate-950 text-white pt-32 pb-12 overflow-hidden">
   <div class="absolute inset-0">
     {% if tour.cover_image %}
-    <img src="{{ tour.cover_image.url }}" alt="{{ tour.title }}" class="w-full h-full object-cover opacity-45">
+    <img src="{{ tour.cover_image.url }}" alt="{{ tour.title }}" class="w-full h-full object-cover opacity-50">
+    {% elif tour.destination.cover_image %}
+    <img src="{{ tour.destination.cover_image.url }}" alt="{{ tour.title }}" class="w-full h-full object-cover opacity-50">
     {% else %}
-    <div class="w-full h-full bg-gradient-to-t from-slate-950 via-slate-900 to-sky-950"></div>
+    <img src="{% static 'images/hero-sajek.jpg' %}" alt="{{ tour.title }}" class="w-full h-full object-cover opacity-50">
     {% endif %}
   </div>
   <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent"></div>

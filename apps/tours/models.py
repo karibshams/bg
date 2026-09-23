@@ -121,7 +121,13 @@ class Tour(models.Model):
     bangla_short_description = models.TextField(blank=True, help_text="Bengali teaser for cards and search results")
     description = models.TextField(help_text="Full itinerary and overview")
     bangla_description = models.TextField(blank=True, help_text="Bengali full itinerary and overview")
-    cover_image = models.ImageField(upload_to='tours/covers/', blank=True, null=True)
+    cover_image = models.ImageField(
+        upload_to='tours/covers/', 
+        blank=False, 
+        null=True,
+        verbose_name="Tour Cover Image (কভার ফটো)",
+        help_text="Mandatory: Upload a distinct high-resolution landscape cover photo for this tour package card and hero banner."
+    )
     video_url = models.URLField(blank=True, help_text="YouTube or Vimeo preview link")
     
     guide_security_info = models.CharField(max_length=200, default="Certified Guide & Safety Escort", blank=True, help_text="e.g. Certified Guide & Safety Escort")
@@ -233,6 +239,21 @@ class Tour(models.Model):
             'color': 'sky',
             'icon': 'calendar'
         }
+
+    @property
+    def get_cover_image_url(self):
+        """Returns the tour's custom cover image, falling back to destination cover image or default."""
+        if self.cover_image:
+            try:
+                return self.cover_image.url
+            except Exception:
+                pass
+        if self.destination and self.destination.cover_image:
+            try:
+                return self.destination.cover_image.url
+            except Exception:
+                pass
+        return '/static/images/hero-sajek.jpg'
 
     def __str__(self):
         return f"{self.title} (৳{self.current_price:,.0f})"

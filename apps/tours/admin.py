@@ -1,3 +1,4 @@
+from django import forms
 from django.contrib import admin
 from django.utils.html import format_html
 from django.db import models
@@ -11,6 +12,30 @@ from .models import (
 )
 from .corporate_voucher import generate_corporate_voucher_pdf
 from .widgets import QuillAdminWidget
+
+
+class TourAdminForm(forms.ModelForm):
+    class Meta:
+        model = Tour
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['cover_image'].required = True
+        self.fields['cover_image'].label = "📸 Tour Cover Image (বাধ্যতামূলক কভার ফটো)"
+        self.fields['cover_image'].help_text = (
+            "⚠️ Mandatory: Upload a distinct high-resolution landscape cover photo for this tour package. "
+            "Displayed on tour cards, category listings, and the detail hero banner."
+        )
+
+    def clean_cover_image(self):
+        cover = self.cleaned_data.get('cover_image')
+        if not cover:
+            raise forms.ValidationError(
+                "Please upload a distinct cover photo for this tour package. A cover photo is required."
+            )
+        return cover
+
 
 class TourBusInline(admin.TabularInline):
     model = TourBus
@@ -47,11 +72,13 @@ class TourImageInline(admin.TabularInline):
 
 @admin.register(Tour)
 class TourAdmin(admin.ModelAdmin):
-    list_display = ('title', 'destination', 'category', 'duration_badge', 'duration', 'formatted_price', 'bus_seat_badge', 'rating_stars', 'is_featured', 'is_published')
+    form = TourAdminForm
+    list_display = ('cover_thumbnail', 'title', 'destination', 'category', 'duration_badge', 'duration', 'formatted_price', 'bus_seat_badge', 'rating_stars', 'is_featured', 'is_published')
     list_filter = ('duration_type', 'requires_nid_or_birth_cert', 'has_bus_seat_selection', 'bus_layout_type', 'is_published', 'is_featured', 'destination', 'category')
     search_fields = ('title', 'bangla_title', 'description', 'destination__name')
     prepopulated_fields = {'slug': ('title',)}
     list_editable = ('is_featured', 'is_published')
+    readonly_fields = ('cover_image_preview',)
     inlines = [TourBusInline, TourDateInline, TourItineraryInline, TourInclusionInline, TourImageInline]
     formfield_overrides = {
         models.TextField: {'widget': QuillAdminWidget},
@@ -60,6 +87,10 @@ class TourAdmin(admin.ModelAdmin):
     fieldsets = (
         ('General Information', {
             'fields': ('title', 'bangla_title', 'slug', 'destination', 'category', 'badge_text')
+        }),
+        ('📸 Tour Package Cover Image & Media (Mandatory / বাধ্যতামূলক)', {
+            'description': 'Mandatory cover image for website tour cards, category listings, and the detail hero banner. Admins must upload a distinct image for each package.',
+            'fields': ('cover_image', 'cover_image_preview', 'video_url')
         }),
         ('Duration, Group Size, Guide & Pricing', {
             'description': 'Manage tour classification (Day-Long vs Multi-Day), duration, capacity, and pricing.',
@@ -71,12 +102,11 @@ class TourAdmin(admin.ModelAdmin):
                 ('guide_security_info', 'bangla_guide_security_info')
             )
         }),
-        ('Descriptions & Media (WYSIWYG Overview)', {
+        ('Descriptions (WYSIWYG Overview)', {
             'description': 'Provide rich text overviews, highlights, and teaser descriptions.',
             'fields': (
                 'short_description', 'bangla_short_description',
-                'description', 'bangla_description',
-                'cover_image', 'video_url'
+                'description', 'bangla_description'
             )
         }),
         ('Package Inclusions & Exclusions (List Builders)', {
@@ -100,6 +130,27 @@ class TourAdmin(admin.ModelAdmin):
             'fields': (('rating', 'reviews_count'), ('is_featured', 'is_published'))
         }),
     )
+
+    def cover_thumbnail(self, obj):
+        if obj.cover_image:
+            return format_html(
+                '<img src="{}" style="height: 38px; width: 62px; object-fit: cover; border-radius: 6px; border: 1px solid #0284c7; box-shadow: 0 1px 3px rgba(0,0,0,0.15);" alt="Cover">',
+                obj.cover_image.url
+            )
+        return format_html('<span style="color: #ef4444; font-size: 11px; font-weight: bold;">⚠️ No Cover</span>')
+    cover_thumbnail.short_description = "Cover"
+
+    def cover_image_preview(self, obj):
+        if obj and obj.cover_image:
+            return format_html(
+                '<div style="margin: 8px 0; padding: 12px; background: #0f172a; border-radius: 10px; display: inline-block; border: 1px solid #334155;">'
+                '<img src="{}" style="max-height: 200px; max-width: 360px; object-fit: cover; border-radius: 8px; display: block; border: 2px solid #0284c7; box-shadow: 0 4px 12px rgba(0,0,0,0.25);">'
+                '<div style="margin-top: 6px; font-size: 11px; color: #94a3b8; font-weight: 600;">📁 Current File: {}</div>'
+                '</div>',
+                obj.cover_image.url, obj.cover_image.name
+            )
+        return format_html('<span style="color: #ef4444; font-weight: 700; font-size: 12px;">⚠️ No cover image uploaded yet. A cover image is mandatory.</span>')
+    cover_image_preview.short_description = "Live Cover Preview"
 
     def duration_badge(self, obj):
         badge = obj.duration_type_badge

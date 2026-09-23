@@ -5,6 +5,8 @@
   <div class="relative h-60 overflow-hidden bg-slate-900">
     {% if tour.cover_image %}
     <img src="{{ tour.cover_image.url }}" alt="{{ tour.title }}" class="w-full h-full object-cover tour-img-zoom">
+    {% elif tour.destination.cover_image %}
+    <img src="{{ tour.destination.cover_image.url }}" alt="{{ tour.title }}" class="w-full h-full object-cover tour-img-zoom">
     {% else %}
     <img src="{% static 'images/hero-sajek.jpg' %}" alt="{{ tour.title }}" class="w-full h-full object-cover tour-img-zoom">
     {% endif %}
