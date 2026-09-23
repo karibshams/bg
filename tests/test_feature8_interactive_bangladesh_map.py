@@ -89,10 +89,10 @@ class Feature8InteractiveBangladeshMapTestCase(TestCase):
         res = self.client.get(url)
         self.assertEqual(res.status_code, 200)
 
-        # Check Leaflet & OSM integration (Free and open-source, no paid API keys)
+        # Check Leaflet & CartoDB Voyager integration (Zero 403 tile blocking, zero API costs)
         self.assertContains(res, "leaflet.js")
         self.assertContains(res, "leaflet.css")
-        self.assertContains(res, "tile.openstreetmap.org")
+        self.assertContains(res, "basemaps.cartocdn.com/rastertiles/voyager")
         self.assertContains(res, "bangladesh-map")
 
         # Check destination pins & title
