@@ -1,7 +1,9 @@
 from datetime import datetime
 from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponse
 from django.db.models import Q
-from .models import Tour, Destination, TourCategory, TourDate
+from .models import Tour, Destination, TourCategory, TourDate, CorporateTour
+from .corporate_voucher import generate_corporate_voucher_pdf
 
 def tour_list_view(request):
     """
@@ -209,3 +211,13 @@ def destination_detail_view(request, slug):
         'destination': destination,
         'tours': tours,
     })
+
+
+def corporate_voucher_view(request, reference):
+    """Allows staff and corporate clients to view and download their bespoke PDF voucher."""
+    corporate_tour = get_object_or_404(CorporateTour, reference_code=reference)
+    pdf_bytes = generate_corporate_voucher_pdf(corporate_tour)
+    filename = f"BhromonGhuri_Corporate_Voucher_{corporate_tour.reference_code}.pdf"
+    response = HttpResponse(pdf_bytes, content_type='application/pdf')
+    response['Content-Disposition'] = f'inline; filename="{filename}"'
+    return response

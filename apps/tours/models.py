@@ -1,5 +1,7 @@
+import uuid
 from django.db import models
 from django.utils.text import slugify
+from django.utils import timezone
 
 class Destination(models.Model):
     """Tourist destination like Sajek, Bandarban, Cox's Bazar, Sundarbans."""
@@ -397,4 +399,119 @@ class TourBus(models.Model):
 
     def __str__(self):
         return f"{self.bus_name} ({self.get_layout_type_display()}) — {self.tour.title}"
+
+
+class CorporateTour(models.Model):
+    """
+    Dedicated module for bespoke corporate tour events with multi-destination support,
+    cost/logistics breakdown, and customizable itineraries.
+    """
+    STATUS_CHOICES = [
+        ('PROPOSAL', 'Proposal / Planning (পরিকল্পনা)'),
+        ('CONFIRMED', 'Confirmed (নিশ্চিত)'),
+        ('IN_PROGRESS', 'In Progress / Traveling (চলমান)'),
+        ('COMPLETED', 'Completed (সম্পন্ন)'),
+        ('CANCELLED', 'Cancelled (বাতিল)'),
+    ]
+
+    PAYMENT_CHOICES = [
+        ('PENDING', 'Payment Pending (বকেয়া)'),
+        ('PARTIAL', 'Partially Paid / Advance Received (আংশিক পরিশোধ)'),
+        ('PAID', 'Fully Paid (পরিশোধিত)'),
+    ]
+
+    reference_code = models.CharField(max_length=40, unique=True, editable=False)
+    
+    # Event & Package Details
+    title = models.CharField(max_length=255, verbose_name="Corporate Event / Tour Title")
+    bangla_title = models.CharField(max_length=255, blank=True, verbose_name="Bangla Title (Optional)")
+    
+    # Client Organization Details
+    company_name = models.CharField(max_length=200, verbose_name="Client Company / Organization")
+    contact_person = models.CharField(max_length=150, verbose_name="Focal Person Name")
+    designation = models.CharField(max_length=150, blank=True, verbose_name="Designation / Department")
+    phone = models.CharField(max_length=50, verbose_name="Contact Phone")
+    email = models.EmailField(verbose_name="Contact Email")
+    office_address = models.CharField(max_length=255, blank=True, verbose_name="Company / Office Address")
+
+    # Multi-Destination Support
+    destinations = models.ManyToManyField(Destination, related_name='corporate_tours', verbose_name="Destinations Included")
+    route_summary = models.CharField(
+        max_length=255,
+        blank=True,
+        verbose_name="Custom Route Summary",
+        help_text="e.g. Dhaka -> Bandarban + Cox's Bazar -> Dhaka"
+    )
+
+    # Schedule & Group Size
+    start_date = models.DateField(verbose_name="Tour Start Date")
+    end_date = models.DateField(verbose_name="Tour End Date")
+    duration_text = models.CharField(max_length=100, default="3 Days / 2 Nights", verbose_name="Duration Description")
+    num_participants = models.PositiveIntegerField(default=50, verbose_name="Total Participants / Employees")
+
+    # Logistics Breakdown
+    bus_count = models.PositiveIntegerField(default=1, verbose_name="Number of Buses Reserved")
+    bus_type = models.CharField(max_length=150, default="Luxury AC Coach (Hino / Scania)", verbose_name="Bus Type / Operator")
+    accommodation_details = models.TextField(blank=True, verbose_name="Resort / Hotel Logistics", help_text="e.g. 5-Star Resort, Twin sharing executive rooms")
+    catering_details = models.TextField(blank=True, verbose_name="Food & Catering Logistics", help_text="e.g. Buffet breakfast, BBQ dinner, executive lunch sets")
+
+    # Financial & Cost Breakdown
+    total_cost = models.DecimalField(max_digits=12, decimal_places=2, verbose_name="Total Package Budget (BDT)")
+    advance_paid = models.DecimalField(max_digits=12, decimal_places=2, default=0.00, verbose_name="Advance Paid Amount (BDT)")
+    payment_status = models.CharField(max_length=30, choices=PAYMENT_CHOICES, default='PENDING', verbose_name="Payment Status")
+
+    # Special Instructions & Admin Reminders
+    special_requirements = models.TextField(blank=True, verbose_name="Client Special Requirements", help_text="Conference hall, sound system, team building, banner setup")
+    reminder_notes = models.TextField(blank=True, verbose_name="Administrative Reminders & Logistics Notes", help_text="Internal notes for operations team, driver contacts, guide assignments")
+
+    status = models.CharField(max_length=30, choices=STATUS_CHOICES, default='PROPOSAL', verbose_name="Event Status")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = "Corporate Tour & Event"
+        verbose_name_plural = "Corporate Tours & Events"
+
+    @property
+    def due_amount(self):
+        return max(0, float(self.total_cost) - float(self.advance_paid))
+
+    def get_destinations_display(self):
+        dests = list(self.destinations.all())
+        if dests:
+            return " + ".join(d.name for d in dests)
+        return self.route_summary or "Multi-Destination Tour"
+
+    def save(self, *args, **kwargs):
+        if not self.reference_code:
+            year = timezone.now().year
+            while True:
+                rand_code = uuid.uuid4().hex[:6].upper()
+                candidate = f"BG-CORP-{year}-{rand_code}"
+                if not CorporateTour.objects.filter(reference_code=candidate).exists():
+                    self.reference_code = candidate
+                    break
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.reference_code} — {self.company_name} ({self.title})"
+
+
+class CorporateItinerary(models.Model):
+    """Day-by-day customized schedule for corporate tour events."""
+    corporate_tour = models.ForeignKey(CorporateTour, on_delete=models.CASCADE, related_name='itineraries')
+    day_number = models.PositiveIntegerField(default=1)
+    title = models.CharField(max_length=200, verbose_name="Day Heading / Activity")
+    description = models.TextField(verbose_name="Activity / Schedule Details")
+    stay_info = models.CharField(max_length=200, blank=True, verbose_name="Night Stay / Location")
+
+    class Meta:
+        ordering = ['day_number']
+        verbose_name = "Corporate Itinerary Day"
+        verbose_name_plural = "Corporate Itinerary Days"
+
+    def __str__(self):
+        return f"Day {self.day_number}: {self.title}"
+
 
