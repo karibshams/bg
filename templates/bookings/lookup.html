@@ -149,6 +149,232 @@
           </p>
         </div>
 
+        {% if booking.status == 'CONFIRMED' and booking.tour.has_bus_seat_selection and bus_data %}
+        {{ bus_data.grid|json_script:"bus-grid-data" }}
+        {{ bus_data.occupied|json_script:"bus-occupied-data" }}
+        {{ bus_data.selected|json_script:"bus-selected-data" }}
+
+        <!-- Bus Seat Selection Section -->
+        <div class="pt-4 border-t border-slate-200" 
+             x-data="busSeatPicker({
+               activeBusId: {{ bus_data.active_bus.id|default:0 }},
+               maxTravelers: {{ booking.num_travelers }},
+               canChange: {{ can_change_seats|yesno:'true,false' }},
+               apiUrl: '{% url 'bookings:seat_map_api' booking.booking_reference %}',
+               hasSelected: {{ booking.selected_seats|yesno:'true,false' }}
+             })">
+          
+          <!-- Assigned Seats Summary Bar -->
+          <div class="p-4 rounded-2xl bg-gradient-to-r from-sky-50 via-cyan-50 to-indigo-50 border border-sky-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm">
+            <div class="space-y-1">
+              <div class="flex items-center space-x-2">
+                <i data-lucide="bus" class="w-5 h-5 text-sky-600"></i>
+                <span class="font-bold text-sky-950 text-sm trans-target"
+                      data-en="Bus Seat Reservation"
+                      data-bn="বাসের আসন সংরক্ষণ">Bus Seat Reservation</span>
+              </div>
+              <p class="text-xs text-sky-800">
+                <span class="trans-target" data-en="Assigned Seats:" data-bn="সংরক্ষিত আসন:">Assigned Seats:</span>
+                {% if booking.selected_seats %}
+                  <strong class="text-sky-950 font-mono text-sm ml-1 bg-white/80 px-2 py-0.5 rounded border border-sky-300">
+                    {% if booking.assigned_bus %}{{ booking.assigned_bus.bus_name }} — {% endif %}{{ booking.get_selected_seats_display }}
+                  </strong>
+                {% else %}
+                  <span class="text-amber-800 font-bold bg-amber-100/80 px-2 py-0.5 rounded border border-amber-300 trans-target"
+                        data-en="Not selected yet" data-bn="এখনও আসন বেছে নেওয়া হয়নি">Not selected yet</span>
+                {% endif %}
+              </p>
+            </div>
+
+            <div>
+              {% if booking.selected_seats %}
+                {% if can_change_seats %}
+                  <button type="button" @click="togglePicker()" 
+                          class="w-full sm:w-auto px-4 py-2 rounded-xl bg-white hover:bg-sky-50 text-sky-700 border border-sky-300 text-xs font-bold shadow-sm transition-all flex items-center justify-center space-x-1.5">
+                    <i data-lucide="refresh-cw" class="w-3.5 h-3.5 text-sky-600" :class="{'rotate-180': showSeatPicker}"></i>
+                    <span x-text="showSeatPicker ? 'Hide Seat Map' : 'Change Seats'" class="trans-target" data-en="Change Seats" data-bn="আসন পরিবর্তন করুন">Change Seats</span>
+                  </button>
+                {% else %}
+                  <span class="px-3 py-1.5 rounded-xl bg-amber-100 text-amber-900 border border-amber-300 text-xs font-semibold flex items-center space-x-1.5">
+                    <i data-lucide="lock" class="w-3.5 h-3.5 text-amber-700"></i>
+                    <span class="trans-target" data-en="Seat change locked (<24h to tour)" data-bn="লক (ট্যুর শুরুর <২৪ ঘণ্টা বাকি)">Seat change locked (<24h to tour)</span>
+                  </span>
+                {% endif %}
+              {% else %}
+                <button type="button" @click="togglePicker()" 
+                        class="w-full sm:w-auto px-4 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold shadow transition-all flex items-center justify-center space-x-1.5">
+                  <i data-lucide="armchair" class="w-3.5 h-3.5"></i>
+                  <span class="trans-target" data-en="Select Bus Seats Now" data-bn="এখনই আসন নির্বাচন করুন">Select Bus Seats Now</span>
+                </button>
+              {% endif %}
+            </div>
+          </div>
+
+          <!-- Seat Picker Interactive Container -->
+          <div x-show="showSeatPicker" x-transition.duration.300ms class="mt-4 space-y-4">
+            
+            <!-- Hold Timer & Notice -->
+            <div class="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-300 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+              <div class="flex items-center space-x-2 text-amber-950 font-bold">
+                <i data-lucide="clock" class="w-4 h-4 text-amber-600 animate-pulse"></i>
+                <span class="trans-target" data-en="5-Minute Hold Timer:" data-bn="৫-মিনিট হোল্ড টাইমার:">5-Minute Hold Timer:</span>
+                <span class="font-mono text-sm px-2.5 py-0.5 rounded-lg bg-amber-200 text-amber-950 font-black tracking-wider shadow-sm" x-text="formattedTime">05:00</span>
+              </div>
+              <p class="text-[11px] text-amber-900 font-medium trans-target"
+                 data-en="Selected seats are temporarily held for 5 minutes during this session."
+                 data-bn="আসন নির্বাচনের সময় ডাবল-বুকিং রোধে নির্বাচিত আসন ৫ মিনিট রিজার্ভ রাখা হয়।">
+                Selected seats are temporarily held for 5 minutes during this session.
+              </p>
+            </div>
+
+            <!-- Error Banner -->
+            <div x-show="errorMessage" x-text="errorMessage" class="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold"></div>
+
+            <!-- Seat Legend -->
+            <div class="flex flex-wrap items-center justify-center gap-4 py-2.5 px-4 text-xs font-bold text-slate-700 bg-slate-50 rounded-2xl border border-slate-200">
+              <div class="flex items-center space-x-1.5">
+                <div class="w-4 h-4 rounded-md bg-emerald-500 border border-emerald-600 shadow-sm"></div>
+                <span class="trans-target" data-en="Available" data-bn="খালি">Available</span>
+              </div>
+              <div class="flex items-center space-x-1.5">
+                <div class="w-4 h-4 rounded-md bg-blue-600 border border-blue-700 shadow-sm"></div>
+                <span class="trans-target" data-en="Selected (You)" data-bn="আপনার নির্বাচিত">Selected (You)</span>
+              </div>
+              <div class="flex items-center space-x-1.5">
+                <div class="w-4 h-4 rounded-md bg-rose-500 border border-rose-600 opacity-90 shadow-sm"></div>
+                <span class="trans-target" data-en="Occupied" data-bn="বুকড">Occupied</span>
+              </div>
+            </div>
+
+            <!-- Multiple Bus Selector (if more than 1 bus) -->
+            {% if bus_data.buses|length > 1 %}
+            <div class="flex items-center space-x-2 overflow-x-auto pb-1">
+              <span class="text-xs font-bold text-slate-600 flex-shrink-0 trans-target" data-en="Choose Bus:" data-bn="বাস নির্বাচন করুন:">Choose Bus:</span>
+              {% for b in bus_data.buses %}
+                <button type="button" @click="selectBus({{ b.id }})" 
+                        :class="activeBusId == {{ b.id }} ? 'bg-sky-600 text-white font-bold' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'"
+                        class="px-3 py-1.5 rounded-xl text-xs transition-colors flex-shrink-0 border border-slate-200">
+                  {{ b.bus_name }} ({{ b.total_seats }} seats)
+                </button>
+              {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Interactive Bus Cabin Diagram -->
+            <div class="p-6 rounded-3xl bg-slate-100 border-2 border-slate-300 max-w-xs sm:max-w-sm mx-auto shadow-inner relative">
+              
+              <!-- Front of Bus indicator -->
+              <div class="border-b-2 border-dashed border-slate-300 pb-3 mb-4 flex items-center justify-between text-xs text-slate-600 font-bold uppercase tracking-wider">
+                <div class="flex items-center space-x-1.5">
+                  <i data-lucide="door-open" class="w-4 h-4 text-slate-500"></i>
+                  <span class="trans-target" data-en="Entry" data-bn="প্রবেশ">Entry</span>
+                </div>
+                <span class="text-[10px] text-slate-400 font-mono tracking-widest trans-target" data-en="FRONT" data-bn="সামনে">FRONT</span>
+                <div class="flex items-center space-x-1.5">
+                  <span class="trans-target" data-en="Driver" data-bn="চালক">Driver</span>
+                  <i data-lucide="circle-dot" class="w-4 h-4 text-slate-700"></i>
+                </div>
+              </div>
+
+              <!-- Seat Rows Grid -->
+              <div class="space-y-2.5">
+                <template x-for="row in rows" :key="row.row">
+                  <div class="flex items-center justify-between gap-2 sm:gap-3">
+                    
+                    <!-- Left Seats -->
+                    <div class="flex items-center gap-1.5">
+                      <template x-for="seat in row.left" :key="seat">
+                        <button type="button" 
+                                @click="toggleSeat(seat)"
+                                :disabled="isOccupied(seat)"
+                                :class="getSeatClass(seat)"
+                                class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-center select-none"
+                                :title="seat">
+                          <span x-text="seat"></span>
+                        </button>
+                      </template>
+                    </div>
+
+                    <!-- Aisle -->
+                    <div class="text-[10px] text-slate-400 font-bold uppercase tracking-widest px-1 select-none">
+                      <span x-text="row.row"></span>
+                    </div>
+
+                    <!-- Right Seats -->
+                    <div class="flex items-center gap-1.5">
+                      <template x-for="seat in row.right" :key="seat">
+                        <button type="button" 
+                                @click="toggleSeat(seat)"
+                                :disabled="isOccupied(seat)"
+                                :class="getSeatClass(seat)"
+                                class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-center select-none"
+                                :title="seat">
+                          <span x-text="seat"></span>
+                        </button>
+                      </template>
+                    </div>
+
+                  </div>
+                </template>
+              </div>
+
+              <!-- Rear of Bus -->
+              <div class="border-t-2 border-dashed border-slate-300 pt-3 mt-4 text-center text-[10px] text-slate-400 font-mono tracking-widest uppercase trans-target"
+                   data-en="REAR OF BUS" data-bn="বাসের পেছনের অংশ">
+                REAR OF BUS
+              </div>
+
+            </div>
+
+            <!-- Seat Selection Summary & Confirm Form -->
+            <div class="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-3">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+                <div>
+                  <span class="text-slate-500 trans-target" data-en="Travelers Count:" data-bn="ভ্রমণকারী সংখ্যা:">Travelers Count:</span>
+                  <strong class="text-slate-900 ml-1">{{ booking.num_travelers }} <span class="trans-target" data-en="seat(s)" data-bn="টি আসন">seat(s)</span></strong>
+                </div>
+                <div>
+                  <span class="text-slate-500 trans-target" data-en="Selected:" data-bn="নির্বাচিত:">Selected:</span>
+                  <span class="font-bold ml-1 font-mono text-sm" :class="selectedSeats.length === maxTravelers ? 'text-emerald-600' : 'text-amber-600'" x-text="`${selectedSeats.length} / ${maxTravelers}`"></span>
+                </div>
+              </div>
+
+              <!-- Selected Seat Badges -->
+              <div class="flex flex-wrap items-center gap-1.5 min-h-[32px] p-2 bg-slate-50 rounded-xl border border-slate-100">
+                <template x-if="selectedSeats.length === 0">
+                  <span class="text-xs text-slate-400 italic trans-target" data-en="Click on available green seats to choose." data-bn="খালি সবুজ আসনগুলোতে ক্লিক করে বেছে নিন।">Click on available green seats to choose.</span>
+                </template>
+                <template x-for="s in selectedSeats" :key="s">
+                  <span class="px-2.5 py-1 rounded-lg bg-blue-600 text-white text-xs font-bold font-mono shadow-sm flex items-center space-x-1">
+                    <span x-text="s"></span>
+                    <button type="button" @click="toggleSeat(s)" class="text-blue-200 hover:text-white ml-1 font-bold">×</button>
+                  </span>
+                </template>
+              </div>
+
+              <!-- Submit Form -->
+              <form method="POST" action="{% url 'bookings:select_seats' booking.booking_reference %}" class="pt-1">
+                {% csrf_token %}
+                <input type="hidden" name="bus_id" :value="activeBusId">
+                <input type="hidden" name="seats" :value="selectedSeats.join(',')">
+                <button type="submit" 
+                        :disabled="selectedSeats.length !== maxTravelers"
+                        :class="selectedSeats.length === maxTravelers ? 'bg-emerald-600 hover:bg-emerald-500 text-white cursor-pointer shadow-md' : 'bg-slate-200 text-slate-400 cursor-not-allowed'"
+                        class="w-full py-3 rounded-xl font-bold text-xs flex items-center justify-center space-x-2 transition-all">
+                  <i data-lucide="check-circle" class="w-4 h-4"></i>
+                  <span class="trans-target" 
+                        data-en="Confirm Bus Seat Selection" 
+                        data-bn="আসন সংরক্ষণ নিশ্চিত করুন">Confirm Bus Seat Selection</span>
+                </button>
+              </form>
+
+            </div>
+
+          </div>
+
+        </div>
+        {% endif %}
+
         <div class="pt-4 border-t border-slate-100 flex flex-col sm:flex-row gap-2">
           {% if booking.status == 'CONFIRMED' %}
             <a href="{% url 'bookings:download_voucher' booking.booking_reference %}" 
@@ -192,4 +418,127 @@
 
   </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function busSeatPicker(config) {
+  const occupiedElem = document.getElementById('bus-occupied-data');
+  const selectedElem = document.getElementById('bus-selected-data');
+  const gridElem = document.getElementById('bus-grid-data');
+
+  let occupied = [];
+  let selected = [];
+  let rows = [];
+
+  try { if (occupiedElem) occupied = JSON.parse(occupiedElem.textContent); } catch (e) {}
+  try { if (selectedElem) selected = JSON.parse(selectedElem.textContent); } catch (e) {}
+  try { if (gridElem) rows = JSON.parse(gridElem.textContent); } catch (e) {}
+
+  return {
+    activeBusId: config.activeBusId,
+    occupiedSeats: occupied,
+    selectedSeats: [...selected],
+    rows: rows,
+    maxTravelers: config.maxTravelers || 1,
+    canChange: config.canChange,
+    apiUrl: config.apiUrl,
+    showSeatPicker: !config.hasSelected,
+    timerSeconds: 300,
+    timerInterval: null,
+    timerActive: false,
+    errorMessage: '',
+
+    init() {
+      if (this.showSeatPicker) {
+        this.startTimer();
+      }
+    },
+    togglePicker() {
+      if (!this.canChange && config.hasSelected) return;
+      this.showSeatPicker = !this.showSeatPicker;
+      if (this.showSeatPicker && !this.timerActive) {
+        this.startTimer();
+      }
+      this.$nextTick(() => {
+        if (window.lucide) window.lucide.createIcons();
+      });
+    },
+    isOccupied(seat) {
+      return this.occupiedSeats.includes(seat);
+    },
+    isSelected(seat) {
+      return this.selectedSeats.includes(seat);
+    },
+    getSeatClass(seat) {
+      if (this.isOccupied(seat)) {
+        return 'bg-rose-500 text-white cursor-not-allowed opacity-90 border border-rose-600 shadow-sm';
+      }
+      if (this.isSelected(seat)) {
+        return 'bg-blue-600 text-white ring-2 ring-blue-300 shadow-md scale-105 border border-blue-700';
+      }
+      return 'bg-emerald-500 hover:bg-emerald-600 text-white cursor-pointer shadow-sm hover:scale-105 border border-emerald-600';
+    },
+    toggleSeat(seat) {
+      if (this.isOccupied(seat)) return;
+      this.errorMessage = '';
+      if (this.isSelected(seat)) {
+        this.selectedSeats = this.selectedSeats.filter(s => s !== seat);
+      } else {
+        if (this.selectedSeats.length >= this.maxTravelers) {
+          this.errorMessage = `You can only select up to ${this.maxTravelers} seat(s).`;
+          return;
+        }
+        this.selectedSeats.push(seat);
+        this.selectedSeats.sort();
+        if (!this.timerActive) {
+          this.startTimer();
+        }
+      }
+    },
+    startTimer() {
+      if (this.timerInterval) clearInterval(this.timerInterval);
+      this.timerSeconds = 300;
+      this.timerActive = true;
+      this.timerInterval = setInterval(() => {
+        if (this.timerSeconds > 0) {
+          this.timerSeconds--;
+        } else {
+          clearInterval(this.timerInterval);
+          this.timerActive = false;
+          this.selectedSeats = [];
+          this.errorMessage = 'Seat hold session expired (5 minutes). Please re-select your seats.';
+          this.fetchBusData(this.activeBusId);
+        }
+      }, 1000);
+    },
+    get formattedTime() {
+      const m = Math.floor(this.timerSeconds / 60);
+      const s = this.timerSeconds % 60;
+      return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    },
+    async selectBus(busId) {
+      if (this.activeBusId === busId) return;
+      this.activeBusId = busId;
+      this.selectedSeats = [];
+      await this.fetchBusData(busId);
+      this.$nextTick(() => {
+        if (window.lucide) window.lucide.createIcons();
+      });
+    },
+    async fetchBusData(busId) {
+      try {
+        const res = await fetch(`${this.apiUrl}?bus_id=${busId}`);
+        const data = await res.json();
+        if (data.enabled) {
+          this.occupiedSeats = data.occupied_seats || [];
+          this.rows = data.rows || [];
+        }
+      } catch (err) {
+        console.error('Error fetching seat map:', err);
+      }
+    }
+  };
+}
+</script>
 {% endblock %}

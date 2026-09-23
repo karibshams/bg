@@ -3,9 +3,15 @@ from django.utils.html import format_html
 from django.db import models
 from .models import (
     Destination, TourCategory, Tour, TourDate, 
-    TourItinerary, TourImage, TourInclusion
+    TourItinerary, TourImage, TourInclusion, TourBus
 )
 from .widgets import QuillAdminWidget
+
+class TourBusInline(admin.TabularInline):
+    model = TourBus
+    extra = 1
+    fields = ('bus_name', 'bus_number', 'layout_type', 'total_seats', 'is_active')
+
 
 class TourDateInline(admin.TabularInline):
     model = TourDate
@@ -36,12 +42,12 @@ class TourImageInline(admin.TabularInline):
 
 @admin.register(Tour)
 class TourAdmin(admin.ModelAdmin):
-    list_display = ('title', 'destination', 'category', 'duration', 'formatted_price', 'rating_stars', 'is_featured', 'is_published')
-    list_filter = ('is_published', 'is_featured', 'destination', 'category')
+    list_display = ('title', 'destination', 'category', 'duration', 'formatted_price', 'bus_seat_badge', 'rating_stars', 'is_featured', 'is_published')
+    list_filter = ('has_bus_seat_selection', 'bus_layout_type', 'is_published', 'is_featured', 'destination', 'category')
     search_fields = ('title', 'bangla_title', 'description', 'destination__name')
     prepopulated_fields = {'slug': ('title',)}
     list_editable = ('is_featured', 'is_published')
-    inlines = [TourDateInline, TourItineraryInline, TourInclusionInline, TourImageInline]
+    inlines = [TourBusInline, TourDateInline, TourItineraryInline, TourInclusionInline, TourImageInline]
     formfield_overrides = {
         models.TextField: {'widget': QuillAdminWidget},
     }
@@ -74,10 +80,25 @@ class TourAdmin(admin.ModelAdmin):
                 'excluded_items', 'bangla_excluded_items'
             )
         }),
+        ('Bus Seat Selection Configuration', {
+            'description': 'Enable/disable interactive bus seat selection and choose layouts (36, 40, or 45-seater). Multiple reserved buses can be added in the inline section below.',
+            'fields': (
+                ('has_bus_seat_selection', 'bus_layout_type'),
+            )
+        }),
         ('Reviews & Visibility', {
             'fields': (('rating', 'reviews_count'), ('is_featured', 'is_published'))
         }),
     )
+
+    def bus_seat_badge(self, obj):
+        if obj.has_bus_seat_selection:
+            return format_html(
+                '<span style="background-color: #047857; color: white; padding: 3px 8px; border-radius: 9999px; font-size: 11px; font-weight: bold; white-space: nowrap;">✓ {} Seats</span>',
+                obj.bus_layout_type
+            )
+        return format_html('<span style="color: #94a3b8; font-size: 11px;">Disabled</span>')
+    bus_seat_badge.short_description = "Bus Seats"
 
     def formatted_price(self, obj):
         if obj.discount_price:
@@ -95,6 +116,13 @@ class TourAdmin(admin.ModelAdmin):
     def rating_stars(self, obj):
         return format_html('<span style="color: #f59e0b;">★ {}</span>', obj.rating)
     rating_stars.short_description = "Rating"
+
+
+@admin.register(TourBus)
+class TourBusAdmin(admin.ModelAdmin):
+    list_display = ('bus_name', 'tour', 'bus_number', 'layout_type', 'total_seats', 'is_active', 'created_at')
+    list_filter = ('layout_type', 'is_active', 'tour')
+    search_fields = ('bus_name', 'bus_number', 'tour__title')
 
 
 @admin.register(Destination)

@@ -35,6 +35,12 @@ class Booking(models.Model):
     
     special_requests = models.TextField(blank=True)
     rejection_reason = models.TextField(blank=True, default='', help_text="Specific reason if the booking was rejected")
+    
+    # Bus Seat Selection
+    selected_seats = models.CharField(max_length=150, blank=True, default='', help_text="Comma-separated chosen seat numbers (e.g. A1, A2)")
+    assigned_bus = models.ForeignKey('tours.TourBus', on_delete=models.SET_NULL, null=True, blank=True, related_name='bookings')
+    seat_selected_at = models.DateTimeField(null=True, blank=True)
+
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDING')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -79,6 +85,20 @@ class Booking(models.Model):
         self.save(update_fields=['status', 'rejection_reason', 'updated_at'])
         if self.tour_date:
             self.tour_date.update_available_seats()
+
+    def get_selected_seats_list(self):
+        if not self.selected_seats:
+            return []
+        return [s.strip() for s in self.selected_seats.split(',') if s.strip()]
+
+    def get_selected_seats_display(self):
+        seats = self.get_selected_seats_list()
+        if not seats:
+            return "Assigned on departure"
+        seats_str = ", ".join(seats)
+        if self.assigned_bus:
+            return f"{seats_str} ({self.assigned_bus.bus_name})"
+        return seats_str
 
     def __str__(self):
         return f"{self.booking_reference} - {self.customer_name} ({self.tour.title})"

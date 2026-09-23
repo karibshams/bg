@@ -81,6 +81,24 @@ class Tour(models.Model):
     rating = models.DecimalField(max_digits=3, decimal_places=1, default=4.9)
     reviews_count = models.PositiveIntegerField(default=12)
     
+    # Bus Seat Selection Controls
+    has_bus_seat_selection = models.BooleanField(
+        default=False,
+        verbose_name="Enable Bus Seat Selection",
+        help_text="Provide an option to enable or disable bus seat selection per tour package"
+    )
+    bus_layout_type = models.CharField(
+        max_length=10,
+        choices=[
+            ('36', '36-Seater (4x9)'),
+            ('40', '40-Seater (4x10)'),
+            ('45', '45-Seater (5x9)'),
+        ],
+        default='40',
+        verbose_name="Bus Seat Layout",
+        help_text="Choose from three specific bus seat layouts: 36-seater, 40-seater, or 45-seater"
+    )
+
     is_featured = models.BooleanField(default=False)
     is_published = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -295,3 +313,81 @@ class TourInclusion(models.Model):
     def __str__(self):
         status = "Included" if self.is_included else "Excluded"
         return f"[{status}] {self.item}"
+
+
+class TourBus(models.Model):
+    """
+    Reserved bus for a tour package.
+    Supports assigning multiple reserved buses per tour package.
+    """
+    LAYOUT_CHOICES = [
+        ('36', '36-Seater (4x9)'),
+        ('40', '40-Seater (4x10)'),
+        ('45', '45-Seater (5x9)'),
+    ]
+
+    tour = models.ForeignKey(Tour, on_delete=models.CASCADE, related_name='buses')
+    tour_date = models.ForeignKey('TourDate', on_delete=models.SET_NULL, null=True, blank=True, related_name='buses')
+    bus_name = models.CharField(max_length=100, default="Bus 1", help_text="e.g. Scania AC - Bus 1")
+    bus_number = models.CharField(max_length=50, blank=True, help_text="e.g. Dhaka Metro-Ba 14-8890")
+    layout_type = models.CharField(max_length=10, choices=LAYOUT_CHOICES, default='40')
+    total_seats = models.PositiveIntegerField(default=40)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['tour', 'bus_name']
+        verbose_name = "Tour Reserved Bus"
+        verbose_name_plural = "Tour Reserved Buses"
+
+    def save(self, *args, **kwargs):
+        if self.layout_type == '36':
+            self.total_seats = 36
+        elif self.layout_type == '40':
+            self.total_seats = 40
+        elif self.layout_type == '45':
+            self.total_seats = 45
+        super().save(*args, **kwargs)
+
+    def get_seat_layout_grid(self):
+        """
+        Returns structured grid rows for bus layout:
+        36-seater: 9 rows (A-I), 4 seats per row (Left: 1, 2; Right: 3, 4)
+        40-seater: 10 rows (A-J), 4 seats per row (Left: 1, 2; Right: 3, 4)
+        45-seater: 9 rows (A-I), 5 seats per row (Left: 1, 2; Right: 3, 4, 5)
+        """
+        rows = []
+        row_letters = "ABCDEFGHIJ"
+        if self.layout_type == '36':
+            for r in row_letters[:9]:
+                rows.append({
+                    'row': r,
+                    'left': [f"{r}1", f"{r}2"],
+                    'right': [f"{r}3", f"{r}4"]
+                })
+        elif self.layout_type == '40':
+            for r in row_letters[:10]:
+                rows.append({
+                    'row': r,
+                    'left': [f"{r}1", f"{r}2"],
+                    'right': [f"{r}3", f"{r}4"]
+                })
+        elif self.layout_type == '45':
+            for r in row_letters[:9]:
+                rows.append({
+                    'row': r,
+                    'left': [f"{r}1", f"{r}2"],
+                    'right': [f"{r}3", f"{r}4", f"{r}5"]
+                })
+        return rows
+
+    def get_all_seat_numbers(self):
+        seats = []
+        for row in self.get_seat_layout_grid():
+            seats.extend(row['left'])
+            seats.extend(row['right'])
+        return seats
+
+    def __str__(self):
+        return f"{self.bus_name} ({self.get_layout_type_display()}) — {self.tour.title}"
+

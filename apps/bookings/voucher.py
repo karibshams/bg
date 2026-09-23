@@ -211,6 +211,13 @@ def generate_booking_voucher_pdf(booking):
 
     dest_str = clean_ascii(tour.destination.name) if tour.destination else "Bangladesh"
 
+    seats_str = clean_ascii(booking.selected_seats) if booking.selected_seats else "Assigned upon departure"
+    bus_name = clean_ascii(booking.assigned_bus.bus_name) if booking.assigned_bus else "Reserved AC Coach"
+    if booking.tour.has_bus_seat_selection or booking.selected_seats:
+        bus_seat_display = f"<b>{seats_str}</b> ({bus_name})"
+    else:
+        bus_seat_display = "Standard Tour Coach"
+
     tour_data = [
         [
             Paragraph("Tour Package:", cell_label),
@@ -223,6 +230,12 @@ def generate_booking_voucher_pdf(booking):
             Paragraph(clean_ascii(tour.duration), cell_value),
             Paragraph("Travel Schedule / Batch:", cell_label),
             Paragraph(f"<b>{travel_date_str}</b>", cell_value)
+        ],
+        [
+            Paragraph("Assigned Bus & Seats:", cell_label),
+            Paragraph(f"<font color='#0369a1'>{bus_seat_display}</font>", cell_value),
+            Paragraph("Departure Reporting:", cell_label),
+            Paragraph("<b>30 mins before travel</b>", cell_value)
         ]
     ]
 
@@ -299,6 +312,7 @@ def generate_booking_voucher_pdf(booking):
     story.append(Spacer(1, 4))
 
     guidelines_html = (
+        "• <b>Mandatory Travel Voucher:</b> Travelers must bring a printed or digital copy of this voucher on the day of the tour.<br/>"
         "• <b>Reporting Time:</b> Please report to the departure station at least 30 minutes before departure.<br/>"
         "• <b>Identity Verification:</b> Travelers must carry a valid National ID Card / Passport and this voucher.<br/>"
         "• <b>Luggage Policy:</b> Maximum one standard backpack / luggage per traveler for smooth transit.<br/>"

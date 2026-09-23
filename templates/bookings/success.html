@@ -104,6 +104,48 @@
             <span class="text-xs text-slate-400 block mb-1 trans-target" data-en="Total Paid Amount:" data-bn="পরিশোধিত মোট টাকা:">Total Paid Amount:</span>
             <span class="font-extrabold text-slate-900 text-base">৳{{ booking.total_amount|floatformat:0 }} (Paid)</span>
           </div>
+
+          {% if booking.tour.has_bus_seat_selection %}
+          <div class="sm:col-span-2 p-3.5 rounded-2xl bg-sky-50/80 border border-sky-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <span class="text-xs text-sky-900 font-bold block trans-target" data-en="Reserved Bus & Seats:" data-bn="বাস ও সংরক্ষিত আসন নং:">Reserved Bus & Seats:</span>
+              <div class="mt-1 flex items-center space-x-2">
+                {% if booking.selected_seats %}
+                  <span class="px-3 py-1 bg-sky-600 text-white font-mono font-bold text-sm rounded-lg shadow-sm">
+                    {% if booking.assigned_bus %}{{ booking.assigned_bus.bus_name }} — {% endif %}{{ booking.get_selected_seats_display }}
+                  </span>
+                {% else %}
+                  <span class="text-xs font-semibold text-amber-700 bg-amber-100/90 px-2.5 py-1 rounded-lg trans-target"
+                        data-en="No seats selected yet" data-bn="এখনও কোনো আসন নির্বাচিত হয়নি">
+                    No seats selected yet
+                  </span>
+                {% endif %}
+              </div>
+            </div>
+            <div>
+              <a href="{% url 'bookings:lookup' %}?ref={{ booking.booking_reference }}" class="text-xs text-sky-700 hover:text-sky-900 font-bold underline flex items-center space-x-1">
+                <span class="trans-target" data-en="Manage / Select Seats in Tracker →" data-bn="ট্র্যাকারে আসন নির্বাচন বা পরিবর্তন করুন →">Manage / Select Seats in Tracker →</span>
+              </a>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+
+        <!-- Travel Document & Voucher Mandatory Instruction -->
+        <div class="p-4 rounded-2xl bg-amber-50 border border-amber-300 text-amber-950 text-xs flex items-start space-x-3 shadow-sm">
+          <i data-lucide="alert-circle" class="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5"></i>
+          <div class="space-y-1">
+            <span class="font-bold text-amber-900 block trans-target"
+                  data-en="Important Tour Day Instruction:"
+                  data-bn="জরুরি ভ্রমণ নির্দেশিকা:">
+              Important Tour Day Instruction:
+            </span>
+            <p class="trans-target leading-relaxed text-amber-900"
+               data-en="Travelers must bring a printed or digital copy of this official voucher along with authentic personal travel documents (e.g., National ID card, Student ID, or Passport) on the day of the tour for passenger and seat verification."
+               data-bn="ভ্রমণ শুরুর দিন যাত্রী ও আসন যাচাইয়ের জন্য এই অফিশিয়াল ভাউচারের প্রিন্ট কপি অথবা স্মার্টফোনে ডিজিটাল কপি এবং সাথে মূল পরিচয়পত্র (জাতীয় পরিচয়পত্র / পাসপোর্ট / স্টুডেন্ট আইডি) প্রদর্শন করা বাধ্যতামূলক।">
+              Travelers must bring a printed or digital copy of this official voucher along with authentic personal travel documents (e.g., National ID card, Student ID, or Passport) on the day of the tour for passenger and seat verification.
+            </p>
+          </div>
         </div>
 
         <!-- Barcode / Security strip -->
