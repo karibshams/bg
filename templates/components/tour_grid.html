@@ -1,21 +1,135 @@
-{% if tours %}
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-  {% for tour in tours %}
-    {% include 'components/tour_card.html' with tour=tour %}
-  {% endfor %}
-</div>
+{% if selected_date_obj %}
+
+  {% if is_exact_date_match and tours %}
+    <!-- Exact Date Matches Banner -->
+    <div class="mb-8 p-5 rounded-3xl bg-emerald-50 border border-emerald-300 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-emerald-950 shadow-sm font-bengali">
+      <div class="flex items-center space-x-3.5">
+        <div class="w-11 h-11 rounded-2xl bg-emerald-600 text-white flex items-center justify-center flex-shrink-0 shadow-md">
+          <i data-lucide="calendar-check" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <div class="flex items-center space-x-2">
+            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-black uppercase tracking-wider bg-emerald-200 text-emerald-900 border border-emerald-300 trans-target"
+                  data-en="Exact Departure Date Match" data-bn="নির্দিষ্ট যাত্রার তারিখের মিল">
+              Exact Departure Date Match
+            </span>
+            <span class="text-xs text-emerald-700 font-bold">• {{ tours|length }} <span class="trans-target" data-en="Tour(s) Available" data-bn="টি ট্যুর উপলব্ধ">Tour(s) Available</span></span>
+          </div>
+          <h3 class="text-base font-extrabold text-emerald-950 mt-0.5 trans-target"
+              data-en="Showing tours departing on {{ selected_date_obj|date:'d M Y' }}"
+              data-bn="{{ selected_date_obj|date:'d M Y' }} তারিখে প্রস্থানকারী ট্যুরসমূহ প্রদর্শন করা হচ্ছে">
+            Showing tours departing on {{ selected_date_obj|date:'d M Y' }}
+          </h3>
+        </div>
+      </div>
+
+      <a href="{% url 'tours:list' %}" 
+         class="px-4 py-2 rounded-xl bg-white border border-emerald-300 text-emerald-800 hover:bg-emerald-100/60 font-bold text-xs shadow-sm transition-colors self-start sm:self-auto flex items-center space-x-1.5">
+        <i data-lucide="x" class="w-3.5 h-3.5"></i>
+        <span class="trans-target" data-en="Clear Date Filter" data-bn="তারিখ ফিল্টার মুছুন">Clear Date Filter</span>
+      </a>
+    </div>
+
+    <!-- Tours Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {% for tour in tours %}
+        {% include 'components/tour_card.html' with tour=tour %}
+      {% endfor %}
+    </div>
+
+  {% elif nearby_results %}
+    <!-- Smart Proximity Matching Section -->
+    <div class="space-y-6 font-bengali">
+      
+      <div class="p-6 rounded-3xl bg-gradient-to-br from-amber-500/10 via-sky-500/5 to-emerald-500/10 border-2 border-amber-300/90 shadow-md">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-amber-200/70 pb-5">
+          <div class="flex items-start sm:items-center space-x-4">
+            <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-500 to-orange-500 text-white flex items-center justify-center shadow-lg flex-shrink-0">
+              <i data-lucide="sparkles" class="w-6 h-6"></i>
+            </div>
+            <div>
+              <div class="flex items-center space-x-2">
+                <span class="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-amber-500 text-white shadow-sm trans-target"
+                      data-en="Alternative dates available nearby"
+                      data-bn="কাছাকাছি বিকল্প যাত্রার তারিখ">
+                  Alternative dates available nearby
+                </span>
+                <span class="text-xs text-amber-800 font-bold hidden sm:inline">• Smart Proximity Matching</span>
+              </div>
+              <h3 class="text-lg font-black text-slate-900 mt-1 trans-target"
+                  data-en="No exact tours running on {{ selected_date_obj|date:'d M Y' }}"
+                  data-bn="{{ selected_date_obj|date:'d M Y' }} তারিখে সরাসরি কোনো ট্যুর প্রস্থান করছে না">
+                No exact tours running on {{ selected_date_obj|date:'d M Y' }}
+              </h3>
+              <p class="text-xs text-slate-600 trans-target"
+                 data-en="Our smart travel matcher found the closest 5 available departure dates around your searched date:"
+                 data-bn="আমাদের স্মার্ট ট্রাভেল ম্যাচিং সিস্টেম আপনার খোঁজা তারিখের কাছাকাছি সেরা ৫টি উপলব্ধ যাত্রার তারিখ নিচে প্রদর্শন করছে:">
+                Our smart travel matcher found the closest 5 available departure dates around your searched date:
+              </p>
+            </div>
+          </div>
+
+          <a href="{% url 'tours:list' %}" 
+             class="px-4 py-2 rounded-xl bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-sm transition-colors self-start sm:self-auto flex items-center space-x-1.5 flex-shrink-0">
+            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+            <span class="trans-target" data-en="View All Dates" data-bn="সকল তারিখ দেখুন">View All Dates</span>
+          </a>
+        </div>
+
+        <!-- 5 Proximity Tour Cards Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-6">
+          {% for item in nearby_results %}
+            {% include 'components/proximity_tour_card.html' with item=item %}
+          {% endfor %}
+        </div>
+      </div>
+
+    </div>
+
+  {% else %}
+    <!-- No exact and no proximity dates found -->
+    <div class="py-16 text-center bg-white rounded-3xl border border-slate-200/80 p-8 shadow-sm font-bengali">
+      <div class="w-16 h-16 mx-auto mb-4 text-slate-300">
+        <i data-lucide="calendar-x" class="w-full h-full"></i>
+      </div>
+      <h3 class="text-xl font-bold text-slate-800 mb-2 trans-target"
+          data-en="No Departures Found for this Date" data-bn="এই তারিখে কোনো যাত্রার তারিখ পাওয়া যায়নি">
+        No Departures Found for this Date
+      </h3>
+      <p class="text-sm text-slate-500 max-w-md mx-auto mb-6 trans-target"
+         data-en="No active batches are available near {{ selected_date_obj|date:'d M Y' }}. Try selecting a different date or explore our complete catalog."
+         data-bn="{{ selected_date_obj|date:'d M Y' }} তারিখের কাছাকাছি কোনো সক্রিয় ব্যাচ পাওয়া যায়নি। অন্য কোনো তারিখ নির্বাচন করুন অথবা আমাদের পুরো ক্যাটালগ দেখুন।">
+        No active batches are available near {{ selected_date_obj|date:'d M Y' }}. Try selecting a different date or explore our complete catalog.
+      </p>
+      <a href="{% url 'tours:list' %}" class="inline-flex items-center space-x-2 px-5 py-2.5 rounded-full bg-sky-500 hover:bg-sky-600 text-white text-xs font-semibold transition-colors">
+        <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+        <span class="trans-target" data-en="Clear Date & Show All Tours" data-bn="তারিখ মুছে সকল ট্যুর দেখুন">Clear Date & Show All Tours</span>
+      </a>
+    </div>
+  {% endif %}
+
 {% else %}
-<div class="py-16 text-center bg-white rounded-3xl border border-slate-200/80 p-8 shadow-sm">
-  <div class="w-16 h-16 mx-auto mb-4 text-slate-300">
-    <i data-lucide="compass" class="w-full h-full"></i>
-  </div>
-  <h3 class="text-xl font-bold text-slate-800 mb-2 trans-target" data-en="No Tour Packages Found" data-bn="কোনো ট্যুর প্যাকেজ পাওয়া যায়নি">No Tour Packages Found</h3>
-  <p class="text-sm text-slate-500 max-w-md mx-auto mb-6 trans-target" data-en="No tours match your current filters. Please adjust your filters and try again." data-bn="আপনার বর্তমান ফিল্টারের সাথে মিলে এমন কোনো ট্যুর এই মুহূর্তে নেই। ফিল্টার পরিবর্তন করে পুনরায় চেষ্টা করুন।">
-    No tours match your current filters. Please adjust your filters and try again.
-  </p>
-  <a href="{% url 'tours:list' %}" class="inline-flex items-center space-x-2 px-5 py-2.5 rounded-full bg-sky-500 hover:bg-sky-600 text-white text-xs font-semibold transition-colors">
-    <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
-    <span class="trans-target" data-en="Clear All Filters" data-bn="সব ফিল্টার ক্লিয়ার করুন">Clear All Filters</span>
-  </a>
-</div>
+
+  {% if tours %}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {% for tour in tours %}
+        {% include 'components/tour_card.html' with tour=tour %}
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="py-16 text-center bg-white rounded-3xl border border-slate-200/80 p-8 shadow-sm font-bengali">
+      <div class="w-16 h-16 mx-auto mb-4 text-slate-300">
+        <i data-lucide="compass" class="w-full h-full"></i>
+      </div>
+      <h3 class="text-xl font-bold text-slate-800 mb-2 trans-target" data-en="No Tour Packages Found" data-bn="কোনো ট্যুর প্যাকেজ পাওয়া যায়নি">No Tour Packages Found</h3>
+      <p class="text-sm text-slate-500 max-w-md mx-auto mb-6 trans-target" data-en="No tours match your current filters. Please adjust your filters and try again." data-bn="আপনার বর্তমান ফিল্টারের সাথে মিলে এমন কোনো ট্যুর এই মুহূর্তে নেই। ফিল্টার পরিবর্তন করে পুনরায় চেষ্টা করুন।">
+        No tours match your current filters. Please adjust your filters and try again.
+      </p>
+      <a href="{% url 'tours:list' %}" class="inline-flex items-center space-x-2 px-5 py-2.5 rounded-full bg-sky-500 hover:bg-sky-600 text-white text-xs font-semibold transition-colors">
+        <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+        <span class="trans-target" data-en="Clear All Filters" data-bn="সব ফিল্টার ক্লিয়ার করুন">Clear All Filters</span>
+      </a>
+    </div>
+  {% endif %}
+
 {% endif %}

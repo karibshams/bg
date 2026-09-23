@@ -1,11 +1,13 @@
+from datetime import datetime
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Q
-from .models import Tour, Destination, TourCategory
+from .models import Tour, Destination, TourCategory, TourDate
 
 def tour_list_view(request):
     """
-    Renders tour listing. If requested via HTMX, returns only the tour grid partial
-    for instant asynchronous filtering and search.
+    Renders tour listing with flexible travel date search, filter controls,
+    and smart proximity matching for departure dates.
+    If requested via HTMX, returns only the tour grid partial.
     """
     tours = Tour.objects.filter(is_published=True).select_related('destination', 'category')
     
@@ -55,25 +57,108 @@ def tour_list_view(request):
     else:
         tours = tours.order_by('-is_featured', '-created_at')
 
-    # HTMX Partial Swap check
-    if request.headers.get('HX-Request'):
-        return render(request, 'components/tour_grid.html', {
-            'tours': tours,
-        })
+    # Date Search & Smart Proximity Matching
+    date_str = request.GET.get('date', '').strip()
+    target_date = None
+    is_exact_date_match = False
+    nearby_results = []
 
-    destinations = Destination.objects.all()
-    categories = TourCategory.objects.all()
-    
-    return render(request, 'tours/list.html', {
+    if date_str:
+        try:
+            target_date = datetime.strptime(date_str, '%Y-%m-%d').date()
+        except (ValueError, TypeError):
+            target_date = None
+
+    if target_date:
+        # Check for tours departing on the exact date with available capacity
+        exact_tours = tours.filter(
+            dates__start_date=target_date,
+            dates__is_active=True,
+            dates__available_seats__gt=0
+        ).distinct()
+
+        if exact_tours.exists():
+            is_exact_date_match = True
+            tours = exact_tours
+        else:
+            # Exact date is not running! Proximity Matching:
+            # Automatically display up to 5 nearby or closest available departure dates around searched date
+            is_exact_date_match = False
+
+            filtered_tour_ids = list(tours.values_list('id', flat=True))
+            if filtered_tour_ids:
+                nearby_dates_qs = TourDate.objects.filter(
+                    tour_id__in=filtered_tour_ids,
+                    is_active=True,
+                    available_seats__gt=0
+                ).select_related('tour', 'tour__destination', 'tour__category')
+            else:
+                nearby_dates_qs = TourDate.objects.none()
+
+            # If filtered tours don't have active dates, search across all published tours
+            if not nearby_dates_qs.exists():
+                nearby_dates_qs = TourDate.objects.filter(
+                    tour__is_published=True,
+                    is_active=True,
+                    available_seats__gt=0
+                ).select_related('tour', 'tour__destination', 'tour__category')
+
+            nearby_candidates = []
+            seen_pairs = set()
+            for td in nearby_dates_qs:
+                pair_key = (td.tour_id, td.start_date)
+                if pair_key in seen_pairs:
+                    continue
+                seen_pairs.add(pair_key)
+
+                delta = (td.start_date - target_date).days
+                abs_delta = abs(delta)
+
+                if delta == 0:
+                    delta_label_en = "Same Day"
+                    delta_label_bn = "একই দিন"
+                elif delta > 0:
+                    delta_label_en = f"+{delta} day{'s' if delta > 1 else ''} later"
+                    delta_label_bn = f"{delta} দিন পর"
+                else:
+                    delta_label_en = f"{abs(delta)} day{'s' if abs(delta) > 1 else ''} earlier"
+                    delta_label_bn = f"{abs(delta)} দিন আগে"
+
+                nearby_candidates.append({
+                    'tour_date': td,
+                    'tour': td.tour,
+                    'delta_days': delta,
+                    'abs_delta': abs_delta,
+                    'delta_label_en': delta_label_en,
+                    'delta_label_bn': delta_label_bn,
+                })
+
+            # Sort by closest date (smallest abs_delta), then start_date
+            nearby_candidates.sort(key=lambda x: (x['abs_delta'], x['tour_date'].start_date))
+            nearby_results = nearby_candidates[:5]
+            # Since no exact matches exist, clear exact tours so proximity recommendations are highlighted
+            tours = []
+
+    context = {
         'tours': tours,
-        'destinations': destinations,
-        'categories': categories,
+        'destinations': Destination.objects.all(),
+        'categories': TourCategory.objects.all(),
         'selected_dest': dest_slug,
         'selected_cat': cat_slug,
         'selected_duration': duration,
         'selected_sort': sort,
+        'selected_date': date_str,
+        'selected_date_obj': target_date,
+        'is_exact_date_match': is_exact_date_match,
+        'nearby_results': nearby_results,
         'query': query,
-    })
+    }
+
+    # HTMX Partial Swap check
+    if request.headers.get('HX-Request'):
+        return render(request, 'components/tour_grid.html', context)
+
+    return render(request, 'tours/list.html', context)
 
 
 def tour_detail_view(request, slug):
@@ -90,7 +175,12 @@ def tour_detail_view(request, slug):
     )
     
     active_dates = tour.dates.filter(is_active=True).order_by('start_date')
-    
+    selected_date_id = request.GET.get('date', '').strip()
+    if selected_date_id and selected_date_id.isdigit():
+        selected_date_id = int(selected_date_id)
+    else:
+        selected_date_id = None
+
     inclusions = tour.get_included_list()
     exclusions = tour.get_excluded_list()
     
@@ -102,6 +192,7 @@ def tour_detail_view(request, slug):
     return render(request, 'tours/detail.html', {
         'tour': tour,
         'active_dates': active_dates,
+        'selected_date_id': selected_date_id,
         'itineraries': tour.itineraries.all(),
         'gallery_images': tour.gallery_images.all(),
         'inclusions': inclusions,

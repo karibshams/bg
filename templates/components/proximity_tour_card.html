@@ -1,0 +1,92 @@
+{% load static %}
+<div class="proximity-card bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border-2 border-amber-200/80 hover:border-amber-400 flex flex-col group relative">
+
+  <!-- Top Floating Alternative Departure Badge -->
+  <div class="absolute top-3 left-3 z-10">
+    <span class="px-3 py-1 rounded-full text-[11px] font-black tracking-wide bg-amber-500 text-white shadow-lg flex items-center space-x-1 animate-pulse">
+      <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
+      <span class="trans-target" data-en="{{ item.delta_label_en }}" data-bn="{{ item.delta_label_bn }}">{{ item.delta_label_en }}</span>
+    </span>
+  </div>
+
+  <div class="absolute top-3 right-3 z-10">
+    <span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-white/95 backdrop-blur-md text-amber-800 shadow border border-amber-200">
+      <span class="trans-target" data-en="Alternative Date" data-bn="বিকল্প তারিখ">Alternative Date</span>
+    </span>
+  </div>
+
+  <!-- Image Container -->
+  <div class="relative h-48 overflow-hidden bg-slate-900">
+    {% if item.tour.cover_image %}
+    <img src="{{ item.tour.cover_image.url }}" alt="{{ item.tour.title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+    {% else %}
+    <img src="{% static 'images/hero-sajek.jpg' %}" alt="{{ item.tour.title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+    {% endif %}
+
+    <div class="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent"></div>
+
+    <!-- Departure Date Strip Overlay on Photo -->
+    <div class="absolute bottom-3 left-3 right-3 flex items-center justify-between text-white text-xs">
+      <span class="font-bold flex items-center space-x-1 text-sky-200">
+        <i data-lucide="map-pin" class="w-3.5 h-3.5 text-sky-400"></i>
+        <span class="trans-target" data-en="{{ item.tour.destination.name }}" data-bn="{{ item.tour.destination.bangla_name|default:item.tour.destination.name }}">{{ item.tour.destination.name }}</span>
+      </span>
+      <span class="font-mono text-[11px] px-2 py-0.5 rounded-md bg-black/60 backdrop-blur-sm text-amber-300 font-bold">
+        {{ item.tour.duration }}
+      </span>
+    </div>
+  </div>
+
+  <!-- Body -->
+  <div class="p-5 flex flex-col flex-grow justify-between space-y-4 font-bengali">
+    
+    <!-- Departure Highlight Box -->
+    <div class="p-3 rounded-2xl bg-amber-50/80 border border-amber-200 flex items-center justify-between">
+      <div>
+        <span class="text-[10px] text-amber-700 font-bold block uppercase tracking-wider trans-target" data-en="Available Departure Date:" data-bn="উপলব্ধ যাত্রার তারিখ:">Available Departure Date:</span>
+        <span class="text-sm font-extrabold text-slate-900">{{ item.tour_date.start_date|date:"d M Y" }}</span>
+        <span class="text-xs text-slate-500">({{ item.tour_date.start_date|date:"D" }})</span>
+      </div>
+      <div class="text-right">
+        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold {% if item.tour_date.available_seats <= 5 %}bg-rose-100 text-rose-800 border border-rose-200{% else %}bg-emerald-100 text-emerald-800 border border-emerald-200{% endif %}">
+          {{ item.tour_date.available_seats }} <span class="trans-target" data-en="seats left" data-bn="সিট বাকি">seats left</span>
+        </span>
+      </div>
+    </div>
+
+    <!-- Title and short description -->
+    <div class="space-y-1">
+      <h4 class="font-sans text-base font-bold text-slate-900 group-hover:text-sky-600 transition-colors line-clamp-1">
+        <a href="{% url 'tours:detail' item.tour.slug %}?date={{ item.tour_date.id }}" 
+           class="trans-target" data-en="{{ item.tour.title }}" data-bn="{{ item.tour.bangla_title|default:item.tour.title }}">
+          {{ item.tour.title }}
+        </a>
+      </h4>
+      <p class="text-xs text-slate-500 line-clamp-2 leading-relaxed trans-target" data-en="{{ item.tour.short_description }}" data-bn="{{ item.tour.bangla_short_description|default:item.tour.short_description }}">
+        {{ item.tour.short_description }}
+      </p>
+    </div>
+
+    <!-- Price and Action Buttons -->
+    <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+      <div>
+        <span class="text-[10px] text-slate-400 block font-medium trans-target" data-en="Batch Price" data-bn="ব্যাচ ভাড়া">Batch Price</span>
+        <span class="text-lg font-black text-sky-600">৳{{ item.tour_date.effective_price|floatformat:0 }}</span>
+      </div>
+
+      <div class="flex items-center space-x-1.5">
+        <a href="{% url 'tours:detail' item.tour.slug %}?date={{ item.tour_date.id }}" 
+           class="px-2.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors">
+          <span class="trans-target" data-en="Details" data-bn="বিস্তারিত">Details</span>
+        </a>
+        <a href="{% url 'bookings:create' %}?tour={{ item.tour.slug }}&date={{ item.tour_date.id }}" 
+           class="px-3.5 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold transition-all shadow-sm flex items-center space-x-1">
+          <span class="trans-target" data-en="Book Date" data-bn="বুক করুন">Book Date</span>
+          <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+        </a>
+      </div>
+    </div>
+
+  </div>
+
+</div>
