@@ -22,6 +22,38 @@ def clean_ascii(text):
     return "".join(c if ord(c) < 128 else " " for c in str(text)).strip()
 
 
+def draw_corporate_watermark(canvas, doc):
+    """
+    Applies the company logo as a subtle, faint watermark background across
+    the center of the page without obstructing readability.
+    """
+    canvas.saveState()
+    logo_path = Path(settings.BASE_DIR) / 'static' / 'images' / 'official-logo-transparent.png'
+    if not logo_path.exists():
+        logo_path = Path(settings.BASE_DIR) / 'static' / 'images' / 'logo-transparent.png'
+    if not logo_path.exists():
+        logo_path = Path(settings.BASE_DIR) / 'static' / 'images' / 'official-logo.png'
+
+    if logo_path.exists():
+        try:
+            canvas.setFillAlpha(0.06)
+            page_w, page_h = doc.pagesize
+            wm_size = 350
+            x = (page_w - wm_size) / 2
+            y = (page_h - wm_size) / 2
+            canvas.drawImage(
+                str(logo_path),
+                x, y,
+                width=wm_size,
+                height=wm_size,
+                preserveAspectRatio=True,
+                mask='auto'
+            )
+        except Exception:
+            pass
+    canvas.restoreState()
+
+
 def generate_corporate_voucher_pdf(corporate_tour):
     """
     Generates an official, beautifully styled executive PDF voucher
@@ -369,7 +401,8 @@ def generate_corporate_voucher_pdf(corporate_tour):
         footer_style
     ))
 
-    doc.build(story)
+    # Build document with faint branded watermark background
+    doc.build(story, onFirstPage=draw_corporate_watermark, onLaterPages=draw_corporate_watermark)
     pdf_data = buffer.getvalue()
     buffer.close()
     return pdf_data

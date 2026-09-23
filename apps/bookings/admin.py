@@ -1,15 +1,23 @@
+from decimal import Decimal
+import uuid
 from django.contrib import admin, messages
+from django.utils import timezone
 from django.utils.html import format_html
 from django.urls import path, reverse
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
+from django.http import JsonResponse
 from .models import Booking
 from apps.payments.models import Payment
 from apps.payments.services import PaymentGatewayService
+from apps.tours.models import Tour, TourDate, TourBus
+from apps.bookings.views import get_or_create_default_bus, get_occupied_seats
 
 @admin.register(Booking)
 class BookingAdmin(admin.ModelAdmin):
+    change_list_template = "admin/bookings/booking/change_list.html"
     list_display = (
         'booking_reference',
+        'source_badge',
         'customer_name',
         'customer_phone',
         'tour_title',
@@ -23,7 +31,7 @@ class BookingAdmin(admin.ModelAdmin):
         'voucher_link',
         'created_at'
     )
-    list_filter = ('status', 'identification_type', 'tour', 'created_at')
+    list_filter = ('booking_source', 'status', 'identification_type', 'tour', 'created_at')
     search_fields = (
         'booking_reference',
         'customer_name',
@@ -35,6 +43,16 @@ class BookingAdmin(admin.ModelAdmin):
     )
     readonly_fields = ('booking_reference', 'created_at', 'updated_at')
     actions = ['mark_confirmed', 'mark_rejected', 'mark_cancelled']
+
+    def source_badge(self, obj):
+        if obj.booking_source == 'OFFLINE':
+            return format_html(
+                '<span style="background: linear-gradient(135deg, #7c3aed, #6d28d9); color: white; padding: 3px 8px; border-radius: 9999px; font-size: 10px; font-weight: 800; white-space: nowrap; display: inline-block; box-shadow: 0 1px 3px rgba(124, 58, 237, 0.3);">🏢 Offline Desk</span>'
+            )
+        return format_html(
+            '<span style="background-color: #0284c7; color: white; padding: 3px 8px; border-radius: 9999px; font-size: 10px; font-weight: 800; white-space: nowrap; display: inline-block;">🌐 Online</span>'
+        )
+    source_badge.short_description = "উৎস (Source)"
 
     def tour_title(self, obj):
         return obj.tour.bangla_title or obj.tour.title
@@ -134,10 +152,233 @@ class BookingAdmin(admin.ModelAdmin):
     def get_urls(self):
         urls = super().get_urls()
         custom_urls = [
+            path('offline-create/', self.admin_site.admin_view(self.offline_booking_create_view), name='booking_offline_create'),
+            path('offline-confirmation/<str:reference>/', self.admin_site.admin_view(self.offline_booking_confirmation_view), name='booking_offline_confirmation'),
+            path('api/tour-details/<int:tour_id>/', self.admin_site.admin_view(self.tour_details_api), name='booking_tour_details_api'),
+            path('api/tour-bus-seats/<int:tour_date_id>/', self.admin_site.admin_view(self.tour_bus_seats_api), name='booking_bus_seats_api'),
             path('<int:booking_id>/approve-quick/', self.admin_site.admin_view(self.approve_single_booking), name='booking_approve_single'),
             path('<int:booking_id>/reject-quick/', self.admin_site.admin_view(self.reject_single_booking), name='booking_reject_single'),
         ]
         return custom_urls + urls
+
+    def offline_booking_create_view(self, request):
+        """
+        Custom admin view for creating manual on-spot / walk-in offline bookings
+        with live bus seat selection, payment recording, and instant voucher generation.
+        """
+        if request.method == 'POST':
+            tour_id = request.POST.get('tour_id')
+            tour_date_id = request.POST.get('tour_date_id')
+            num_travelers_raw = request.POST.get('num_travelers', '1')
+            customer_name = request.POST.get('customer_name', '').strip()
+            customer_phone = request.POST.get('customer_phone', '').strip()
+            customer_email = request.POST.get('customer_email', '').strip()
+            customer_address = request.POST.get('customer_address', '').strip()
+            paid_amount_raw = request.POST.get('paid_amount', '').strip()
+            payment_method = request.POST.get('payment_method', 'CASH')
+            transaction_id = request.POST.get('transaction_id', '').strip()
+            identification_type = request.POST.get('identification_type', 'NID')
+            identification_number = request.POST.get('identification_number', '').strip()
+            special_requests = request.POST.get('special_requests', '').strip()
+            selected_seats_raw = request.POST.get('selected_seats', '').strip()
+            bus_id = request.POST.get('bus_id')
+
+            errors = []
+            if not tour_id:
+                errors.append("ট্যুর প্যাকেজ নির্বাচন করা আবশ্যক (Tour package is required).")
+            if not customer_name:
+                errors.append("গ্রাহকের নাম আবশ্যক (Customer name is required).")
+            if not customer_phone:
+                errors.append("গ্রাহকের ফোন নম্বর আবশ্যক (Customer phone is required).")
+
+            try:
+                num_travelers = int(num_travelers_raw)
+                if num_travelers < 1:
+                    errors.append("ভ্রমণকারী সংখ্যা কমপক্ষে ১ জন হতে হবে।")
+            except ValueError:
+                num_travelers = 1
+                errors.append("ভ্রমণকারী সংখ্যা সঠিক সংখ্যায় প্রদান করুন।")
+
+            tour = Tour.objects.filter(id=tour_id).first() if tour_id else None
+            if not tour:
+                errors.append("নির্বাচিত ট্যুর পাওয়া যায়নি।")
+
+            tour_date = None
+            if tour_date_id:
+                tour_date = TourDate.objects.filter(id=tour_date_id, tour=tour).first()
+                if not tour_date:
+                    errors.append("নির্বাচিত ভ্রমণ তারিখটি পাওয়া যায়নি।")
+                elif tour_date.available_seats < num_travelers:
+                    errors.append(f"নির্বাচিত তারিখে পর্যাপ্ত আসন নেই (অবশিষ্ট: {tour_date.available_seats}টি, প্রয়োজন: {num_travelers}টি)।")
+
+            # Validate seats if bus seat selection is enabled
+            assigned_bus = None
+            selected_seats_list = []
+            if tour and tour.has_bus_seat_selection:
+                if bus_id and str(bus_id).isdigit():
+                    assigned_bus = tour.buses.filter(id=int(bus_id)).first()
+                if not assigned_bus:
+                    assigned_bus = get_or_create_default_bus(tour, tour_date)
+
+                if selected_seats_raw:
+                    selected_seats_list = [s.strip().upper() for s in selected_seats_raw.split(',') if s.strip()]
+                    if len(selected_seats_list) != num_travelers:
+                        errors.append(f"নির্বাচিত বাসের আসন সংখ্যা ({len(selected_seats_list)}টি) অবশ্যই ভ্রমণকারী সংখ্যার ({num_travelers} জন) সমান হতে হবে।")
+
+                    # Check seat conflicts
+                    occupied = get_occupied_seats(tour_date, assigned_bus)
+                    conflict = set(selected_seats_list).intersection(occupied)
+                    if conflict:
+                        errors.append(f"আসন {', '.join(conflict)} ইতোমধ্যে সংরক্ষিত। অন্য আসন নির্বাচন করুন।")
+
+            if errors:
+                for err in errors:
+                    messages.error(request, err)
+            else:
+                unit_price = getattr(tour_date, 'price', None) or (tour.price if tour else Decimal('0.00'))
+                total_amount = unit_price * num_travelers
+                try:
+                    paid_amount = Decimal(paid_amount_raw) if paid_amount_raw else total_amount
+                except Exception:
+                    paid_amount = total_amount
+
+                if not customer_email:
+                    rand_suffix = uuid.uuid4().hex[:6]
+                    customer_email = f"walkin-{rand_suffix}@bhromonghuri.com"
+
+                booking = Booking(
+                    tour=tour,
+                    tour_date=tour_date,
+                    booking_source=Booking.BOOKING_SOURCE_OFFLINE,
+                    customer_name=customer_name,
+                    customer_phone=customer_phone,
+                    customer_email=customer_email,
+                    customer_address=customer_address,
+                    num_travelers=num_travelers,
+                    unit_price=unit_price,
+                    total_amount=total_amount,
+                    special_requests=special_requests,
+                    identification_type=identification_type,
+                    identification_number=identification_number,
+                    selected_seats=",".join(selected_seats_list),
+                    assigned_bus=assigned_bus,
+                    seat_selected_at=timezone.now() if selected_seats_list else None,
+                    status=Booking.STATUS_CONFIRMED,
+                    created_by=request.user if request.user.is_authenticated else None,
+                )
+                if request.FILES.get('identification_document'):
+                    booking.identification_document = request.FILES['identification_document']
+
+                booking.save()
+                booking.confirm_booking()
+
+                trx_id = transaction_id or f"OFFLINE-REC-{booking.booking_reference}"
+                Payment.objects.create(
+                    booking=booking,
+                    transaction_id=trx_id,
+                    sender_number=customer_phone,
+                    payment_method=payment_method,
+                    amount=paid_amount,
+                    currency='BDT',
+                    status='SUCCESS',
+                    verified_at=timezone.now(),
+                    gateway_response=f"Admin On-Spot Booking created by: {request.user.username if request.user.is_authenticated else 'Admin'}"
+                )
+
+                messages.success(
+                    request,
+                    f"✓ অফলাইন বুকিং {booking.booking_reference} ({booking.customer_name}) সফলভাবে তৈরি ও নিশ্চিত হয়েছে!"
+                )
+                return redirect('admin:booking_offline_confirmation', reference=booking.booking_reference)
+
+        tours = Tour.objects.filter(is_published=True).select_related('destination').prefetch_related('dates', 'buses').order_by('title')
+        context = {
+            **self.admin_site.each_context(request),
+            'title': 'নতুন অফলাইন / অন-স্পট বুকিং এন্ট্রি (New Offline Booking)',
+            'tours': tours,
+            'payment_methods': Payment.METHOD_CHOICES,
+        }
+        return render(request, 'admin/bookings/offline_booking_create.html', context)
+
+    def offline_booking_confirmation_view(self, request, reference):
+        """
+        Confirmation screen for an offline booking with immediate printable/downloadable voucher links.
+        """
+        booking = get_object_or_404(
+            Booking.objects.select_related('tour', 'tour_date', 'assigned_bus', 'created_by').prefetch_related('payments'),
+            booking_reference=reference
+        )
+        payment = booking.payments.filter(status='SUCCESS').first() or booking.payments.first()
+        context = {
+            **self.admin_site.each_context(request),
+            'title': f'অফলাইন বুকিং নিশ্চিতকরণ — {booking.booking_reference}',
+            'booking': booking,
+            'payment': payment,
+        }
+        return render(request, 'admin/bookings/offline_booking_confirmation.html', context)
+
+    def tour_details_api(self, request, tour_id):
+        """Returns JSON details of a tour including dates, pricing, and bus configuration."""
+        tour = get_object_or_404(Tour, id=tour_id)
+        dates = [
+            {
+                'id': d.id,
+                'start_date': d.start_date.strftime('%d %b %Y'),
+                'end_date': d.end_date.strftime('%d %b %Y') if d.end_date else '',
+                'available_seats': d.available_seats,
+                'price': float(getattr(d, 'price', None) or tour.price),
+            }
+            for d in tour.dates.filter(is_active=True).order_by('start_date')
+        ]
+        buses = [
+            {
+                'id': b.id,
+                'name': b.bus_name,
+                'layout': b.layout_type,
+                'total_seats': b.total_seats
+            }
+            for b in tour.buses.filter(is_active=True)
+        ]
+        return JsonResponse({
+            'id': tour.id,
+            'title': tour.title,
+            'bangla_title': tour.bangla_title,
+            'price': float(tour.price),
+            'duration': tour.duration,
+            'has_bus_seat_selection': tour.has_bus_seat_selection,
+            'bus_layout_type': tour.bus_layout_type or '40',
+            'dates': dates,
+            'buses': buses
+        })
+
+    def tour_bus_seats_api(self, request, tour_date_id):
+        """Returns JSON bus layout grid and occupied seats for a tour date."""
+        tour_date = get_object_or_404(TourDate.objects.select_related('tour'), id=tour_date_id)
+        tour = tour_date.tour
+        if not tour.has_bus_seat_selection:
+            return JsonResponse({'has_bus': False})
+
+        bus_id = request.GET.get('bus_id')
+        buses = tour.buses.filter(is_active=True)
+        if not buses.exists():
+            get_or_create_default_bus(tour, tour_date)
+            buses = tour.buses.filter(is_active=True)
+
+        if bus_id and str(bus_id).isdigit():
+            active_bus = buses.filter(id=int(bus_id)).first() or buses.first()
+        else:
+            active_bus = buses.first()
+
+        occupied = get_occupied_seats(tour_date, active_bus)
+        return JsonResponse({
+            'has_bus': True,
+            'bus_id': active_bus.id,
+            'bus_name': active_bus.bus_name,
+            'layout_type': active_bus.layout_type,
+            'rows': active_bus.get_seat_layout_grid(),
+            'occupied_seats': list(occupied),
+            'buses': [{'id': b.id, 'name': b.bus_name, 'layout': b.layout_type} for b in buses]
+        })
 
     def approve_single_booking(self, request, booking_id):
         booking = get_object_or_404(Booking, id=booking_id)

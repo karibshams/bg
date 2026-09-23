@@ -20,9 +20,31 @@ class Booking(models.Model):
         (STATUS_COMPLETED, 'Completed'),
     ]
 
+    BOOKING_SOURCE_ONLINE = 'ONLINE'
+    BOOKING_SOURCE_OFFLINE = 'OFFLINE'
+    BOOKING_SOURCE_CHOICES = [
+        (BOOKING_SOURCE_ONLINE, 'Online Customer (অনলাইন)'),
+        (BOOKING_SOURCE_OFFLINE, 'Admin / Offline Walk-in (অফলাইন/অন-স্পট)'),
+    ]
+
     booking_reference = models.CharField(max_length=30, unique=True, editable=False)
     tour = models.ForeignKey(Tour, on_delete=models.PROTECT, related_name='bookings')
     tour_date = models.ForeignKey(TourDate, on_delete=models.SET_NULL, null=True, blank=True, related_name='bookings')
+    
+    booking_source = models.CharField(
+        max_length=20,
+        choices=BOOKING_SOURCE_CHOICES,
+        default=BOOKING_SOURCE_ONLINE,
+        verbose_name="Booking Source"
+    )
+    created_by = models.ForeignKey(
+        'auth.User',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='created_bookings',
+        verbose_name="Created By Admin"
+    )
     
     customer_name = models.CharField(max_length=150)
     customer_email = models.EmailField()
@@ -77,6 +99,10 @@ class Booking(models.Model):
         verbose_name = "Booking"
         verbose_name_plural = "Bookings"
 
+    @property
+    def is_offline(self):
+        return self.booking_source == self.BOOKING_SOURCE_OFFLINE
+
     def save(self, *args, **kwargs):
         if not self.booking_reference:
             year = timezone.now().year
@@ -86,7 +112,14 @@ class Booking(models.Model):
                 if not Booking.objects.filter(booking_reference=candidate).exists():
                     self.booking_reference = candidate
                     break
-        if not self.total_amount and self.unit_price:
+        if not self.unit_price:
+            if self.tour_date and self.tour_date.price:
+                self.unit_price = self.tour_date.price
+            elif self.tour and self.tour.price:
+                self.unit_price = self.tour.price
+            else:
+                self.unit_price = 0
+        if not self.total_amount and self.unit_price is not None:
             self.total_amount = self.unit_price * self.num_travelers
         super().save(*args, **kwargs)
 

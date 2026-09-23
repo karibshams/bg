@@ -179,6 +179,25 @@
   </div>
 
 
+  <!-- Quick Actions Bar -->
+  <div style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-radius: 14px; padding: 14px 20px; margin-bottom: 24px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 14px; border: 1px solid rgba(255,255,255,0.08);">
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <span style="font-size: 1.3rem;">⚡</span>
+      <div>
+        <span style="font-size: 0.95rem; font-weight: 800; color: #f8fafc; display: block;">কুইক অ্যাডমিন অ্যাকশন (Quick Actions)</span>
+        <span style="font-size: 0.75rem; color: #94a3b8;">অফলাইন বুকিং এন্ট্রি, ওয়াটারমার্ক ভাউচার তৈরি ও দ্রুত অ্যাক্সেস</span>
+      </div>
+    </div>
+    <div style="display: flex; gap: 10px;">
+      <a href="{% url 'admin:booking_offline_create' %}" style="background: linear-gradient(135deg, #7c3aed, #6d28d9); color: #ffffff !important; padding: 8px 16px; border-radius: 8px; font-weight: 800; font-size: 0.85rem; text-decoration: none !important; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.35);">
+        <span>🏢 + নতুন অফলাইন / অন-স্পট বুকিং</span>
+      </a>
+      <a href="{% url 'admin:bookings_booking_changelist' %}" style="background: rgba(255,255,255,0.08); color: #e2e8f0 !important; border: 1px solid rgba(255,255,255,0.15); padding: 8px 14px; border-radius: 8px; font-weight: 700; font-size: 0.85rem; text-decoration: none !important;">
+        📋 সকল বুকিং দেখুন
+      </a>
+    </div>
+  </div>
+
   <!-- ========================================== -->
   <!-- 1. PENDING APPROVALS SECTION (PRIMARY)     -->
   <!-- ========================================== -->

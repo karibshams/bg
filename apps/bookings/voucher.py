@@ -23,6 +23,38 @@ def clean_ascii(text):
     return "".join(c if ord(c) < 128 else " " for c in str(text)).strip()
 
 
+def draw_voucher_watermark(canvas, doc):
+    """
+    Applies the company logo as a subtle, faint watermark background across
+    the center of the page without obstructing readability.
+    """
+    canvas.saveState()
+    logo_path = Path(settings.BASE_DIR) / 'static' / 'images' / 'official-logo-transparent.png'
+    if not logo_path.exists():
+        logo_path = Path(settings.BASE_DIR) / 'static' / 'images' / 'logo-transparent.png'
+    if not logo_path.exists():
+        logo_path = Path(settings.BASE_DIR) / 'static' / 'images' / 'official-logo.png'
+
+    if logo_path.exists():
+        try:
+            canvas.setFillAlpha(0.06)
+            page_w, page_h = doc.pagesize
+            wm_size = 360
+            x = (page_w - wm_size) / 2
+            y = (page_h - wm_size) / 2
+            canvas.drawImage(
+                str(logo_path),
+                x, y,
+                width=wm_size,
+                height=wm_size,
+                preserveAspectRatio=True,
+                mask='auto'
+            )
+        except Exception:
+            pass
+    canvas.restoreState()
+
+
 def generate_booking_voucher_pdf(booking):
     """
     Generates an official, beautifully styled PDF voucher for a booking.
@@ -135,9 +167,25 @@ def generate_booking_voucher_pdf(booking):
     brand_cells.append(Spacer(1, 4))
     brand_cells.append(Paragraph(company_info, cell_value))
 
+    is_offline = getattr(booking, 'booking_source', '') == 'OFFLINE'
+    source_title = "OFFLINE BOOKING VOUCHER" if is_offline else "OFFICIAL BOOKING VOUCHER"
+    source_badge_text = "OFFLINE / WALK-IN" if is_offline else "ONLINE CONFIRMED"
+    source_badge_color = "#6366f1" if is_offline else "#065f46"
+
+    source_badge_style = ParagraphStyle(
+        'SourceBadge',
+        parent=styles['Normal'],
+        fontName='Helvetica-Bold',
+        fontSize=8.5,
+        leading=11,
+        textColor=colors.HexColor(source_badge_color),
+        alignment=TA_RIGHT
+    )
+
     voucher_info = [
-        Paragraph("<b>OFFICIAL BOOKING VOUCHER</b>", title_style),
+        Paragraph(f"<b>{source_title}</b>", title_style),
         Paragraph(f"VOUCHER REF: <b>{booking.booking_reference}</b>", subtitle_style),
+        Paragraph(f"Type: <b>{source_badge_text}</b>", source_badge_style),
         Paragraph(f"Issued On: {booking.created_at.strftime('%d %B %Y')}", subtitle_style),
         Paragraph(f"Status: <b>{booking.get_status_display().upper()}</b>", badge_style),
     ]
@@ -349,8 +397,8 @@ def generate_booking_voucher_pdf(booking):
         footer_style
     ))
 
-    # Build document
-    doc.build(story)
+    # Build document with faint branded watermark background
+    doc.build(story, onFirstPage=draw_voucher_watermark, onLaterPages=draw_voucher_watermark)
     pdf_data = buffer.getvalue()
     buffer.close()
     return pdf_data

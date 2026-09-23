@@ -342,7 +342,7 @@ def booking_seat_map_api(request, reference):
 
 
 def download_voucher_pdf_view(request, reference):
-    """Generates and serves downloadable PDF voucher for a booking."""
+    """Generates and serves downloadable/printable watermarked PDF voucher for a booking."""
     booking = get_object_or_404(
         Booking.objects.select_related('tour', 'tour_date', 'tour__destination', 'assigned_bus'),
         booking_reference=reference
@@ -351,6 +351,7 @@ def download_voucher_pdf_view(request, reference):
     pdf_bytes = generate_booking_voucher_pdf(booking)
     response = HttpResponse(pdf_bytes, content_type='application/pdf')
     filename = f"BhromonGhuri_Voucher_{booking.booking_reference}.pdf"
-    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    disposition = 'inline' if request.GET.get('view') == 'inline' else 'attachment'
+    response['Content-Disposition'] = f'{disposition}; filename="{filename}"'
     return response
 
