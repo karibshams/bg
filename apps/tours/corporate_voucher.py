@@ -273,12 +273,14 @@ def generate_corporate_voucher_pdf(corporate_tour):
     story.append(Spacer(1, 4))
 
     transport_str = f"{corporate_tour.bus_count} Bus(es) — {clean_ascii(corporate_tour.bus_type)}"
+    if corporate_tour.vehicle_breakdown:
+        transport_str += f"<br/><font color='#475569'>{clean_ascii(corporate_tour.vehicle_breakdown)}</font>"
     hotel_str = clean_ascii(corporate_tour.accommodation_details) or "Standard executive corporate room arrangements."
     food_str = clean_ascii(corporate_tour.catering_details) or "Full board breakfast, lunch, and dinner."
 
     logistics_data = [
         [
-            Paragraph("Transport / Bus:", cell_label),
+            Paragraph("Transport / Fleet:", cell_label),
             Paragraph(f"<b>{transport_str}</b>", cell_value)
         ],
         [

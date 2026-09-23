@@ -1,8 +1,8 @@
 import json
 from datetime import datetime
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, Http404
 from django.db.models import Q
 from .models import Tour, Destination, TourCategory, TourDate, CorporateTour
 from .corporate_voucher import generate_corporate_voucher_pdf
@@ -216,6 +216,54 @@ def destination_detail_view(request, slug):
     return render(request, 'tours/destination_detail.html', {
         'destination': destination,
         'tours': tours,
+    })
+
+
+def corporate_landing_view(request):
+    """
+    Corporate events and bespoke group tour hub.
+    Allows searching proposals by reference code and showcases corporate capabilities.
+    """
+    query = request.GET.get('ref', '').strip().upper()
+    error_message = None
+    if query:
+        corp = CorporateTour.objects.filter(reference_code=query, is_published=True).first()
+        if corp:
+            return redirect('tours:corporate_detail', reference=corp.reference_code)
+        else:
+            error_message = f"No corporate package found for reference code '{query}'."
+
+    featured_tours = CorporateTour.objects.filter(is_published=True, is_featured=True)[:6]
+    recent_showcase = CorporateTour.objects.filter(is_published=True)[:8]
+
+    return render(request, 'tours/corporate_landing.html', {
+        'featured_tours': featured_tours,
+        'recent_showcase': recent_showcase,
+        'query': query,
+        'error_message': error_message,
+    })
+
+
+def corporate_detail_view(request, reference):
+    """
+    Dedicated executive frontend view for bespoke corporate packages,
+    showcasing fleet allocations, group headcount, day-by-day itineraries,
+    and downloadable official booking documentation.
+    """
+    corporate_tour = get_object_or_404(
+        CorporateTour.objects.prefetch_related('destinations', 'itineraries'),
+        reference_code=reference
+    )
+    if not corporate_tour.is_published and not request.user.is_staff:
+        raise Http404("Corporate package proposal not found or unpublished.")
+
+    itineraries = corporate_tour.itineraries.all()
+    catalog_destinations = corporate_tour.destinations.all()
+    
+    return render(request, 'tours/corporate_detail.html', {
+        'tour': corporate_tour,
+        'itineraries': itineraries,
+        'catalog_destinations': catalog_destinations,
     })
 
 

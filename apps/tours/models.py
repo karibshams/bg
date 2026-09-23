@@ -1,6 +1,7 @@
 import uuid
 import re
 from django.db import models
+from django.urls import reverse
 from django.utils.text import slugify
 from django.utils import timezone
 
@@ -542,11 +543,14 @@ class CorporateTour(models.Model):
         ('PAID', 'Fully Paid (পরিশোধিত)'),
     ]
 
-    reference_code = models.CharField(max_length=40, unique=True, editable=False)
+    reference_code = models.CharField(max_length=40, unique=True, blank=True, editable=False)
     
     # Event & Package Details
     title = models.CharField(max_length=255, verbose_name="Corporate Event / Tour Title")
     bangla_title = models.CharField(max_length=255, blank=True, verbose_name="Bangla Title (Optional)")
+    cover_image = models.ImageField(upload_to='corporate_tours/', blank=True, null=True, verbose_name="Corporate Event Banner / Cover Image")
+    is_published = models.BooleanField(default=True, verbose_name="Publish Corporate Portal Page", help_text="Allow client and team to view bespoke corporate portal page online")
+    is_featured = models.BooleanField(default=False, verbose_name="Feature on Corporate Showcase")
     
     # Client Organization Details
     company_name = models.CharField(max_length=200, verbose_name="Client Company / Organization")
@@ -556,8 +560,19 @@ class CorporateTour(models.Model):
     email = models.EmailField(verbose_name="Contact Email")
     office_address = models.CharField(max_length=255, blank=True, verbose_name="Company / Office Address")
 
-    # Multi-Destination Support
-    destinations = models.ManyToManyField(Destination, related_name='corporate_tours', verbose_name="Destinations Included")
+    # Unrestricted Bangladesh Destinations & Route Support
+    destination_name = models.CharField(
+        max_length=255,
+        blank=True,
+        verbose_name="Event Venue / Destination",
+        help_text="Any destination or venue across Bangladesh, e.g. Gazipur Resort, Savar, Sreemangal, Sundarbans"
+    )
+    destinations = models.ManyToManyField(
+        Destination,
+        blank=True,
+        related_name='corporate_tours',
+        verbose_name="Catalog Destinations Included (Optional)"
+    )
     route_summary = models.CharField(
         max_length=255,
         blank=True,
@@ -573,7 +588,12 @@ class CorporateTour(models.Model):
 
     # Logistics Breakdown
     bus_count = models.PositiveIntegerField(default=1, verbose_name="Number of Buses Reserved")
-    bus_type = models.CharField(max_length=150, default="Luxury AC Coach (Hino / Scania)", verbose_name="Bus Type / Operator")
+    bus_type = models.CharField(max_length=150, default="Luxury AC Coach (Hino / Scania / Hyundai)", verbose_name="Bus Type / Fleet Allocation")
+    vehicle_breakdown = models.TextField(
+        blank=True,
+        verbose_name="Fleet & Transport Allocation Details",
+        help_text="e.g. 4x 40-Seat Scania AC Buses, 2x HiAce Microbuses for executive committee, 1x Luggage Truck"
+    )
     accommodation_details = models.TextField(blank=True, verbose_name="Resort / Hotel Logistics", help_text="e.g. 5-Star Resort, Twin sharing executive rooms")
     catering_details = models.TextField(blank=True, verbose_name="Food & Catering Logistics", help_text="e.g. Buffet breakfast, BBQ dinner, executive lunch sets")
 
@@ -597,13 +617,20 @@ class CorporateTour(models.Model):
 
     @property
     def due_amount(self):
-        return max(0, float(self.total_cost) - float(self.advance_paid))
+        total = float(self.total_cost or 0)
+        advance = float(self.advance_paid or 0)
+        return max(0.0, total - advance)
 
     def get_destinations_display(self):
+        if self.destination_name:
+            return self.destination_name
         dests = list(self.destinations.all())
         if dests:
             return " + ".join(d.name for d in dests)
-        return self.route_summary or "Multi-Destination Tour"
+        return self.route_summary or "Any Location Across Bangladesh"
+
+    def get_absolute_url(self):
+        return reverse('tours:corporate_detail', kwargs={'reference': self.reference_code})
 
     def save(self, *args, **kwargs):
         if not self.reference_code:

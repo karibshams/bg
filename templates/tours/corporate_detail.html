@@ -1,0 +1,478 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ tour.company_name }} — {{ tour.title }} | BhromonGhuri Corporate{% endblock %}
+{% block meta_description %}Bespoke corporate travel and group tour event for {{ tour.company_name }} by BhromonGhuri Corporate Division.{% endblock %}
+
+{% block content %}
+<main class="min-h-screen bg-slate-950 text-slate-100 pt-24 pb-20">
+
+  <!-- Breadcrumbs & Quick Bar -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-2">
+    <div class="flex flex-wrap items-center justify-between gap-4 text-xs text-slate-400 border-b border-white/10 pb-4">
+      <nav class="flex items-center space-x-2">
+        <a href="{% url 'core:home' %}" class="hover:text-sky-400 transition-colors">
+          <span class="trans-target" data-en="Home" data-bn="হোম">Home</span>
+        </a>
+        <span class="text-slate-600">/</span>
+        <a href="{% url 'tours:corporate_landing' %}" class="hover:text-sky-400 transition-colors">
+          <span class="trans-target" data-en="Corporate Division" data-bn="কর্পোরেট বিভাগ">Corporate Division</span>
+        </a>
+        <span class="text-slate-600">/</span>
+        <span class="text-sky-400 font-mono font-semibold">{{ tour.reference_code }}</span>
+      </nav>
+
+      <div class="flex items-center gap-3">
+        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold tracking-wide uppercase font-mono
+          {% if tour.status == 'CONFIRMED' %}bg-emerald-500/20 text-emerald-300 border border-emerald-500/30
+          {% elif tour.status == 'IN_PROGRESS' %}bg-sky-500/20 text-sky-300 border border-sky-500/30
+          {% elif tour.status == 'COMPLETED' %}bg-indigo-500/20 text-indigo-300 border border-indigo-500/30
+          {% else %}bg-amber-500/20 text-amber-300 border border-amber-500/30{% endif %}">
+          <span class="w-1.5 h-1.5 rounded-full mr-1.5 
+            {% if tour.status == 'CONFIRMED' %}bg-emerald-400 animate-pulse
+            {% elif tour.status == 'IN_PROGRESS' %}bg-sky-400 animate-pulse
+            {% elif tour.status == 'COMPLETED' %}bg-indigo-400
+            {% else %}bg-amber-400{% endif %}"></span>
+          {{ tour.get_status_display }}
+        </span>
+
+        <a href="{% url 'tours:corporate_voucher' tour.reference_code %}" 
+           target="_blank"
+           class="inline-flex items-center space-x-1.5 px-3 py-1.5 bg-sky-600 hover:bg-sky-500 text-white rounded-lg text-xs font-semibold shadow-lg shadow-sky-600/30 transition-all hover:scale-105">
+          <i data-lucide="file-down" class="w-3.5 h-3.5"></i>
+          <span class="trans-target" data-en="Download Official PDF Voucher" data-bn="অফিসিয়াল PDF ভাউচার ডাউনলোড">Download PDF Voucher</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hero Header Banner with Executive Background -->
+  <section class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+    <div class="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-slate-900 via-slate-900 to-slate-950 p-6 sm:p-10 lg:p-12 shadow-2xl">
+      
+      <!-- Background Graphic & Ambient Glow -->
+      <div class="absolute -top-32 -right-32 w-96 h-96 bg-sky-500/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="absolute -bottom-32 -left-32 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+      {% if tour.cover_image %}
+        <div class="absolute inset-0 opacity-20 mix-blend-overlay">
+          <img src="{{ tour.cover_image.url }}" alt="{{ tour.title }}" class="w-full h-full object-cover">
+        </div>
+      {% endif %}
+
+      <div class="relative z-10">
+        <!-- Organization Pill & Reference -->
+        <div class="flex flex-wrap items-center gap-3 mb-4">
+          <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-xl bg-white/10 backdrop-blur-md border border-white/15 text-slate-200 text-xs font-medium">
+            <i data-lucide="building-2" class="w-4 h-4 text-sky-400"></i>
+            <span class="font-bold tracking-wide">{{ tour.company_name }}</span>
+          </div>
+          <div class="inline-flex items-center space-x-1.5 px-3 py-1 rounded-xl bg-slate-800/80 border border-slate-700 text-slate-300 text-xs font-mono">
+            <i data-lucide="hash" class="w-3.5 h-3.5 text-slate-400"></i>
+            <span>REF: <strong class="text-white">{{ tour.reference_code }}</strong></span>
+          </div>
+          <div class="inline-flex items-center space-x-1 px-3 py-1 rounded-xl bg-emerald-950/60 border border-emerald-800/50 text-emerald-300 text-xs font-medium">
+            <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-400"></i>
+            <span class="trans-target" data-en="Bespoke Corporate Contract" data-bn="কাস্টমাইজড কর্পোরেট চুক্তি">Bespoke Corporate Contract</span>
+          </div>
+        </div>
+
+        <!-- Tour Title -->
+        <h1 class="text-2xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-tight">
+          {{ tour.title }}
+        </h1>
+        {% if tour.bangla_title %}
+          <p class="text-lg sm:text-xl text-sky-300/90 font-medium font-bengali mt-2">
+            {{ tour.bangla_title }}
+          </p>
+        {% endif %}
+
+        <!-- Quick Summary Ribbon -->
+        <div class="mt-8 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 pt-6 border-t border-white/10 text-left">
+          
+          <!-- Stat 1: Scalable Group Capacity -->
+          <div class="p-3.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm">
+            <div class="flex items-center space-x-2 text-slate-400 text-xs mb-1">
+              <i data-lucide="users-round" class="w-4 h-4 text-sky-400"></i>
+              <span class="trans-target" data-en="Group Capacity" data-bn="গ্রুপ ক্যাপাসিটি">Group Capacity</span>
+            </div>
+            <p class="text-base sm:text-lg font-bold text-white">
+              {{ tour.num_participants }} <span class="text-xs font-normal text-slate-400">Travelers</span>
+            </p>
+            <p class="text-[10px] text-sky-400 font-medium mt-0.5">Fixed Corporate Group</p>
+          </div>
+
+          <!-- Stat 2: Transport Fleet -->
+          <div class="p-3.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm">
+            <div class="flex items-center space-x-2 text-slate-400 text-xs mb-1">
+              <i data-lucide="bus" class="w-4 h-4 text-emerald-400"></i>
+              <span class="trans-target" data-en="Fleet Allocation" data-bn="ফ্লিট বরাদ্দ">Fleet Allocation</span>
+            </div>
+            <p class="text-base sm:text-lg font-bold text-white">
+              {{ tour.bus_count }} <span class="text-xs font-normal text-slate-400">Reserved Bus(es)</span>
+            </p>
+            <p class="text-[10px] text-emerald-400 font-medium mt-0.5 truncate" title="{{ tour.bus_type }}">{{ tour.bus_type }}</p>
+          </div>
+
+          <!-- Stat 3: Event Dates -->
+          <div class="p-3.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm">
+            <div class="flex items-center space-x-2 text-slate-400 text-xs mb-1">
+              <i data-lucide="calendar-range" class="w-4 h-4 text-amber-400"></i>
+              <span class="trans-target" data-en="Tour Schedule" data-bn="ট্যুর সময়সূচী">Tour Schedule</span>
+            </div>
+            <p class="text-sm sm:text-base font-bold text-white leading-tight">
+              {{ tour.start_date|date:"d M Y" }}
+            </p>
+            <p class="text-[11px] text-slate-400 mt-0.5">to {{ tour.end_date|date:"d M Y" }}</p>
+          </div>
+
+          <!-- Stat 4: Duration -->
+          <div class="p-3.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm">
+            <div class="flex items-center space-x-2 text-slate-400 text-xs mb-1">
+              <i data-lucide="clock" class="w-4 h-4 text-purple-400"></i>
+              <span class="trans-target" data-en="Duration" data-bn="সময়কাল">Duration</span>
+            </div>
+            <p class="text-base sm:text-lg font-bold text-white">
+              {{ tour.duration_text }}
+            </p>
+            <p class="text-[10px] text-purple-400 font-medium mt-0.5">Full Itinerary</p>
+          </div>
+
+          <!-- Stat 5: Destination -->
+          <div class="p-3.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm col-span-2 sm:col-span-1">
+            <div class="flex items-center space-x-2 text-slate-400 text-xs mb-1">
+              <i data-lucide="map-pin" class="w-4 h-4 text-rose-400"></i>
+              <span class="trans-target" data-en="Destination / Route" data-bn="গন্তব্য ও রুট">Destination / Route</span>
+            </div>
+            <p class="text-sm sm:text-base font-bold text-white truncate" title="{{ tour.get_destinations_display }}">
+              {{ tour.get_destinations_display }}
+            </p>
+            <p class="text-[10px] text-rose-400 font-medium mt-0.5 truncate">Across Bangladesh</p>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content Grid -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-10">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      
+      <!-- Left 2 Columns: Logistics, Accommodations, Catering, and Itinerary -->
+      <div class="lg:col-span-2 space-y-8">
+        
+        <!-- Section 1: Fleet, Logistics & Transportation Management -->
+        <section class="rounded-3xl border border-white/10 bg-slate-900/80 p-6 sm:p-8 backdrop-blur-md">
+          <div class="flex items-center space-x-3 mb-6 pb-4 border-b border-white/10">
+            <div class="p-2.5 rounded-2xl bg-sky-500/20 text-sky-400 border border-sky-500/30">
+              <i data-lucide="bus-front" class="w-6 h-6"></i>
+            </div>
+            <div>
+              <h2 class="text-xl font-bold text-white">
+                <span class="trans-target" data-en="Dedicated Fleet & Transport Management" data-bn="নিবেদিত ফ্লিট ও পরিবহন ব্যবস্থাপনা">Dedicated Fleet & Transport Management</span>
+              </h2>
+              <p class="text-xs text-slate-400">Customized vehicular logistics for large corporate delegations</p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="p-4 rounded-2xl bg-slate-950/60 border border-white/5">
+              <span class="text-xs font-medium text-slate-400 block mb-1">
+                <span class="trans-target" data-en="Assigned Fleet Allocation" data-bn="বরাদ্দকৃত গাড়িবহর">Assigned Fleet Allocation</span>
+              </span>
+              <p class="text-base font-semibold text-white">
+                {{ tour.bus_count }} Coach(es) — {{ tour.bus_type }}
+              </p>
+              <div class="mt-2 text-xs text-sky-300/80 flex items-center space-x-1.5">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400"></i>
+                <span>AC Air-Suspension • GPS Tracking • Professional Chauffeurs</span>
+              </div>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-slate-950/60 border border-white/5">
+              <span class="text-xs font-medium text-slate-400 block mb-1">
+                <span class="trans-target" data-en="Route & Transit Summary" data-bn="রুট ও ট্রানজিট বিবরণ">Route & Transit Summary</span>
+              </span>
+              <p class="text-base font-semibold text-white">
+                {{ tour.route_summary|default:tour.get_destinations_display }}
+              </p>
+              <div class="mt-2 text-xs text-slate-400 flex items-center space-x-1.5">
+                <i data-lucide="navigation" class="w-3.5 h-3.5 text-sky-400"></i>
+                <span>Seamless point-to-point corporate pickup & return</span>
+              </div>
+            </div>
+          </div>
+
+          {% if tour.vehicle_breakdown %}
+            <div class="mt-4 p-4 rounded-2xl bg-sky-950/30 border border-sky-800/30">
+              <span class="text-xs font-bold text-sky-400 uppercase tracking-wider block mb-1">
+                <span class="trans-target" data-en="Detailed Fleet Allocation & Support Vehicles" data-bn="বিস্তারিত গাড়িবহর ও সাপোর্ট যান বিবরণ">Detailed Fleet Allocation & Support Vehicles</span>
+              </span>
+              <p class="text-sm text-slate-200 whitespace-pre-line leading-relaxed">
+                {{ tour.vehicle_breakdown }}
+              </p>
+            </div>
+          {% endif %}
+        </section>
+
+        <!-- Section 2: Resort, Accommodations & Catering -->
+        <section class="rounded-3xl border border-white/10 bg-slate-900/80 p-6 sm:p-8 backdrop-blur-md">
+          <div class="flex items-center space-x-3 mb-6 pb-4 border-b border-white/10">
+            <div class="p-2.5 rounded-2xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+              <i data-lucide="hotel" class="w-6 h-6"></i>
+            </div>
+            <div>
+              <h2 class="text-xl font-bold text-white">
+                <span class="trans-target" data-en="Resort, Hospitality & Dining Arrangements" data-bn="রিসোর্ট, আবাসন ও ক্যাটারিং ব্যবস্থাপনা">Resort, Hospitality & Dining Arrangements</span>
+              </h2>
+              <p class="text-xs text-slate-400">Premium accommodations, corporate catering, and banquet dining</p>
+            </div>
+          </div>
+
+          <div class="space-y-4">
+            <!-- Accommodation Card -->
+            <div class="p-5 rounded-2xl bg-slate-950/60 border border-white/5">
+              <div class="flex items-center space-x-2 text-sm font-semibold text-emerald-400 mb-2">
+                <i data-lucide="bed-double" class="w-4 h-4"></i>
+                <span><span class="trans-target" data-en="Resort & Room Allocation" data-bn="রিসোর্ট ও রুম বরাদ্দ">Resort & Room Allocation</span></span>
+              </div>
+              <p class="text-sm text-slate-200 leading-relaxed">
+                {{ tour.accommodation_details|default:"Executive luxury resort stay with twin/single sharing configurations, high-speed Wi-Fi, and recreational facilities." }}
+              </p>
+            </div>
+
+            <!-- Catering Card -->
+            <div class="p-5 rounded-2xl bg-slate-950/60 border border-white/5">
+              <div class="flex items-center space-x-2 text-sm font-semibold text-amber-400 mb-2">
+                <i data-lucide="utensils" class="w-4 h-4"></i>
+                <span><span class="trans-target" data-en="Catering & Executive Dining" data-bn="ক্যাটারিং ও এক্সিকিউটিভ ডাইনিং">Catering & Executive Dining</span></span>
+              </div>
+              <p class="text-sm text-slate-200 leading-relaxed">
+                {{ tour.catering_details|default:"Full-board executive meals: Buffet breakfast, multi-course lunch, evening tea & snacks, and grand gala BBQ dinner." }}
+              </p>
+            </div>
+
+            <!-- Special Requirements -->
+            {% if tour.special_requirements %}
+            <div class="p-5 rounded-2xl bg-purple-950/30 border border-purple-800/30">
+              <div class="flex items-center space-x-2 text-sm font-semibold text-purple-300 mb-2">
+                <i data-lucide="sparkles" class="w-4 h-4 text-purple-400"></i>
+                <span><span class="trans-target" data-en="Corporate Event Special Arrangements" data-bn="বিশেষ কর্পোরেট ব্যবস্থাপনা">Corporate Event Special Arrangements</span></span>
+              </div>
+              <p class="text-sm text-purple-100/90 leading-relaxed">
+                {{ tour.special_requirements }}
+              </p>
+            </div>
+            {% endif %}
+          </div>
+        </section>
+
+        <!-- Section 3: Day-by-Day Customized Corporate Itinerary -->
+        <section class="rounded-3xl border border-white/10 bg-slate-900/80 p-6 sm:p-8 backdrop-blur-md">
+          <div class="flex items-center justify-between mb-6 pb-4 border-b border-white/10">
+            <div class="flex items-center space-x-3">
+              <div class="p-2.5 rounded-2xl bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">
+                <i data-lucide="calendar-check" class="w-6 h-6"></i>
+              </div>
+              <div>
+                <h2 class="text-xl font-bold text-white">
+                  <span class="trans-target" data-en="Day-by-Day Customized Itinerary" data-bn="দিনভিত্তিক কাস্টমাইজড ভ্রমণসূচি">Day-by-Day Customized Itinerary</span>
+                </h2>
+                <p class="text-xs text-slate-400">Official timeline curated for {{ tour.company_name }}</p>
+              </div>
+            </div>
+            <span class="text-xs font-mono font-bold text-indigo-400 bg-indigo-950/60 border border-indigo-800/50 px-3 py-1 rounded-xl">
+              {{ itineraries|length }} Day(s) Scheduled
+            </span>
+          </div>
+
+          {% if itineraries %}
+            <div class="relative pl-6 sm:pl-8 space-y-8 before:absolute before:left-3 before:top-3 before:bottom-3 before:w-0.5 before:bg-gradient-to-b before:from-sky-500 before:via-emerald-500 before:to-indigo-500">
+              {% for day in itineraries %}
+                <div class="relative group">
+                  <!-- Timeline Node -->
+                  <div class="absolute -left-6 sm:-left-8 top-1.5 w-6 h-6 rounded-full bg-slate-900 border-2 border-sky-400 flex items-center justify-center shadow-lg shadow-sky-500/30 group-hover:scale-125 transition-transform">
+                    <span class="text-[10px] font-bold text-sky-300 font-mono">{{ day.day_number }}</span>
+                  </div>
+
+                  <div class="p-5 rounded-2xl bg-slate-950/70 border border-white/10 group-hover:border-sky-500/40 transition-colors">
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                      <h3 class="text-base font-bold text-white">
+                        <span class="text-sky-400 mr-2 font-mono">Day {{ day.day_number }}:</span> {{ day.title }}
+                      </h3>
+                      {% if day.stay_info %}
+                        <span class="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-lg bg-indigo-950/60 border border-indigo-800/50 text-[11px] font-medium text-indigo-300">
+                          <i data-lucide="moon" class="w-3 h-3"></i>
+                          <span>Night Stay: <strong>{{ day.stay_info }}</strong></span>
+                        </span>
+                      {% endif %}
+                    </div>
+                    <p class="text-sm text-slate-300 whitespace-pre-line leading-relaxed">
+                      {{ day.description }}
+                    </p>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <!-- Default Structured Corporate Flow if inlines not yet populated -->
+            <div class="p-6 rounded-2xl bg-slate-950/50 border border-white/5 text-center">
+              <i data-lucide="info" class="w-8 h-8 text-sky-400 mx-auto mb-2"></i>
+              <p class="text-sm text-slate-300 font-medium">
+                Day-by-day tailored agenda is being finalized by BhromonGhuri Operations Team.
+              </p>
+              <p class="text-xs text-slate-500 mt-1">
+                Please refer to the downloadable corporate voucher below for the confirmed flight/bus schedule and hotel check-in times.
+              </p>
+            </div>
+          {% endif %}
+        </section>
+
+      </div>
+
+      <!-- Right 1 Column: Client Info, Financial Contract, PDF Download, Focal Person -->
+      <div class="space-y-6">
+        
+        <!-- Official PDF Voucher Download Card -->
+        <div class="rounded-3xl border border-sky-500/30 bg-gradient-to-br from-sky-950/50 to-slate-900 p-6 shadow-xl relative overflow-hidden">
+          <div class="absolute -right-10 -bottom-10 w-36 h-36 bg-sky-500/20 rounded-full blur-2xl pointer-events-none"></div>
+          
+          <div class="flex items-center space-x-3 mb-4">
+            <div class="p-2.5 rounded-2xl bg-sky-500 text-white shadow-lg shadow-sky-500/40">
+              <i data-lucide="file-check-2" class="w-6 h-6"></i>
+            </div>
+            <div>
+              <h3 class="text-base font-bold text-white">
+                <span class="trans-target" data-en="Official PDF Travel Voucher" data-bn="অফিসিয়াল PDF ট্রাভেল ভাউচার">Official Travel Voucher</span>
+              </h3>
+              <p class="text-xs text-sky-300">Govt. Registered Operator Document</p>
+            </div>
+          </div>
+
+          <p class="text-xs text-slate-300 leading-relaxed mb-5">
+            Download the official verified PDF documentation including QR authentication, complete logistics schedule, and driver contact directory.
+          </p>
+
+          <a href="{% url 'tours:corporate_voucher' tour.reference_code %}" 
+             target="_blank"
+             class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white font-bold text-sm shadow-lg shadow-sky-500/30 flex items-center justify-center space-x-2 transition-all hover:scale-[1.02]">
+            <i data-lucide="download" class="w-4 h-4"></i>
+            <span class="trans-target" data-en="Download Verified PDF Voucher" data-bn="যাচাইকৃত PDF ভাউচার ডাউনলোড করুন">Download Verified PDF Voucher</span>
+          </a>
+
+          <div class="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-[11px] text-slate-400">
+            <span>Watermarked & Digitally Signed</span>
+            <span class="font-mono text-sky-400">{{ tour.reference_code }}</span>
+          </div>
+        </div>
+
+        <!-- Corporate Client & Focal Person Card -->
+        <div class="rounded-3xl border border-white/10 bg-slate-900/80 p-6 backdrop-blur-md">
+          <h3 class="text-sm font-bold text-white uppercase tracking-wider mb-4 pb-2 border-b border-white/10 flex items-center space-x-2">
+            <i data-lucide="briefcase" class="w-4 h-4 text-emerald-400"></i>
+            <span><span class="trans-target" data-en="Corporate Client Information" data-bn="কর্পোরেট ক্লায়েন্ট তথ্য">Corporate Client Information</span></span>
+          </h3>
+
+          <div class="space-y-3.5 text-xs">
+            <div>
+              <span class="text-slate-400 block mb-0.5">Organization:</span>
+              <p class="text-sm font-bold text-white">{{ tour.company_name }}</p>
+            </div>
+
+            <div>
+              <span class="text-slate-400 block mb-0.5">Focal Person / Delegate Lead:</span>
+              <p class="text-sm font-semibold text-slate-200">{{ tour.contact_person }}</p>
+              {% if tour.designation %}
+                <p class="text-[11px] text-sky-400">{{ tour.designation }}</p>
+              {% endif %}
+            </div>
+
+            <div class="grid grid-cols-1 gap-2 pt-2 border-t border-white/5">
+              <a href="tel:{{ tour.phone }}" class="flex items-center space-x-2 text-slate-300 hover:text-white transition-colors">
+                <i data-lucide="phone" class="w-3.5 h-3.5 text-sky-400"></i>
+                <span class="font-mono">{{ tour.phone }}</span>
+              </a>
+              <a href="mailto:{{ tour.email }}" class="flex items-center space-x-2 text-slate-300 hover:text-white transition-colors">
+                <i data-lucide="mail" class="w-3.5 h-3.5 text-sky-400"></i>
+                <span>{{ tour.email }}</span>
+              </a>
+              {% if tour.office_address %}
+              <div class="flex items-start space-x-2 text-slate-400 pt-1">
+                <i data-lucide="map-pin" class="w-3.5 h-3.5 text-rose-400 flex-shrink-0 mt-0.5"></i>
+                <span>{{ tour.office_address }}</span>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        <!-- Financial Contract Overview (Staff / Executive) -->
+        <div class="rounded-3xl border border-white/10 bg-slate-900/80 p-6 backdrop-blur-md">
+          <h3 class="text-sm font-bold text-white uppercase tracking-wider mb-4 pb-2 border-b border-white/10 flex items-center space-x-2">
+            <i data-lucide="receipt" class="w-4 h-4 text-sky-400"></i>
+            <span><span class="trans-target" data-en="Contract Financial Overview" data-bn="চুক্তির আর্থিক বিবরণ">Contract Financial Overview</span></span>
+          </h3>
+
+          <div class="space-y-3">
+            <div class="flex items-center justify-between text-xs">
+              <span class="text-slate-400">Total Contract Package:</span>
+              <span class="text-base font-bold text-sky-400">৳{{ tour.total_cost|floatformat:0 }}</span>
+            </div>
+
+            <div class="flex items-center justify-between text-xs">
+              <span class="text-slate-400">Advance Received:</span>
+              <span class="text-sm font-semibold text-emerald-400">৳{{ tour.advance_paid|floatformat:0 }}</span>
+            </div>
+
+            <div class="flex items-center justify-between text-xs pt-2 border-t border-white/10">
+              <span class="text-slate-300 font-semibold">Remaining Balance Due:</span>
+              <span class="text-base font-bold {% if tour.due_amount > 0 %}text-rose-400{% else %}text-emerald-400{% endif %}">
+                ৳{{ tour.due_amount|floatformat:0 }}
+              </span>
+            </div>
+
+            <div class="pt-2">
+              <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold tracking-wide uppercase font-mono
+                {% if tour.payment_status == 'PAID' %}bg-emerald-500/20 text-emerald-300 border border-emerald-500/30
+                {% elif tour.payment_status == 'PARTIAL' %}bg-amber-500/20 text-amber-300 border border-amber-500/30
+                {% else %}bg-rose-500/20 text-rose-300 border border-rose-500/30{% endif %}">
+                Payment: {{ tour.get_payment_status_display }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 24/7 Corporate Dedicated Desk -->
+        <div class="rounded-3xl border border-white/10 bg-slate-900/80 p-6 backdrop-blur-md">
+          <div class="flex items-center space-x-3 mb-3">
+            <div class="p-2 rounded-xl bg-emerald-500/20 text-emerald-400">
+              <i data-lucide="headset" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <h4 class="text-sm font-bold text-white">BhromonGhuri Corporate Desk</h4>
+              <p class="text-[11px] text-slate-400">Dedicated 24/7 Account Management</p>
+            </div>
+          </div>
+          <p class="text-xs text-slate-300 mb-3">
+            Have questions or require route modifications? Contact our Corporate Travel Division immediately.
+          </p>
+          <div class="space-y-1.5 text-xs font-mono">
+            <div class="text-sky-400 flex items-center space-x-1.5">
+              <i data-lucide="phone" class="w-3.5 h-3.5"></i>
+              <span>+8801518919370, +8801855939459</span>
+            </div>
+            <div class="text-slate-300 flex items-center space-x-1.5 font-sans">
+              <i data-lucide="mail" class="w-3.5 h-3.5 text-sky-400"></i>
+              <span>corporate@bhromonghuri.com</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+</main>
+{% endblock %}

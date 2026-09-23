@@ -57,6 +57,10 @@
       <a href="{% url 'tours:list' %}" class="px-2 py-1 xl:px-2.5 xl:py-1.5 rounded-lg text-slate-200 hover:text-white hover:bg-white/10 transition-all duration-200 font-medium tracking-wide flex items-center space-x-1">
         <span class="trans-target" data-en="Tour Packages" data-bn="ট্যুর প্যাকেজ">Tour Packages</span>
       </a>
+      <a href="{% url 'tours:corporate_landing' %}" class="px-2 py-1 xl:px-2.5 xl:py-1.5 rounded-lg text-sky-300 hover:text-white hover:bg-sky-500/20 border border-sky-500/30 transition-all duration-200 font-semibold tracking-wide flex items-center space-x-1">
+        <i data-lucide="building-2" class="w-3.5 h-3.5 text-sky-400"></i>
+        <span class="trans-target" data-en="Corporate" data-bn="কর্পোরেট">Corporate</span>
+      </a>
       <a href="/#destinations" class="px-2 py-1 xl:px-2.5 xl:py-1.5 rounded-lg text-slate-200 hover:text-white hover:bg-white/10 transition-all duration-200 font-medium tracking-wide">
         <span class="trans-target" data-en="Destinations" data-bn="গন্তব্য">Destinations</span>
       </a>
@@ -277,6 +281,10 @@
       </a>
       <a @click="mobileOpen = false" href="{% url 'tours:list' %}" class="py-2 hover:text-sky-400 border-b border-slate-800/60">
         <span class="trans-target" data-en="Tour Packages" data-bn="ট্যুর প্যাকেজ">Tour Packages</span>
+      </a>
+      <a @click="mobileOpen = false" href="{% url 'tours:corporate_landing' %}" class="py-2 hover:text-sky-400 border-b border-slate-800/60 flex items-center space-x-2">
+        <i data-lucide="building-2" class="w-4 h-4 text-sky-400"></i>
+        <span class="trans-target" data-en="Corporate Tours" data-bn="কর্পোরেট ট্যুর">Corporate Tours</span>
       </a>
       <a @click="mobileOpen = false" href="{% url 'tours:interactive_map' %}" class="py-2.5 px-3 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 font-bold flex items-center space-x-2">
         <i data-lucide="map" class="w-4 h-4 text-emerald-400"></i>

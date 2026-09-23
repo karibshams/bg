@@ -269,14 +269,16 @@ class CorporateTourAdmin(admin.ModelAdmin):
         'formatted_total',
         'payment_badge',
         'status_badge',
+        'presentation_action',
         'voucher_action',
         'created_at'
     )
-    list_filter = ('status', 'payment_status', 'destinations', 'start_date', 'created_at')
+    list_filter = ('status', 'payment_status', 'is_published', 'is_featured', 'start_date', 'created_at')
     search_fields = (
         'reference_code',
         'company_name',
         'contact_person',
+        'destination_name',
         'phone',
         'email',
         'title',
@@ -288,7 +290,7 @@ class CorporateTourAdmin(admin.ModelAdmin):
 
     fieldsets = (
         ('Client Organization & Contact Person', {
-            'description': 'Details of the corporate client and primary focal person.',
+            'description': 'Details of the corporate client, executive organizers, and primary focal person.',
             'fields': (
                 ('company_name', 'reference_code'),
                 ('contact_person', 'designation'),
@@ -296,26 +298,35 @@ class CorporateTourAdmin(admin.ModelAdmin):
                 'office_address'
             )
         }),
-        ('Event Scope & Multi-Destination Configuration', {
-            'description': 'Specify multiple destinations and custom travel route.',
+        ('Event Scope & Unrestricted Destination Routing', {
+            'description': 'Specify any Bangladesh destination, resort venue, and customized route without catalog restrictions.',
             'fields': (
                 ('title', 'bangla_title'),
-                'destinations',
+                'cover_image',
+                'destination_name',
                 'route_summary',
+                'destinations',
+                ('is_published', 'is_featured')
+            )
+        }),
+        ('Schedule & Scalable Group Capacity', {
+            'description': 'Fixed large group sizes (50, 100, 200, 300, 500+ travelers) tailored for corporate contracts.',
+            'fields': (
                 ('start_date', 'end_date', 'duration_text'),
                 'num_participants'
             )
         }),
-        ('Logistics, Buses & Hospitality Breakdown', {
-            'description': 'Manage bus arrangements, resort accommodations, and food/catering.',
+        ('Fleet, Transport & Hospitality Management', {
+            'description': 'Manage bus arrangements, fleet allocations (e.g. Scania AC coaches, executive microbuses), resort accommodations, and catering.',
             'fields': (
                 ('bus_count', 'bus_type'),
+                'vehicle_breakdown',
                 'accommodation_details',
                 'catering_details'
             )
         }),
         ('Cost Breakdown & Payment Billing', {
-            'description': 'Package contract price, advance payments received, and due balance.',
+            'description': 'Total negotiated package price, advance payments received, and due balance.',
             'fields': (
                 ('total_cost', 'advance_paid', 'due_amount_display'),
                 'payment_status'
@@ -338,21 +349,27 @@ class CorporateTourAdmin(admin.ModelAdmin):
 
     def destinations_display(self, obj):
         return obj.get_destinations_display()
-    destinations_display.short_description = "Destinations (গন্তব্যসমূহ)"
+    destinations_display.short_description = "Destinations / Route (গন্তব্য)"
 
     def travel_schedule(self, obj):
+        if not obj.start_date:
+            return obj.duration_text
         return f"{obj.start_date.strftime('%d %b %Y')} ({obj.duration_text})"
     travel_schedule.short_description = "Schedule / Duration"
 
     def bus_summary(self, obj):
         return f"{obj.bus_count} Bus(es)"
-    bus_summary.short_description = "Transport"
+    bus_summary.short_description = "Transport Fleet"
 
     def formatted_total(self, obj):
+        if not obj or obj.total_cost is None:
+            return "৳0"
         return format_html('<span style="font-weight: bold; color: #0284c7;">৳{:,.0f}</span>', obj.total_cost)
     formatted_total.short_description = "Budget (BDT)"
 
     def due_amount_display(self, obj):
+        if not obj or not obj.pk:
+            return format_html('<span style="color: #64748b;">৳0.00 (Calculated on save)</span>')
         due = obj.due_amount
         color = '#b91c1c' if due > 0 else '#047857'
         return format_html('<span style="font-weight: bold; color: {};">৳{:,.2f}</span>', color, due)
@@ -385,6 +402,16 @@ class CorporateTourAdmin(admin.ModelAdmin):
             color, obj.get_status_display()
         )
     status_badge.short_description = "Event Status"
+
+    def presentation_action(self, obj):
+        if not obj.pk or not obj.reference_code:
+            return "-"
+        url = obj.get_absolute_url()
+        return format_html(
+            '<a href="{}" target="_blank" style="padding: 4px 8px; background-color: #059669; color: white; border-radius: 6px; font-size: 11px; font-weight: bold; text-decoration: none; display: inline-block;">View Portal ↗</a>',
+            url
+        )
+    presentation_action.short_description = "Web Portal"
 
     def voucher_action(self, obj):
         url = reverse('admin:corporate_tour_voucher', args=[obj.id])
