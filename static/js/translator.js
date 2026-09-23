@@ -499,6 +499,10 @@
           if (parent.hasAttribute('data-en') && parent.hasAttribute('data-bn')) {
             return NodeFilter.FILTER_REJECT;
           }
+          // Never interfere with live clock elements
+          if (parent.closest('#live-clock-widget') || parent.classList.contains('live-time-display') || parent.classList.contains('live-date-display')) {
+            return NodeFilter.FILTER_REJECT;
+          }
           // Never translate or alter the brand logo
           if (parent.closest('a[aria-label="ভ্রমণঘুড়ি"]') || parent.classList.contains('brand-logo-text')) {
             return NodeFilter.FILTER_REJECT;
