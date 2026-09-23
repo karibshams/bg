@@ -1,4 +1,5 @@
 import os
+import re
 import secrets
 import urllib.parse
 import requests
@@ -9,7 +10,9 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.models import User
 from django.urls import reverse
 from django.conf import settings
-from .models import SiteSetting, Testimonial, FAQ
+from django.core.mail import send_mail
+from .models import SiteSetting, Testimonial, FAQ, EmailVerification
+
 
 # Dynamic imports from sibling apps with fallback
 def get_home_context():
@@ -71,20 +74,303 @@ def contact_view(request):
     })
 
 
+def send_verification_otp_email(user, email_ver, request=None):
+    """Sends 6-digit OTP code and direct link to user's Gmail for activation."""
+    domain = request.get_host() if request else '127.0.0.1:8000'
+    protocol = 'https' if request and request.is_secure() else 'http'
+    verify_url = f"{protocol}://{domain}{reverse('core:verify_email')}?email={urllib.parse.quote(email_ver.email)}&token={email_ver.token}"
+
+    subject = f"Your BhromonGhuri Verification Code: {email_ver.otp_code}"
+    message = f"""ভ্রমণঘুড়িতে স্বাগতম! Welcome to BhromonGhuri!
+
+আপনার ইমেইল ভেরিফিকেশন কোড:
+Your 6-digit Email Verification Code is:
+=========================
+        {email_ver.otp_code}
+=========================
+এই কোডটি আগামী ১৫ মিনিট পর্যন্ত কার্যকর থাকবে।
+
+অথবা সরাসরি এই লিংকে ক্লিক করে একাউন্ট ভেরিফাই করুন:
+Or verify directly using this link:
+{verify_url}
+
+যদি আপনি এই অনুরোধ না করে থাকেন, তবে বার্তাটি উপেক্ষা করুন।
+If you did not request this, please ignore this email.
+
+— টিম ভ্রমণঘুড়ি (BhromonGhuri)
+"""
+    send_mail(
+        subject=subject,
+        message=message,
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        recipient_list=[email_ver.email],
+        fail_silently=True
+    )
+
+
+def send_password_reset_otp_email(user, email_ver, request=None):
+    """Sends 6-digit OTP code for password recovery to user's Gmail."""
+    subject = f"BhromonGhuri Password Reset Code: {email_ver.otp_code}"
+    message = f"""ভ্রমণঘুড়ি পাসওয়ার্ড রিসেট রিকোয়েস্ট / BhromonGhuri Password Reset Request
+
+আপনার পাসওয়ার্ড রিসেট করার জন্য ৬-সংখ্যার সিকিউরিটি কোড:
+Your 6-digit Password Reset Code is:
+=========================
+        {email_ver.otp_code}
+=========================
+এই কোডটি আগামী ১৫ মিনিট পর্যন্ত কার্যকর থাকবে।
+
+যদি আপনি পাসওয়ার্ড রিসেটের অনুরোধ না করে থাকেন, তবে দ্রুত আপনার একাউন্টের নিরাপত্তা নিশ্চিত করুন।
+If you did not request this, please ignore this email.
+
+— টিম ভ্রমণঘুড়ি (BhromonGhuri)
+"""
+    send_mail(
+        subject=subject,
+        message=message,
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        recipient_list=[email_ver.email],
+        fail_silently=True
+    )
+
+
 def login_view(request):
-    """User Login page featuring Google Sign-In."""
+    """User Login page featuring Dual Authentication: Google SSO and Manual Username/Password."""
     if request.user.is_authenticated:
         return redirect('core:home')
-    next_url = request.GET.get('next', reverse('core:home'))
+    next_url = request.POST.get('next') or request.GET.get('next') or reverse('core:home')
+
+    if request.method == 'POST':
+        login_id = request.POST.get('login_id', '').strip()
+        password = request.POST.get('password', '').strip()
+
+        if not login_id or not password:
+            messages.error(request, "ইউজারনেম/ইমেইল এবং পাসওয়ার্ড উভয় ফিল্ড পূরণ করুন।")
+            return render(request, 'core/login.html', {'next': next_url, 'login_id': login_id})
+
+        user = None
+        if '@' in login_id:
+            user = User.objects.filter(email__iexact=login_id).first()
+        if not user:
+            user = User.objects.filter(username__iexact=login_id).first()
+
+        if user and user.check_password(password):
+            if not user.is_active:
+                ver = EmailVerification.create_verification(user, purpose='register')
+                send_verification_otp_email(user, ver, request)
+                messages.warning(request, "আপনার অ্যাকাউন্টটি এখনো ভেরিফাই করা হয়নি। আপনার জিমেইলে নতুন ওটিপি (OTP) পাঠানো হয়েছে।")
+                return redirect(f"{reverse('core:verify_email')}?email={urllib.parse.quote(user.email)}&next={urllib.parse.quote(next_url)}")
+
+            login(request, user)
+            messages.success(request, f"স্বাগতম, {user.first_name or user.username}! সফলভাবে লগইন হয়েছেন।")
+            return redirect(next_url)
+        else:
+            messages.error(request, "ভুল ইউজারনেম/ইমেইল অথবা পাসওয়ার্ড। অনুগ্রহ করে আবার চেষ্টা করুন।")
+            return render(request, 'core/login.html', {'next': next_url, 'login_id': login_id})
+
     return render(request, 'core/login.html', {'next': next_url})
 
 
 def register_view(request):
-    """User Registration page featuring Google Register."""
+    """User Registration page featuring Dual Authentication: Google SSO and Manual Sign Up with Email OTP."""
     if request.user.is_authenticated:
         return redirect('core:home')
-    next_url = request.GET.get('next', reverse('core:home'))
+    next_url = request.POST.get('next') or request.GET.get('next') or reverse('core:home')
+
+    if request.method == 'POST':
+        username = request.POST.get('username', '').strip()
+        email = request.POST.get('email', '').strip().lower()
+        password = request.POST.get('password', '').strip()
+        password_confirm = request.POST.get('password_confirm', '').strip()
+
+        if not username or not email or not password:
+            messages.error(request, "সবগুলো ফিল্ড সঠিকভাবে পূরণ করুন।")
+            return render(request, 'core/register.html', {'next': next_url, 'username': username, 'email': email})
+
+        if not re.match(r'^[a-zA-Z0-9_.-]+$', username):
+            messages.error(request, "ইউজারনেমে শুধুমাত্র অক্ষর, সংখ্যা, ডট ও আন্ডারস্কোর ব্যবহার করতে পারেন।")
+            return render(request, 'core/register.html', {'next': next_url, 'username': username, 'email': email})
+
+        if '@' not in email or not email.split('@')[1]:
+            messages.error(request, "অনুগ্রহ করে একটি সঠিক ইমেইল/জিমেইল অ্যাড্রেস প্রদান করুন।")
+            return render(request, 'core/register.html', {'next': next_url, 'username': username, 'email': email})
+
+        if len(password) < 6:
+            messages.error(request, "পাসওয়ার্ড অন্তত ৬ অক্ষরের হতে হবে।")
+            return render(request, 'core/register.html', {'next': next_url, 'username': username, 'email': email})
+
+        if password != password_confirm:
+            messages.error(request, "পাসওয়ার্ড এবং কনফার্ম পাসওয়ার্ড মেলেনি।")
+            return render(request, 'core/register.html', {'next': next_url, 'username': username, 'email': email})
+
+        if User.objects.filter(username__iexact=username).exists():
+            existing_u = User.objects.filter(username__iexact=username).first()
+            if existing_u.is_active:
+                messages.error(request, "এই ইউজারনেমটি ইতিমধ্যে নিবন্ধিত রয়েছে। অনুগ্রহ করে অন্য ইউজারনেম বেছে নিন।")
+                return render(request, 'core/register.html', {'next': next_url, 'username': username, 'email': email})
+            else:
+                existing_u.delete()
+
+        existing_email_user = User.objects.filter(email__iexact=email).first()
+        if existing_email_user:
+            if existing_email_user.is_active:
+                messages.error(request, "এই জিমেইল অ্যাড্রেসটি ইতিমধ্যে ব্যবহৃত হয়েছে। সরাসরি লগইন করুন।")
+                return render(request, 'core/register.html', {'next': next_url, 'username': username, 'email': email})
+            else:
+                user = existing_email_user
+                user.username = username
+                user.set_password(password)
+                user.save()
+        else:
+            user = User.objects.create_user(
+                username=username,
+                email=email,
+                password=password,
+                is_active=False
+            )
+
+        ver = EmailVerification.create_verification(user, purpose='register')
+        send_verification_otp_email(user, ver, request)
+        messages.info(request, f"আপনার জিমেইল ({email}) এ একটি ৬-সংখ্যার ভেরিফিকেশন ওটিপি পাঠানো হয়েছে।")
+        return redirect(f"{reverse('core:verify_email')}?email={urllib.parse.quote(email)}&next={urllib.parse.quote(next_url)}")
+
     return render(request, 'core/register.html', {'next': next_url})
+
+
+def verify_email_view(request):
+    """Validates 6-digit OTP code or direct token for account activation."""
+    email = (request.GET.get('email') or request.POST.get('email', '')).strip().lower()
+    token = request.GET.get('token', '').strip()
+    next_url = request.GET.get('next') or request.POST.get('next') or reverse('core:home')
+
+    # Direct email link verification
+    if token and email:
+        ver = EmailVerification.objects.filter(
+            email__iexact=email,
+            token=token,
+            purpose='register',
+            is_used=False
+        ).first()
+        if ver and ver.is_valid():
+            user = ver.user
+            user.is_active = True
+            user.save()
+            ver.is_used = True
+            ver.save()
+            login(request, user)
+            messages.success(request, "আপনার ইমেইল সফলভাবে ভেরিফাই হয়েছে! ভ্রমণঘুড়িতে স্বাগতম।")
+            return redirect(next_url)
+        else:
+            messages.error(request, "ভেরিফিকেশন লিংকটি অবৈধ বা মেয়াদোত্তীর্ণ হয়েছে। ওটিপি কোড দিয়ে চেষ্টা করুন।")
+
+    if request.method == 'POST':
+        otp_code = request.POST.get('otp_code', '').strip()
+        if not otp_code:
+            messages.error(request, "অনুগ্রহ করে ৬-সংখ্যার ভেরিফিকেশন কোডটি লিখুন।")
+            return render(request, 'core/verify_email.html', {'email': email, 'next': next_url})
+
+        ver = EmailVerification.objects.filter(
+            email__iexact=email,
+            otp_code=otp_code,
+            purpose='register',
+            is_used=False
+        ).first()
+
+        if ver and ver.is_valid():
+            user = ver.user
+            user.is_active = True
+            user.save()
+            ver.is_used = True
+            ver.save()
+            login(request, user)
+            messages.success(request, "আপনার অ্যাকাউন্ট সফলভাবে ভেরিফাই ও সক্রিয় হয়েছে! স্বাগতম।")
+            return redirect(next_url)
+        else:
+            messages.error(request, "ভুল বা মেয়াদোত্তীর্ণ ভেরিফিকেশন কোড। অনুগ্রহ করে সঠিক কোড দিন অথবা নতুন কোড চান।")
+
+    return render(request, 'core/verify_email.html', {'email': email, 'next': next_url})
+
+
+def resend_otp_view(request):
+    """Resends a fresh 6-digit OTP code for registration or password reset."""
+    email = (request.GET.get('email') or request.POST.get('email', '')).strip().lower()
+    purpose = request.GET.get('purpose') or request.POST.get('purpose', 'register')
+    next_url = request.GET.get('next') or request.POST.get('next') or reverse('core:home')
+
+    user = User.objects.filter(email__iexact=email).first()
+    if not user:
+        messages.error(request, "এই ইমেইলের জন্য কোনো অ্যাকাউন্ট পাওয়া যায়নি।")
+        return redirect('core:register')
+
+    ver = EmailVerification.create_verification(user, purpose=purpose)
+    if purpose == 'reset_password':
+        send_password_reset_otp_email(user, ver, request)
+        messages.success(request, f"নতুন পাসওয়ার্ড রিসেট ওটিপি {email} এ পাঠানো হয়েছে।")
+        return redirect(f"{reverse('core:reset_password')}?email={urllib.parse.quote(email)}")
+    else:
+        send_verification_otp_email(user, ver, request)
+        messages.success(request, f"নতুন ভেরিফিকেশন ওটিপি {email} এ পাঠানো হয়েছে।")
+        return redirect(f"{reverse('core:verify_email')}?email={urllib.parse.quote(email)}&next={urllib.parse.quote(next_url)}")
+
+
+def forgot_password_view(request):
+    """Initiates account recovery by sending password reset OTP to registered Gmail."""
+    if request.method == 'POST':
+        email = request.POST.get('email', '').strip().lower()
+        user = User.objects.filter(email__iexact=email).first()
+        if not user:
+            messages.error(request, "এই জিমেইল অ্যাড্রেস দিয়ে কোনো অ্যাকাউন্ট খুঁজে পাওয়া যায়নি।")
+            return render(request, 'core/forgot_password.html', {'email': email})
+
+        ver = EmailVerification.create_verification(user, purpose='reset_password')
+        send_password_reset_otp_email(user, ver, request)
+        messages.info(request, f"পাসওয়ার্ড রিসেটের জন্য একটি ৬-সংখ্যার সিকিউরিটি কোড {email} এ পাঠানো হয়েছে।")
+        return redirect(f"{reverse('core:reset_password')}?email={urllib.parse.quote(email)}")
+
+    return render(request, 'core/forgot_password.html')
+
+
+def reset_password_view(request):
+    """Resets user password after verifying 6-digit OTP."""
+    email = (request.GET.get('email') or request.POST.get('email', '')).strip().lower()
+
+    if request.method == 'POST':
+        otp_code = request.POST.get('otp_code', '').strip()
+        new_password = request.POST.get('new_password', '').strip()
+        confirm_password = request.POST.get('confirm_password', '').strip()
+
+        if not otp_code or not new_password or not confirm_password:
+            messages.error(request, "সবগুলো ফিল্ড পূরণ করুন।")
+            return render(request, 'core/reset_password.html', {'email': email})
+
+        if len(new_password) < 6:
+            messages.error(request, "পাসওয়ার্ড অন্তত ৬ অক্ষরের হতে হবে।")
+            return render(request, 'core/reset_password.html', {'email': email})
+
+        if new_password != confirm_password:
+            messages.error(request, "পাসওয়ার্ড এবং কনফার্ম পাসওয়ার্ড হুবহু মেলেনি।")
+            return render(request, 'core/reset_password.html', {'email': email})
+
+        ver = EmailVerification.objects.filter(
+            email__iexact=email,
+            otp_code=otp_code,
+            purpose='reset_password',
+            is_used=False
+        ).first()
+
+        if ver and ver.is_valid():
+            user = ver.user
+            user.set_password(new_password)
+            user.is_active = True
+            user.save()
+            ver.is_used = True
+            ver.save()
+            messages.success(request, "আপনার পাসওয়ার্ড সফলভাবে পরিবর্তিত হয়েছে! এখন নতুন পাসওয়ার্ড দিয়ে লগইন করুন।")
+            return redirect('core:login')
+        else:
+            messages.error(request, "ভুল বা মেয়াদোত্তীর্ণ ওটিপি কোড। অনুগ্রহ করে সঠিক কোড দিন।")
+
+    return render(request, 'core/reset_password.html', {'email': email})
 
 
 def google_login_view(request):

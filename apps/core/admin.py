@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import SiteSetting, Testimonial, FAQ
+from .models import SiteSetting, Testimonial, FAQ, EmailVerification
 
 @admin.register(SiteSetting)
 class SiteSettingAdmin(admin.ModelAdmin):
@@ -48,3 +48,11 @@ class FAQAdmin(admin.ModelAdmin):
     list_display = ('question', 'order', 'is_published')
     list_editable = ('order', 'is_published')
     search_fields = ('question', 'answer')
+
+
+@admin.register(EmailVerification)
+class EmailVerificationAdmin(admin.ModelAdmin):
+    list_display = ('email', 'user', 'otp_code', 'purpose', 'is_used', 'expires_at', 'created_at')
+    list_filter = ('purpose', 'is_used', 'created_at')
+    search_fields = ('email', 'user__username', 'otp_code')
+    readonly_fields = ('created_at',)

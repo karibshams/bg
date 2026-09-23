@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Verify Email — BhromonGhuri{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-slate-950 text-white pt-28 pb-20 flex items-center justify-center relative overflow-hidden font-bengali">
+  
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(16,185,129,0.22),rgba(255,255,255,0))]"></div>
+  <div class="absolute -top-32 -left-32 w-80 h-80 bg-emerald-500/15 rounded-full blur-3xl pointer-events-none"></div>
+
+  <div class="relative max-w-md w-full mx-auto px-4 z-10">
+    
+    <div class="bg-slate-900/90 backdrop-blur-xl border border-white/10 p-7 sm:p-9 rounded-3xl shadow-2xl space-y-6 text-center">
+      
+      <!-- Icon -->
+      <div class="w-16 h-16 rounded-2xl bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 flex items-center justify-center mx-auto shadow-lg shadow-emerald-500/10">
+        <i data-lucide="shield-check" class="w-8 h-8"></i>
+      </div>
+
+      <div class="space-y-1.5">
+        <h1 class="text-2xl font-extrabold text-white trans-target" data-en="Verify Your Email Address" data-bn="ইমেইল ভেরিফিকেশন">
+          Verify Your Email Address
+        </h1>
+        <p class="text-xs text-slate-300 leading-relaxed">
+          <span class="trans-target" data-en="We have sent a 6-digit verification code to:" data-bn="আমরা একটি ৬-সংখ্যার ভেরিফিকেশন কোড পাঠিয়েছি:">We have sent a 6-digit verification code to:</span>
+          <br>
+          <span class="font-bold text-sky-400 font-mono text-sm">{{ email }}</span>
+        </p>
+      </div>
+
+      <!-- OTP Form -->
+      <form method="POST" action="{% url 'core:verify_email' %}" class="space-y-4">
+        {% csrf_token %}
+        <input type="hidden" name="email" value="{{ email }}">
+        <input type="hidden" name="next" value="{{ next|default:'/' }}">
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-2 trans-target" data-en="Enter 6-Digit OTP Code" data-bn="৬-সংখ্যার ওটিপি কোডটি লিখুন">
+            Enter 6-Digit OTP Code
+          </label>
+          <input type="text" 
+                 name="otp_code" 
+                 maxlength="6"
+                 required 
+                 autofocus
+                 placeholder="123456"
+                 class="w-full py-3 text-center tracking-[0.5em] text-2xl font-mono font-bold bg-slate-800/80 border border-slate-700 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all">
+        </div>
+
+        <button type="submit" 
+                class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-sky-500 hover:from-emerald-400 hover:to-sky-400 text-white font-bold text-sm shadow-lg shadow-emerald-500/20 flex items-center justify-center space-x-2 transition-all duration-200 transform hover:-translate-y-0.5">
+          <i data-lucide="check-circle" class="w-4 h-4"></i>
+          <span class="trans-target" data-en="Verify & Activate Account" data-bn="অ্যাকাউন্ট ভেরিফাই ও সক্রিয় করুন">Verify & Activate Account</span>
+        </button>
+      </form>
+
+      <!-- Resend OTP -->
+      <div class="pt-2 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
+        <span class="trans-target" data-en="Didn't receive code?" data-bn="কোড পাননি?">Didn't receive code?</span>
+        <a href="{% url 'core:resend_otp' %}?email={{ email }}&purpose=register&next={{ next|default:'/' }}" 
+           class="text-sky-400 hover:text-sky-300 font-bold flex items-center space-x-1">
+          <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+          <span class="trans-target" data-en="Resend OTP" data-bn="পুনরায় ওটিপি পাঠান">Resend OTP</span>
+        </a>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+{% endblock %}

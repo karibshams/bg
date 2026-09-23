@@ -24,7 +24,7 @@ class Problem2GoogleOAuthTestCase(TestCase):
         for url_name, expected_button in [('core:login', 'Continue with Google'), ('core:register', 'Sign up with Google')]:
             response = self.client.get(reverse(url_name))
             content = response.content.decode('utf-8')
-            self.assertNotIn('<input type="email" name="email"', content)
+            self.assertNotIn(f'action="{reverse("core:google_login")}"', content)
             self.assertIn(expected_button, content)
 
     @patch.dict(os.environ, {'GOOGLE_CLIENT_ID': 'test-google-client-id-12345.apps.googleusercontent.com'})

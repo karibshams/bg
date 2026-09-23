@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.exceptions import ValidationError
+from django.contrib.auth.models import User
 
 class SiteSetting(models.Model):
     """
@@ -82,3 +83,59 @@ class FAQ(models.Model):
 
     def __str__(self):
         return self.question
+
+
+class EmailVerification(models.Model):
+    """
+    Stores 6-digit OTP codes and tokens for email verification (registration)
+    and password reset recovery.
+    """
+    PURPOSE_CHOICES = [
+        ('register', 'Registration Verification'),
+        ('reset_password', 'Password Reset'),
+    ]
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='email_verifications')
+    email = models.EmailField()
+    otp_code = models.CharField(max_length=6)
+    token = models.CharField(max_length=64, blank=True)
+    purpose = models.CharField(max_length=20, choices=PURPOSE_CHOICES, default='register')
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField()
+    is_used = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = "Email Verification"
+        verbose_name_plural = "Email Verifications"
+
+    def is_valid(self):
+        from django.utils import timezone
+        return not self.is_used and timezone.now() <= self.expires_at
+
+    @classmethod
+    def create_verification(cls, user, purpose='register', validity_minutes=15):
+        import random
+        import secrets
+        from datetime import timedelta
+        from django.utils import timezone
+
+        # Invalidate previous unused codes for same user and purpose
+        cls.objects.filter(user=user, purpose=purpose, is_used=False).update(is_used=True)
+
+        otp_code = f"{random.randint(100000, 999999)}"
+        token = secrets.token_urlsafe(32)
+        expires_at = timezone.now() + timedelta(minutes=validity_minutes)
+
+        return cls.objects.create(
+            user=user,
+            email=user.email,
+            otp_code=otp_code,
+            token=token,
+            purpose=purpose,
+            expires_at=expires_at,
+            is_used=False
+        )
+
+    def __str__(self):
+        return f"{self.email} ({self.purpose}: {self.otp_code})"
