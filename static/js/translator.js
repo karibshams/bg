@@ -480,8 +480,17 @@
     // 1. Primary: Explicit data-en & data-bn elements
     document.querySelectorAll('[data-en][data-bn]').forEach((el) => {
       const targetText = targetLang === 'en' ? el.getAttribute('data-en') : el.getAttribute('data-bn');
-      if (targetText && el.textContent.trim() !== targetText.trim()) {
-        el.textContent = targetText;
+      if (targetText) {
+        const hasHTML = /<[a-z][\s\S]*>/i.test(targetText) || el.classList.contains('prose') || el.getAttribute('data-html') === 'true';
+        if (hasHTML) {
+          if (el.innerHTML.trim() !== targetText.trim()) {
+            el.innerHTML = targetText;
+          }
+        } else {
+          if (el.textContent.trim() !== targetText.trim()) {
+            el.textContent = targetText;
+          }
+        }
       }
     });
 

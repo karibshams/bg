@@ -1,7 +1,37 @@
 import uuid
+import re
 from django.db import models
 from django.utils.text import slugify
 from django.utils import timezone
+
+
+def parse_rich_text_items(text, strip_symbols='•-*+✓✔>✕✗xX '):
+    """
+    Parses items from either HTML (<ul><li>...</li></ul> or <p>...</p>) 
+    or plain multi-line text, cleanly stripping bullet characters and outer tags.
+    """
+    if not text:
+        return []
+    items = []
+    text_lower = text.lower()
+    if '<li' in text_lower:
+        found = re.findall(r'<li[^>]*>(.*?)</li>', text, re.IGNORECASE | re.DOTALL)
+        for item in found:
+            clean = re.sub(r'<[^>]+>', '', item).strip().lstrip(strip_symbols).strip()
+            if clean and clean not in items:
+                items.append(clean)
+    elif '<p' in text_lower:
+        found = re.findall(r'<p[^>]*>(.*?)</p>', text, re.IGNORECASE | re.DOTALL)
+        for item in found:
+            clean = re.sub(r'<[^>]+>', '', item).strip().lstrip(strip_symbols).strip()
+            if clean and clean not in items:
+                items.append(clean)
+    else:
+        for line in text.splitlines():
+            clean = line.strip().lstrip(strip_symbols).strip()
+            if clean and clean not in items:
+                items.append(clean)
+    return items
 
 class Destination(models.Model):
     """Tourist destination like Sajek, Bandarban, Cox's Bazar, Sundarbans."""
@@ -187,31 +217,23 @@ class Tour(models.Model):
         return self.discount_price if self.discount_price else self.price
 
     def get_included_list(self):
-        """Returns unified list of included items from model field & inline objects, cleanly stripping bullet points."""
-        items = []
-        if self.included_items:
-            for line in self.included_items.splitlines():
-                clean = line.strip().lstrip('•-*+✓✔> ').strip()
-                if clean and clean not in items:
-                    items.append(clean)
+        """Returns unified list of included items from model field & inline objects, cleanly stripping bullet points and HTML tags."""
+        items = parse_rich_text_items(self.included_items, strip_symbols='•-*+✓✔> ')
         for inc in self.inclusions.filter(is_included=True):
-            clean = inc.item.strip().lstrip('•-*+✓✔> ').strip()
-            if clean and clean not in items:
-                items.append(clean)
+            clean = parse_rich_text_items(inc.item, strip_symbols='•-*+✓✔> ')
+            for c in clean:
+                if c and c not in items:
+                    items.append(c)
         return items
 
     def get_excluded_list(self):
-        """Returns unified list of excluded items from model field & inline objects, cleanly stripping bullet points."""
-        items = []
-        if self.excluded_items:
-            for line in self.excluded_items.splitlines():
-                clean = line.strip().lstrip('•-*+✕✗xX- ').strip()
-                if clean and clean not in items:
-                    items.append(clean)
+        """Returns unified list of excluded items from model field & inline objects, cleanly stripping bullet points and HTML tags."""
+        items = parse_rich_text_items(self.excluded_items, strip_symbols='•-*+✕✗xX- ')
         for exc in self.inclusions.filter(is_included=False):
-            clean = exc.item.strip().lstrip('•-*+✕✗xX- ').strip()
-            if clean and clean not in items:
-                items.append(clean)
+            clean = parse_rich_text_items(exc.item, strip_symbols='•-*+✕✗xX- ')
+            for c in clean:
+                if c and c not in items:
+                    items.append(c)
         return items
 
     @property

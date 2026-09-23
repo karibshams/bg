@@ -78,6 +78,7 @@
             <span class="trans-target" data-en="Tour Overview & Highlights" data-bn="ট্যুর পরিচিতি ও হাইলাইটস">Tour Overview & Highlights</span>
           </h2>
           <div class="text-slate-700 leading-relaxed text-sm sm:text-base prose max-w-none trans-target"
+               data-html="true"
                data-en="{{ tour.description|safe }}"
                data-bn="{{ tour.bangla_description|default:tour.description|safe }}">
             {{ tour.description|safe }}
@@ -182,6 +183,7 @@
               </h3>
 
               <div class="text-sm text-slate-700 leading-relaxed prose max-w-none trans-target"
+                 data-html="true"
                  data-en="{{ item.description|safe }}"
                  data-bn="{{ item.bangla_description|default:item.description|safe }}">
                 {{ item.description|safe }}
@@ -219,7 +221,7 @@
               {% for inc in inclusions %}
               <li class="flex items-start space-x-2">
                 <i data-lucide="check" class="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5"></i>
-                <span class="trans-target" data-en="{{ inc }}" data-bn="{{ inc }}">{{ inc }}</span>
+                <span class="trans-target text-slate-700 leading-relaxed" data-en="{{ inc|striptags }}" data-bn="{{ inc|striptags }}">{{ inc|safe }}</span>
               </li>
               {% empty %}
               <li class="text-slate-400 trans-target" data-en="No specific inclusions listed." data-bn="কোনো তথ্য নেই।">No specific inclusions listed.</li>
@@ -237,7 +239,7 @@
               {% for exc in exclusions %}
               <li class="flex items-start space-x-2">
                 <i data-lucide="x" class="w-4 h-4 text-rose-500 flex-shrink-0 mt-0.5"></i>
-                <span class="trans-target" data-en="{{ exc }}" data-bn="{{ exc }}">{{ exc }}</span>
+                <span class="trans-target text-slate-700 leading-relaxed" data-en="{{ exc|striptags }}" data-bn="{{ exc|striptags }}">{{ exc|safe }}</span>
               </li>
               {% empty %}
               <li class="text-slate-400 trans-target" data-en="No specific exclusions listed." data-bn="কোনো তথ্য নেই।">No specific exclusions listed.</li>
