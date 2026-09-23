@@ -148,11 +148,17 @@ class TourBusAdmin(admin.ModelAdmin):
 
 @admin.register(Destination)
 class DestinationAdmin(admin.ModelAdmin):
-    list_display = ('name', 'bangla_name', 'tagline', 'is_featured', 'order')
+    list_display = ('name', 'bangla_name', 'tagline', 'coordinates_display', 'is_featured', 'order')
     list_filter = ('is_featured',)
     search_fields = ('name', 'bangla_name', 'description')
     prepopulated_fields = {'slug': ('name',)}
     list_editable = ('is_featured', 'order')
+
+    def coordinates_display(self, obj):
+        lat, lng = obj.get_coordinates()
+        coords_str = f"📍 {lat:.4f}, {lng:.4f}"
+        return format_html('<span style="font-family: monospace; font-size: 11px; color: #0284c7;">{}</span>', coords_str)
+    coordinates_display.short_description = "Map Coordinates"
 
 
 @admin.register(TourCategory)

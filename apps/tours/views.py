@@ -1,6 +1,8 @@
+import json
 from datetime import datetime
 from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse
+from django.urls import reverse
+from django.http import HttpResponse, JsonResponse
 from django.db.models import Q
 from .models import Tour, Destination, TourCategory, TourDate, CorporateTour
 from .corporate_voucher import generate_corporate_voucher_pdf
@@ -225,3 +227,98 @@ def corporate_voucher_view(request, reference):
     response = HttpResponse(pdf_bytes, content_type='application/pdf')
     response['Content-Disposition'] = f'inline; filename="{filename}"'
     return response
+
+
+def destination_map_api(request):
+    """
+    Returns JSON payload of all tourist destinations with geographic coordinates,
+    cover images, and published tour packages for Leaflet.js interactive map.
+    """
+    destinations = Destination.objects.prefetch_related('tours').all()
+    data = []
+    for dest in destinations:
+        lat, lng = dest.get_coordinates()
+        published_tours = list(dest.tours.filter(is_published=True))
+        
+        tours_data = []
+        for t in published_tours:
+            tours_data.append({
+                'id': t.id,
+                'title': t.title,
+                'bangla_title': t.bangla_title,
+                'slug': t.slug,
+                'price': float(t.price),
+                'discount_price': float(t.discount_price) if t.discount_price else None,
+                'duration': t.duration,
+                'duration_type': getattr(t, 'duration_type', 'MULTI_DAY'),
+                'duration_type_display': 'Day Tour' if getattr(t, 'duration_type', 'MULTI_DAY') == 'DAY_TOUR' else 'Multi-Day',
+                'detail_url': reverse('tours:detail', args=[t.slug]),
+                'image_url': t.cover_image.url if t.cover_image else (dest.cover_image.url if dest.cover_image else '/static/images/hero-sajek.jpg'),
+            })
+
+        data.append({
+            'id': dest.id,
+            'name': dest.name,
+            'bangla_name': dest.bangla_name,
+            'slug': dest.slug,
+            'tagline': dest.tagline,
+            'description': dest.description,
+            'bangla_description': dest.bangla_description,
+            'lat': lat,
+            'lng': lng,
+            'cover_image_url': dest.cover_image.url if dest.cover_image else '/static/images/hero-sajek.jpg',
+            'detail_url': reverse('tours:destination_detail', args=[dest.slug]),
+            'tours_count': len(published_tours),
+            'tours': tours_data,
+        })
+    return JsonResponse({'destinations': data})
+
+
+def bangladesh_map_view(request):
+    """
+    Renders interactive Bangladesh travel map powered by free and open-source
+    Leaflet.js and OpenStreetMap. Allows exploring destinations and tour package previews.
+    """
+    destinations = Destination.objects.prefetch_related('tours').all()
+    dest_list = []
+    for d in destinations:
+        lat, lng = d.get_coordinates()
+        tours = list(d.tours.filter(is_published=True))
+        dest_list.append({
+            'id': d.id,
+            'name': d.name,
+            'bangla_name': d.bangla_name,
+            'slug': d.slug,
+            'tagline': d.tagline,
+            'description': d.description,
+            'bangla_description': d.bangla_description,
+            'lat': lat,
+            'lng': lng,
+            'cover_image_url': d.cover_image.url if d.cover_image else '/static/images/hero-sajek.jpg',
+            'detail_url': reverse('tours:destination_detail', args=[d.slug]),
+            'tours_count': len(tours),
+            'tours': [
+                {
+                    'id': t.id,
+                    'title': t.title,
+                    'bangla_title': t.bangla_title,
+                    'slug': t.slug,
+                    'price': float(t.price),
+                    'discount_price': float(t.discount_price) if t.discount_price else None,
+                    'duration': t.duration,
+                    'duration_type': getattr(t, 'duration_type', 'MULTI_DAY'),
+                    'duration_type_display': 'Day Tour' if getattr(t, 'duration_type', 'MULTI_DAY') == 'DAY_TOUR' else 'Multi-Day',
+                    'detail_url': reverse('tours:detail', args=[t.slug]),
+                    'image_url': t.cover_image.url if t.cover_image else (d.cover_image.url if d.cover_image else '/static/images/hero-sajek.jpg'),
+                }
+                for t in tours[:4]
+            ]
+        })
+
+    return render(request, 'tours/map.html', {
+        'destinations': destinations,
+        'destinations_json': json.dumps(dest_list),
+        'total_destinations': len(dest_list),
+        'total_tours': sum(d['tours_count'] for d in dest_list)
+    })
+

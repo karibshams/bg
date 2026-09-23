@@ -15,14 +15,55 @@ class Destination(models.Model):
     is_featured = models.BooleanField(default=True)
     order = models.PositiveIntegerField(default=0)
 
+    # Geographic coordinates for Interactive Map
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True, verbose_name="Latitude")
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True, verbose_name="Longitude")
+
+    KNOWN_COORDINATES = {
+        'sajek': (23.3820, 92.2938),
+        'sajek-valley': (23.3820, 92.2938),
+        'coxs-bazar': (21.4272, 91.9701),
+        'cox-bazar': (21.4272, 91.9701),
+        'bandarban': (22.1953, 92.2184),
+        'saint-martin': (20.6272, 92.3225),
+        'sreemangal': (24.3065, 91.7296),
+        'sundarbans': (22.0864, 89.5160),
+        'sundarban': (22.0864, 89.5160),
+        'tanguar': (25.1328, 91.0772),
+        'tanguar-haor': (25.1328, 91.0772),
+        'chittagong': (22.3569, 91.7832),
+        'chattogram': (22.3569, 91.7832),
+        'rangamati': (22.6533, 92.1753),
+        'sylhet': (24.8949, 91.8687),
+        'kuakata': (21.8167, 90.1167),
+        'dhaka': (23.8103, 90.4125),
+    }
+
     class Meta:
         ordering = ['order', 'name']
         verbose_name = "Destination"
         verbose_name_plural = "Destinations"
 
+    def get_coordinates(self):
+        """Returns tuple of (lat, lng), falling back to known coordinates by slug or name."""
+        if self.latitude is not None and self.longitude is not None:
+            return (float(self.latitude), float(self.longitude))
+        slug_clean = (self.slug or '').lower().replace('_', '-')
+        name_clean = (self.name or '').lower()
+        for key, coords in self.KNOWN_COORDINATES.items():
+            if key in slug_clean or key in name_clean:
+                return coords
+        return (23.8103, 90.4125)
+
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.name)
+        if self.latitude is None or self.longitude is None:
+            coords = self.get_coordinates()
+            if self.latitude is None:
+                self.latitude = coords[0]
+            if self.longitude is None:
+                self.longitude = coords[1]
         super().save(*args, **kwargs)
 
     def __str__(self):

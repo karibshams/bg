@@ -119,6 +119,11 @@
         </div>
       </div>
 
+      <a href="{% url 'tours:interactive_map' %}" id="nav-btn-explore-map" class="text-xs text-emerald-300 hover:text-white px-2.5 py-1.5 xl:px-3 xl:py-2 rounded-xl bg-emerald-950/70 hover:bg-emerald-900/80 border border-emerald-500/40 flex items-center gap-1.5 transition-all duration-200 whitespace-nowrap shadow-sm font-bold" title="Explore Bangladesh Map">
+        <i data-lucide="map" class="w-3.5 h-3.5 text-emerald-400 animate-pulse"></i>
+        <span class="trans-target" data-en="Explore Map" data-bn="ম্যাপ দেখুন">Explore Map</span>
+      </a>
+
       <a href="{% url 'bookings:lookup' %}" class="text-xs text-slate-200 hover:text-white px-2.5 py-1.5 xl:px-3 xl:py-2 rounded-xl bg-slate-800/60 hover:bg-slate-700/80 border border-white/10 flex items-center gap-1.5 transition-all duration-200 whitespace-nowrap shadow-sm" title="Check Booking Status">
         <i data-lucide="search" class="w-3.5 h-3.5 text-sky-400"></i>
         <span class="trans-target" data-en="Track Booking" data-bn="বুকিং যাচাই">Track Booking</span>
@@ -277,6 +282,10 @@
       </a>
       <a @click="mobileOpen = false" href="{% url 'tours:list' %}" class="py-2 hover:text-sky-400 border-b border-slate-800/60">
         <span class="trans-target" data-en="Tour Packages" data-bn="ট্যুর প্যাকেজ">Tour Packages</span>
+      </a>
+      <a @click="mobileOpen = false" href="{% url 'tours:interactive_map' %}" class="py-2.5 px-3 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 font-bold flex items-center space-x-2">
+        <i data-lucide="map" class="w-4 h-4 text-emerald-400"></i>
+        <span class="trans-target" data-en="Explore Bangladesh Map" data-bn="বাংলাদেশ ম্যাপ ঘুরে দেখুন">Explore Bangladesh Map</span>
       </a>
       <a @click="mobileOpen = false" href="/#destinations" class="py-2 hover:text-sky-400 border-b border-slate-800/60">
         <span class="trans-target" data-en="Destinations" data-bn="গন্তব্য">Destinations</span>
