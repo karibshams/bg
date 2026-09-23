@@ -43,7 +43,7 @@ class TourImageInline(admin.TabularInline):
 @admin.register(Tour)
 class TourAdmin(admin.ModelAdmin):
     list_display = ('title', 'destination', 'category', 'duration', 'formatted_price', 'bus_seat_badge', 'rating_stars', 'is_featured', 'is_published')
-    list_filter = ('has_bus_seat_selection', 'bus_layout_type', 'is_published', 'is_featured', 'destination', 'category')
+    list_filter = ('requires_nid_or_birth_cert', 'has_bus_seat_selection', 'bus_layout_type', 'is_published', 'is_featured', 'destination', 'category')
     search_fields = ('title', 'bangla_title', 'description', 'destination__name')
     prepopulated_fields = {'slug': ('title',)}
     list_editable = ('is_featured', 'is_published')
@@ -85,6 +85,10 @@ class TourAdmin(admin.ModelAdmin):
             'fields': (
                 ('has_bus_seat_selection', 'bus_layout_type'),
             )
+        }),
+        ('Identity & Verification Requirements', {
+            'description': 'Configure security checkpoint and travel document requirements.',
+            'fields': ('requires_nid_or_birth_cert',),
         }),
         ('Reviews & Visibility', {
             'fields': (('rating', 'reviews_count'), ('is_featured', 'is_published'))

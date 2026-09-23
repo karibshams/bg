@@ -149,6 +149,97 @@
           </p>
         </div>
 
+        <!-- NID / Birth Certificate Verification Section -->
+        <div class="pt-4 border-t border-slate-200">
+          <div class="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-3 font-bengali">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-2">
+                <i data-lucide="file-badge" class="w-5 h-5 text-sky-600"></i>
+                <span class="font-bold text-slate-900 text-sm trans-target"
+                      data-en="Travel Document (NID / Birth Certificate)"
+                      data-bn="ভ্রমণ পরিচয়পত্র (NID / জন্ম নিবন্ধন)">Travel Document (NID / Birth Certificate)</span>
+              </div>
+              {% if booking.identification_document %}
+                <span class="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold border border-emerald-300 flex items-center space-x-1">
+                  <i data-lucide="check" class="w-3.5 h-3.5"></i>
+                  <span class="trans-target" data-en="Uploaded" data-bn="আপলোড সম্পন্ন">Uploaded</span>
+                </span>
+              {% else %}
+                <span class="px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 text-xs font-bold border border-amber-300 trans-target"
+                      data-en="Pending Upload" data-bn="আপলোড বাকি">Pending Upload</span>
+              {% endif %}
+            </div>
+
+            {% if booking.identification_document %}
+            <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+              <div>
+                <span class="text-slate-500 trans-target" data-en="Document Type:" data-bn="সনদের ধরন:">Document Type:</span>
+                <strong class="text-slate-800 ml-1">{{ booking.get_identification_type_display }}</strong>
+                {% if booking.identification_number %}
+                  <span class="text-slate-500 font-mono ml-1">({{ booking.identification_number }})</span>
+                {% endif %}
+              </div>
+              <a href="{{ booking.identification_document.url }}" target="_blank" 
+                 class="inline-flex items-center space-x-1 text-sky-600 hover:text-sky-700 font-bold underline">
+                <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                <span class="trans-target" data-en="View Document" data-bn="সনদ দেখুন">View Document</span>
+              </a>
+            </div>
+            {% else %}
+            <p class="text-xs text-slate-500 leading-relaxed trans-target"
+               data-en="Security checkpoints in hilly/border regions require authentic identity verification. Please upload your NID or Birth Certificate."
+               data-bn="পাহাড়ি ও সীমান্ত অঞ্চলের নিরাপত্তা চেকপোস্টে যাত্রীদের পরিচয় যাচাই বাধ্যতামূলক। অনুগ্রহ করে আপনার এনআইডি বা জন্ম নিবন্ধন আপলোড করুন।">
+              Security checkpoints in hilly/border regions require authentic identity verification. Please upload your NID or Birth Certificate.
+            </p>
+            {% endif %}
+
+            <!-- Upload / Update Form Toggle -->
+            <div x-data="{ openUpload: {{ booking.identification_document|yesno:'false,true' }} }">
+              {% if booking.identification_document %}
+              <button type="button" @click="openUpload = !openUpload" 
+                      class="text-xs text-sky-600 hover:text-sky-700 font-bold flex items-center space-x-1 pt-1">
+                <i data-lucide="refresh-cw" class="w-3 h-3"></i>
+                <span x-text="openUpload ? 'Close' : 'Update / Re-upload Document'" class="trans-target" data-en="Update / Re-upload Document" data-bn="সনদ পরিবর্তন বা পুনঃআপলোড করুন">Update / Re-upload Document</span>
+              </button>
+              {% endif %}
+
+              <div x-show="openUpload" x-transition class="pt-2">
+                <form action="{% url 'bookings:upload_document' booking.booking_reference %}" method="POST" enctype="multipart/form-data" class="space-y-3 p-3.5 rounded-2xl bg-slate-50 border border-slate-200">
+                  {% csrf_token %}
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                    <div>
+                      <label class="block font-bold text-slate-600 mb-1 trans-target" data-en="Document Type" data-bn="সনদের ধরন">Document Type</label>
+                      <select name="identification_type" class="w-full px-3 py-2 rounded-xl bg-white border border-slate-200 text-xs focus:ring-1 focus:ring-sky-500">
+                        <option value="NID" {% if booking.identification_type == 'NID' %}selected{% endif %}>National ID Card (NID)</option>
+                        <option value="BIRTH_CERT" {% if booking.identification_type == 'BIRTH_CERT' %}selected{% endif %}>Birth Certificate</option>
+                        <option value="PASSPORT" {% if booking.identification_type == 'PASSPORT' %}selected{% endif %}>Passport / Student ID</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label class="block font-bold text-slate-600 mb-1 trans-target" data-en="ID / Certificate Number" data-bn="আইডি / সনদ নম্বর">ID / Certificate Number</label>
+                      <input type="text" name="identification_number" value="{{ booking.identification_number|default:'' }}" placeholder="e.g. 199XXXXXXXXXX" 
+                             class="w-full px-3 py-2 rounded-xl bg-white border border-slate-200 text-xs focus:ring-1 focus:ring-sky-500">
+                    </div>
+                  </div>
+
+                  <div>
+                    <label class="block font-bold text-slate-600 mb-1 text-xs trans-target" data-en="Select Document File (JPG, PNG, PDF)" data-bn="সনদের ফাইল নির্বাচন করুন (ছবি বা পিডিএফ)">Select Document File (JPG, PNG, PDF)</label>
+                    <input type="file" name="identification_document" required accept="image/*,.pdf" 
+                           class="w-full px-3 py-2 rounded-xl bg-white border border-slate-200 text-xs file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100 cursor-pointer">
+                  </div>
+
+                  <button type="submit" 
+                          class="w-full py-2.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs shadow transition-colors flex items-center justify-center space-x-1.5">
+                    <i data-lucide="upload" class="w-3.5 h-3.5"></i>
+                    <span class="trans-target" data-en="Upload Identification Document" data-bn="পরিচয়পত্র আপলোড সম্পন্ন করুন">Upload Identification Document</span>
+                  </button>
+                </form>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
         {% if booking.status == 'CONFIRMED' and booking.tour.has_bus_seat_selection and bus_data %}
         {{ bus_data.grid|json_script:"bus-grid-data" }}
         {{ bus_data.occupied|json_script:"bus-occupied-data" }}

@@ -36,6 +36,33 @@ class Booking(models.Model):
     special_requests = models.TextField(blank=True)
     rejection_reason = models.TextField(blank=True, default='', help_text="Specific reason if the booking was rejected")
     
+    # Identification Document Upload (NID / Birth Certificate)
+    identification_type = models.CharField(
+        max_length=50,
+        choices=[
+            ('NID', 'National ID Card (NID)'),
+            ('BIRTH_CERT', 'Birth Certificate'),
+            ('PASSPORT', 'Passport / Student ID'),
+        ],
+        default='NID',
+        blank=True,
+        verbose_name="Identification Document Type"
+    )
+    identification_number = models.CharField(
+        max_length=100,
+        blank=True,
+        default='',
+        verbose_name="ID / Certificate Number",
+        help_text="National ID, Birth Certificate, or Passport number"
+    )
+    identification_document = models.FileField(
+        upload_to='bookings/documents/',
+        blank=True,
+        null=True,
+        verbose_name="NID / Birth Certificate Document",
+        help_text="Uploaded copy of NID, Birth Certificate, or Passport (Image/PDF)"
+    )
+
     # Bus Seat Selection
     selected_seats = models.CharField(max_length=150, blank=True, default='', help_text="Comma-separated chosen seat numbers (e.g. A1, A2)")
     assigned_bus = models.ForeignKey('tours.TourBus', on_delete=models.SET_NULL, null=True, blank=True, related_name='bookings')

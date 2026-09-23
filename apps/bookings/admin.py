@@ -17,12 +17,13 @@ class BookingAdmin(admin.ModelAdmin):
         'num_travelers',
         'formatted_total',
         'payment_info',
+        'document_badge',
         'status_badge',
         'approve_action',
         'voucher_link',
         'created_at'
     )
-    list_filter = ('status', 'tour', 'created_at')
+    list_filter = ('status', 'identification_type', 'tour', 'created_at')
     search_fields = (
         'booking_reference',
         'customer_name',
@@ -90,6 +91,16 @@ class BookingAdmin(admin.ModelAdmin):
             color, label
         )
     status_badge.short_description = "স্ট্যাটাস (Status)"
+
+    def document_badge(self, obj):
+        if obj.identification_document:
+            return format_html(
+                '<a href="{}" target="_blank" style="padding: 4px 8px; background-color: #dcfce7; color: #166534; border: 1px solid #86efac; border-radius: 6px; font-weight: bold; text-decoration: none; font-size: 11px; display: inline-block;">✓ {}</a>',
+                obj.identification_document.url,
+                obj.get_identification_type_display()
+            )
+        return format_html('<span style="color: #94a3b8; font-size: 11px; font-style: italic;">Pending Upload</span>')
+    document_badge.short_description = "NID / Document"
 
     def approve_action(self, obj):
         if obj.status in ['PENDING', 'PENDING_VERIFICATION']:

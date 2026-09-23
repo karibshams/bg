@@ -99,6 +99,13 @@ class Tour(models.Model):
         help_text="Choose from three specific bus seat layouts: 36-seater, 40-seater, or 45-seater"
     )
 
+    # NID / Birth Certificate Requirement
+    requires_nid_or_birth_cert = models.BooleanField(
+        default=True,
+        verbose_name="Require NID or Birth Certificate",
+        help_text="Require travelers to upload NID or Birth Certificate when booking this package (e.g. hill tracts / border checkpoints)"
+    )
+
     is_featured = models.BooleanField(default=False)
     is_published = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)

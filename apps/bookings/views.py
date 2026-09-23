@@ -89,6 +89,10 @@ def booking_create_view(request):
         unit_price = tour_date.effective_price if tour_date else tour.current_price
         total_amount = unit_price * num_travelers
 
+        identification_type = request.POST.get('identification_type', 'NID')
+        identification_number = request.POST.get('identification_number', '').strip()
+        identification_document = request.FILES.get('identification_document')
+
         booking = Booking.objects.create(
             tour=tour,
             tour_date=tour_date,
@@ -100,6 +104,9 @@ def booking_create_view(request):
             unit_price=unit_price,
             total_amount=total_amount,
             special_requests=special_requests,
+            identification_type=identification_type,
+            identification_number=identification_number,
+            identification_document=identification_document,
             status='PENDING',
         )
 
@@ -112,6 +119,30 @@ def booking_create_view(request):
         'selected_date': selected_date,
         'all_tours': all_tours,
     })
+
+
+def booking_upload_document_view(request, reference):
+    """Allows customer to upload or update NID / Birth Certificate for their booking."""
+    booking = get_object_or_404(Booking, booking_reference=reference)
+    if request.method == 'POST':
+        doc_file = request.FILES.get('identification_document')
+        doc_type = request.POST.get('identification_type', 'NID')
+        doc_num = request.POST.get('identification_number', '').strip()
+
+        fields_to_update = ['updated_at']
+        if doc_file:
+            booking.identification_document = doc_file
+            fields_to_update.append('identification_document')
+        if doc_type:
+            booking.identification_type = doc_type
+            fields_to_update.append('identification_type')
+        if doc_num is not None:
+            booking.identification_number = doc_num
+            fields_to_update.append('identification_number')
+
+        booking.save(update_fields=fields_to_update)
+        messages.success(request, "Identification document (NID / Birth Certificate) uploaded successfully! / আপনার পরিচয়পত্র সফলভাবে আপলোড হয়েছে!")
+    return redirect(f"{reverse('bookings:lookup')}?ref={reference}")
 
 
 def booking_success_view(request, reference):

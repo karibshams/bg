@@ -129,6 +129,30 @@
             </div>
           </div>
           {% endif %}
+
+          <div class="sm:col-span-2 p-3.5 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <span class="text-xs text-slate-500 font-bold block trans-target" data-en="Identification Document (NID / Birth Certificate):" data-bn="পরিচয়পত্র নথি (এনআইডি / জন্ম নিবন্ধন):">Identification Document (NID / Birth Certificate):</span>
+              <div class="mt-1 flex items-center space-x-2">
+                {% if booking.identification_document %}
+                  <span class="inline-flex items-center px-3 py-1 bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold text-xs rounded-lg shadow-sm">
+                    <i data-lucide="file-check" class="w-4 h-4 mr-1.5 text-emerald-600"></i>
+                    <span class="trans-target" data-en="Uploaded & Submitted ({{ booking.get_identification_type_display }}{% if booking.identification_number %}: {{ booking.identification_number }}{% endif %})" data-bn="আপলোড সম্পন্ন ({{ booking.get_identification_type_display }}{% if booking.identification_number %}: {{ booking.identification_number }}{% endif %})">Uploaded & Submitted ({{ booking.get_identification_type_display }}{% if booking.identification_number %}: {{ booking.identification_number }}{% endif %})</span>
+                  </span>
+                {% else %}
+                  <span class="inline-flex items-center px-3 py-1 bg-amber-100 text-amber-900 border border-amber-300 font-semibold text-xs rounded-lg">
+                    <i data-lucide="alert-triangle" class="w-4 h-4 mr-1.5 text-amber-600"></i>
+                    <span class="trans-target" data-en="Not uploaded yet (Can be uploaded in Tracker or presented physically)" data-bn="এখনও আপলোড করা হয়নি (ট্র্যাকারে আপলোড করতে পারেন বা সাথে রাখতে পারেন)">Not uploaded yet (Can be uploaded in Tracker or presented physically)</span>
+                  </span>
+                {% endif %}
+              </div>
+            </div>
+            <div>
+              <a href="{% url 'bookings:lookup' %}?ref={{ booking.booking_reference }}" class="text-xs text-sky-700 hover:text-sky-900 font-bold underline flex items-center space-x-1">
+                <span class="trans-target" data-en="Upload / Manage Document in Tracker →" data-bn="ট্র্যাকারে ডকুমেন্ট আপলোড বা পরিবর্তন করুন →">Upload / Manage Document in Tracker →</span>
+              </a>
+            </div>
+          </div>
         </div>
 
         <!-- Travel Document & Voucher Mandatory Instruction -->

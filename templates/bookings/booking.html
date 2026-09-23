@@ -24,7 +24,7 @@
        get total() { return this.travelers * this.unitPrice; }
      }">
   <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-    <form action="{% url 'bookings:create' %}" method="POST" class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+    <form action="{% url 'bookings:create' %}" method="POST" enctype="multipart/form-data" class="grid grid-cols-1 lg:grid-cols-12 gap-8">
       {% csrf_token %}
       
       <!-- Hidden inputs for tour and date -->
@@ -151,6 +151,51 @@
               <textarea name="special_requests" rows="2" placeholder="Meal preference, seat preference, etc..." 
                         data-en-placeholder="Meal preference, seat preference, etc..." data-bn-placeholder="খাবারের ধরন, সিট প্রিফারেন্স ইত্যাদি..."
                         class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 4: NID / Birth Certificate Upload -->
+        <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-slate-200/80 space-y-4 font-bengali">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <h2 class="text-xl font-bold text-slate-900 flex items-center space-x-2">
+              <span class="w-7 h-7 rounded-full bg-sky-500 text-white flex items-center justify-center text-xs font-bold">4</span>
+              <span class="trans-target" data-en="NID / Birth Certificate Verification" data-bn="এনআইডি / জন্ম নিবন্ধন যাচাইকরণ">NID / Birth Certificate Verification</span>
+            </h2>
+            <span class="text-[11px] px-2.5 py-1 rounded-full bg-sky-50 text-sky-800 font-bold border border-sky-200 self-start sm:self-auto trans-target"
+                  data-en="Required for Security Checkpoints"
+                  data-bn="নিরাপত্তা চেকপোস্টের জন্য প্রয়োজনীয়">Required for Security Checkpoints</span>
+          </div>
+
+          <p class="text-xs text-slate-500 leading-relaxed trans-target"
+             data-en="Upload an authentic copy of your National ID Card (NID), Birth Certificate, or Passport for traveler verification at hill tracts, forest, and border security checkpoints."
+             data-bn="পাহাড়ি এলাকা ও চেকপোস্টের নিরাপত্তার স্বার্থে আপনার জাতীয় পরিচয়পত্র (NID), জন্ম নিবন্ধন সনদ বা পাসপোর্টের স্পষ্ট কপি আপলোড করুন।">
+            Upload an authentic copy of your National ID Card (NID), Birth Certificate, or Passport for traveler verification at hill tracts, forest, and border security checkpoints.
+          </p>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+            <div>
+              <label class="block text-xs font-bold text-slate-600 mb-1 trans-target" data-en="Document Type" data-bn="সনদের ধরন">Document Type</label>
+              <select name="identification_type" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500">
+                <option value="NID">National ID Card (NID) / জাতীয় পরিচয়পত্র</option>
+                <option value="BIRTH_CERT">Birth Certificate / জন্ম নিবন্ধন সনদ</option>
+                <option value="PASSPORT">Passport / Student ID / পাসপোর্ট</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-600 mb-1 trans-target" data-en="Document / ID Number (Optional)" data-bn="আইডি / সনদ নম্বর (ঐচ্ছিক)">Document / ID Number (Optional)</label>
+              <input type="text" name="identification_number" placeholder="e.g. 1994XXXXXXXXX" 
+                     class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500">
+            </div>
+
+            <div class="sm:col-span-2">
+              <label class="block text-xs font-bold text-slate-600 mb-1 trans-target" data-en="Upload Document File (Photo or PDF)" data-bn="সনদ ফাইল আপলোড করুন (ছবি বা পিডিএফ)">Upload Document File (Photo or PDF)</label>
+              <input type="file" name="identification_document" accept="image/*,.pdf" 
+                     class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-600 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100 cursor-pointer">
+              <p class="text-[11px] text-slate-400 mt-1 trans-target" data-en="Supported formats: JPG, PNG, PDF (Max size: 10MB)" data-bn="সমর্থিত ফরম্যাট: JPG, PNG, PDF (সর্বোচ্চ ১০ মেগাবাইট)">
+                Supported formats: JPG, PNG, PDF (Max size: 10MB)
+              </p>
             </div>
           </div>
         </div>

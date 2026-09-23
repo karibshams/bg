@@ -15,17 +15,19 @@ urls = [
     ('Admin Login', 'http://127.0.0.1:8000/admin/login/'),
 ]
 
-all_passed = True
-for name, url in urls:
-    try:
-        req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
-        res = urllib.request.urlopen(req, timeout=5)
-        print(f"[PASS] {res.status} {name}: {url}")
-    except Exception as e:
-        print(f"[FAIL] {name}: {e}")
-        all_passed = False
+if __name__ == '__main__':
+    all_passed = True
+    for name, url in urls:
+        try:
+            req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+            res = urllib.request.urlopen(req, timeout=5)
+            print(f"[PASS] {res.status} {name}: {url}")
+        except Exception as e:
+            print(f"[FAIL] {name}: {e}")
+            all_passed = False
 
-if all_passed:
-    print("\nALL URLS ACCESSIBLE AND RETURNING 200 OK!")
-else:
-    exit(1)
+    if all_passed:
+        print("\nALL URLS ACCESSIBLE AND RETURNING 200 OK!")
+    else:
+        exit(1)
+

@@ -163,6 +163,14 @@ def generate_booking_voucher_pdf(booking):
     story.append(Paragraph("<b>1. TRAVELER & RESERVATION DETAILS</b>", section_heading))
     story.append(Spacer(1, 4))
 
+    id_label = booking.get_identification_type_display() if hasattr(booking, 'get_identification_type_display') else "ID Doc"
+    if booking.identification_number:
+        id_val_text = f"{id_label}: {booking.identification_number}"
+    elif booking.identification_document:
+        id_val_text = f"{id_label}: Uploaded"
+    else:
+        id_val_text = "Pending / Carry Original"
+
     traveler_data = [
         [
             Paragraph("Lead Customer Name:", cell_label),
@@ -177,8 +185,8 @@ def generate_booking_voucher_pdf(booking):
             Paragraph(f"<b>{booking.num_travelers} Person(s)</b>", cell_value)
         ],
         [
-            Paragraph("Customer Address:", cell_label),
-            Paragraph(clean_ascii(booking.customer_address) or "Not Specified", cell_value),
+            Paragraph("Traveler ID / Document:", cell_label),
+            Paragraph(clean_ascii(id_val_text), cell_value),
             Paragraph("Special Requests:", cell_label),
             Paragraph(clean_ascii(booking.special_requests) or "None", cell_value)
         ]
