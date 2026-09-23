@@ -34,9 +34,13 @@ def tour_list_view(request):
     if cat_slug:
         tours = tours.filter(category__slug=cat_slug)
         
-    # Filter by duration
+    # Filter by duration (Day Tour vs Multi-Day Tour & custom ranges)
     duration = request.GET.get('duration', '').strip()
-    if duration == '1-2':
+    if duration == 'day_tour':
+        tours = tours.filter(Q(duration_type='DAY_TOUR') | Q(duration_days=1))
+    elif duration == 'multi_day':
+        tours = tours.filter(Q(duration_type='MULTI_DAY') & Q(duration_days__gt=1))
+    elif duration == '1-2':
         tours = tours.filter(duration_days__lte=2)
     elif duration == '3-4':
         tours = tours.filter(duration_days__gte=3, duration_days__lte=4)

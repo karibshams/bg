@@ -47,8 +47,8 @@ class TourImageInline(admin.TabularInline):
 
 @admin.register(Tour)
 class TourAdmin(admin.ModelAdmin):
-    list_display = ('title', 'destination', 'category', 'duration', 'formatted_price', 'bus_seat_badge', 'rating_stars', 'is_featured', 'is_published')
-    list_filter = ('requires_nid_or_birth_cert', 'has_bus_seat_selection', 'bus_layout_type', 'is_published', 'is_featured', 'destination', 'category')
+    list_display = ('title', 'destination', 'category', 'duration_badge', 'duration', 'formatted_price', 'bus_seat_badge', 'rating_stars', 'is_featured', 'is_published')
+    list_filter = ('duration_type', 'requires_nid_or_birth_cert', 'has_bus_seat_selection', 'bus_layout_type', 'is_published', 'is_featured', 'destination', 'category')
     search_fields = ('title', 'bangla_title', 'description', 'destination__name')
     prepopulated_fields = {'slug': ('title',)}
     list_editable = ('is_featured', 'is_published')
@@ -62,9 +62,10 @@ class TourAdmin(admin.ModelAdmin):
             'fields': ('title', 'bangla_title', 'slug', 'destination', 'category', 'badge_text')
         }),
         ('Duration, Group Size, Guide & Pricing', {
-            'description': 'Manage group capacity, duration, security/guide info, and dynamic regular vs discount prices.',
+            'description': 'Manage tour classification (Day-Long vs Multi-Day), duration, capacity, and pricing.',
             'fields': (
-                ('duration', 'duration_days'),
+                ('duration_type', 'duration_days'),
+                'duration',
                 ('price', 'discount_price'),
                 'max_travelers',
                 ('guide_security_info', 'bangla_guide_security_info')
@@ -99,6 +100,17 @@ class TourAdmin(admin.ModelAdmin):
             'fields': (('rating', 'reviews_count'), ('is_featured', 'is_published'))
         }),
     )
+
+    def duration_badge(self, obj):
+        badge = obj.duration_type_badge
+        if badge['code'] == 'DAY_TOUR':
+            return format_html(
+                '<span style="background-color: #fef3c7; color: #92400e; border: 1px solid #fde68a; padding: 3px 8px; border-radius: 9999px; font-size: 11px; font-weight: bold; white-space: nowrap;">☀️ Day Tour</span>'
+            )
+        return format_html(
+            '<span style="background-color: #e0f2fe; color: #075985; border: 1px solid #bae6fd; padding: 3px 8px; border-radius: 9999px; font-size: 11px; font-weight: bold; white-space: nowrap;">🗓️ Multi-Day</span>'
+        )
+    duration_badge.short_description = "Duration Type"
 
     def bus_seat_badge(self, obj):
         if obj.has_bus_seat_selection:

@@ -120,7 +120,9 @@
             <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5 trans-target" data-en="Duration" data-bn="সময়কাল">Duration</label>
             <select name="duration" hx-trigger="change" 
                     class="w-full py-2.5 px-3 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-500">
-              <option value="">All Durations</option>
+              <option value="">All Durations / সকল সময়কাল</option>
+              <option value="day_tour" {% if selected_duration == 'day_tour' %}selected{% endif %}>☀️ Day Tour (Single Day / ডে ট্যুর)</option>
+              <option value="multi_day" {% if selected_duration == 'multi_day' %}selected{% endif %}>🗓️ Multi-Day Tour (মাল্টি-ডে ট্যুর)</option>
               <option value="1-2" {% if selected_duration == '1-2' %}selected{% endif %}>1-2 Days (Weekend Trips)</option>
               <option value="3-4" {% if selected_duration == '3-4' %}selected{% endif %}>3-4 Days (Standard Tour)</option>
               <option value="5+" {% if selected_duration == '5+' %}selected{% endif %}>5+ Days (Long Expedition)</option>

@@ -242,9 +242,22 @@
     'Batch Price': { en: 'Batch Price', bn: 'ব্যাচ ভাড়া' },
     'ব্যাচ ভাড়া': { en: 'Batch Price', bn: 'ব্যাচ ভাড়া' },
     'Tour(s) Available': { en: 'Tour(s) Available', bn: 'টি ট্যুর উপলব্ধ' },
-    'টি ট্যুর উপলব্ধ': { en: 'Tour(s) Available', bn: 'টি ট্যুর উপলব্ধ' },
     'Book Date': { en: 'Book Date', bn: 'বুক করুন' },
     'বুক করুন': { en: 'Book Date', bn: 'বুক করুন' },
+
+    // Duration Classification (Day Tour vs Multi-Day)
+    'Day Tour (Single Day / Day-Long)': { en: 'Day Tour (Single Day / Day-Long)', bn: 'ডে ট্যুর (১ দিন)' },
+    'ডে ট্যুর (১ দিন)': { en: 'Day Tour (Single Day / Day-Long)', bn: 'ডে ট্যুর (১ দিন)' },
+    'Day Tour (Single Day)': { en: 'Day Tour (Single Day)', bn: 'ডে ট্যুর (১ দিন)' },
+    'Day Tour': { en: 'Day Tour', bn: 'ডে ট্যুর' },
+    'ডে ট্যুর': { en: 'Day Tour', bn: 'ডে ট্যুর' },
+    'Multi-Day Tour': { en: 'Multi-Day Tour', bn: 'মাল্টি-ডে ট্যুর' },
+    'মাল্টি-ডে ট্যুর': { en: 'Multi-Day Tour', bn: 'মাল্টি-ডে ট্যুর' },
+    'Multi-Day': { en: 'Multi-Day', bn: 'মাল্টি-ডে' },
+    'মাল্টি-ডে': { en: 'Multi-Day', bn: 'মাল্টি-ডে' },
+    'All Durations': { en: 'All Durations', bn: 'সকল সময়কাল' },
+    'সকল সময়কাল': { en: 'All Durations', bn: 'সকল সময়কাল' },
+
 
 
     // Booking Process

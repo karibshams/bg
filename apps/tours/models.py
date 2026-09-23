@@ -58,6 +58,18 @@ class Tour(models.Model):
     destination = models.ForeignKey(Destination, on_delete=models.CASCADE, related_name='tours')
     category = models.ForeignKey(TourCategory, on_delete=models.SET_NULL, null=True, blank=True, related_name='tours')
     
+    DURATION_TYPE_CHOICES = [
+        ('DAY_TOUR', 'Day Tour (Single Day / Day-Long)'),
+        ('MULTI_DAY', 'Multi-Day Tour (e.g. 2 Nights / 3 Days)'),
+    ]
+
+    duration_type = models.CharField(
+        max_length=20,
+        choices=DURATION_TYPE_CHOICES,
+        default='MULTI_DAY',
+        verbose_name="Tour Duration Classification",
+        help_text="Choose duration classification: Day Tour (Single Day / Day-Long) or Multi-Day Tour"
+    )
     duration = models.CharField(max_length=80, default="3 Days / 2 Nights")
     duration_days = models.PositiveSmallIntegerField(default=3, help_text="Number of days for filtering")
     price = models.DecimalField(max_digits=10, decimal_places=2, help_text="Price in BDT (৳)")
@@ -154,6 +166,32 @@ class Tour(models.Model):
             if clean and clean not in items:
                 items.append(clean)
         return items
+
+    @property
+    def is_day_tour(self):
+        return self.duration_type == 'DAY_TOUR' or self.duration_days == 1
+
+    @property
+    def duration_type_badge(self):
+        if self.is_day_tour:
+            return {
+                'code': 'DAY_TOUR',
+                'en': 'Day Tour (Single Day)',
+                'bn': 'ডে ট্যুর (১ দিন)',
+                'short_en': 'Day Tour',
+                'short_bn': 'ডে ট্যুর',
+                'color': 'amber',
+                'icon': 'sun'
+            }
+        return {
+            'code': 'MULTI_DAY',
+            'en': 'Multi-Day Tour',
+            'bn': 'মাল্টি-ডে ট্যুর',
+            'short_en': 'Multi-Day',
+            'short_bn': 'মাল্টি-ডে',
+            'color': 'sky',
+            'icon': 'calendar'
+        }
 
     def __str__(self):
         return f"{self.title} (৳{self.current_price:,.0f})"

@@ -38,9 +38,16 @@
     </h1>
 
     <div class="flex flex-wrap items-center gap-6 text-sm text-slate-300 font-medium">
-      <span class="flex items-center space-x-1.5">
-        <i data-lucide="clock" class="w-4 h-4 text-emerald-400"></i>
-        <span class="trans-target" data-en="{{ tour.duration }}" data-bn="{{ tour.duration }}">{{ tour.duration }}</span>
+      <span class="flex items-center space-x-1.5 px-3 py-1 rounded-full {% if tour.is_day_tour %}bg-amber-500/20 text-amber-300 border border-amber-400/30{% else %}bg-sky-500/20 text-sky-300 border border-sky-400/30{% endif %}">
+        {% if tour.is_day_tour %}
+          <i data-lucide="sun" class="w-4 h-4 text-amber-400"></i>
+          <span class="font-bold trans-target" data-en="Day Tour (Single Day)" data-bn="ডে ট্যুর (১ দিন)">Day Tour (Single Day)</span>
+        {% else %}
+          <i data-lucide="calendar" class="w-4 h-4 text-sky-400"></i>
+          <span class="font-bold trans-target" data-en="Multi-Day Tour" data-bn="মাল্টি-ডে ট্যুর">Multi-Day Tour</span>
+        {% endif %}
+        <span class="text-slate-400">•</span>
+        <span>{{ tour.duration }}</span>
       </span>
       <span class="flex items-center space-x-1.5">
         <i data-lucide="users" class="w-4 h-4 text-sky-400"></i>
