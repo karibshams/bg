@@ -45,43 +45,43 @@
           </h2>
 
           <!-- Payment Options Tabs -->
-          <div class="grid grid-cols-3 gap-3">
+          <div class="grid grid-cols-3 gap-2 sm:gap-3">
             
             <!-- bKash -->
             <button type="button" @click="selectedMethod = 'BKASH'"
-                    class="p-4 rounded-2xl border text-center transition-all flex flex-col items-center justify-center space-y-2 focus:outline-none"
+                    class="p-2.5 sm:p-4 rounded-2xl border text-center transition-all flex flex-col items-center justify-center space-y-1 sm:space-y-2 focus:outline-none"
                     :class="selectedMethod === 'BKASH' ? 'border-[#E2136E] bg-pink-50/50 shadow-md ring-2 ring-[#E2136E]/30' : 'border-slate-200 hover:border-slate-300'">
-              <div class="w-10 h-10 rounded-full bg-[#E2136E] text-white flex items-center justify-center font-black text-sm">
+              <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#E2136E] text-white flex items-center justify-center font-black text-xs sm:text-sm shadow-sm">
                 bK
               </div>
-              <span class="font-bold text-slate-900 text-sm">bKash</span>
-              <span class="text-[10px] text-slate-500 trans-target" data-en="bKash (01855939459)" data-bn="বিকাশ (01855939459)">bKash (01855939459)</span>
+              <span class="font-bold text-slate-900 text-xs sm:text-sm">bKash</span>
+              <span class="text-[9px] sm:text-[10px] text-slate-500 truncate max-w-full trans-target" data-en="bKash (01855939459)" data-bn="বিকাশ (01855939459)">bKash (01855939459)</span>
             </button>
 
             <!-- Nagad -->
             <button type="button" @click="selectedMethod = 'NAGAD'"
-                    class="p-4 rounded-2xl border text-center transition-all flex flex-col items-center justify-center space-y-2 focus:outline-none"
+                    class="p-2.5 sm:p-4 rounded-2xl border text-center transition-all flex flex-col items-center justify-center space-y-1 sm:space-y-2 focus:outline-none"
                     :class="selectedMethod === 'NAGAD' ? 'border-[#F7941D] bg-orange-50/50 shadow-md ring-2 ring-[#F7941D]/30' : 'border-slate-200 hover:border-slate-300'">
-              <div class="w-10 h-10 rounded-full bg-[#F7941D] text-white flex items-center justify-center font-black text-sm">
+              <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#F7941D] text-white flex items-center justify-center font-black text-xs sm:text-sm shadow-sm">
                 ন
               </div>
-              <span class="font-bold text-slate-900 text-sm">Nagad</span>
-              <span class="text-[10px] text-slate-500 trans-target" data-en="Nagad (01855939459)" data-bn="নগদ (01855939459)">Nagad (01855939459)</span>
+              <span class="font-bold text-slate-900 text-xs sm:text-sm">Nagad</span>
+              <span class="text-[9px] sm:text-[10px] text-slate-500 truncate max-w-full trans-target" data-en="Nagad (01855939459)" data-bn="নগদ (01855939459)">Nagad (01855939459)</span>
             </button>
 
             <!-- Bank Payment (Temporarily On Hold / Suspended) -->
             <button type="button" @click="selectedMethod = 'BANK'"
-                    class="p-4 rounded-2xl border text-center transition-all flex flex-col items-center justify-center space-y-2 focus:outline-none relative group"
+                    class="p-2.5 sm:p-4 rounded-2xl border text-center transition-all flex flex-col items-center justify-center space-y-1 sm:space-y-2 focus:outline-none relative group"
                     :class="selectedMethod === 'BANK' ? 'border-amber-400 bg-amber-50/70 shadow-md ring-2 ring-amber-400/30' : 'border-slate-200 bg-slate-50/80 hover:border-amber-300'">
-              <span class="absolute top-2 right-2 px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-amber-100 text-amber-800 border border-amber-300 uppercase tracking-wider trans-target"
+              <span class="absolute top-1.5 right-1.5 sm:top-2 sm:right-2 px-1 py-0.2 sm:px-1.5 sm:py-0.5 rounded-full text-[8px] sm:text-[9px] font-bold bg-amber-100 text-amber-800 border border-amber-300 uppercase tracking-wider trans-target"
                     data-en="On Hold" data-bn="স্থগিত">
                 On Hold
               </span>
-              <div class="w-10 h-10 rounded-full bg-slate-200 text-slate-500 flex items-center justify-center group-hover:bg-amber-100 group-hover:text-amber-800 transition-colors">
-                <i data-lucide="building-2" class="w-5 h-5"></i>
+              <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-slate-200 text-slate-500 flex items-center justify-center group-hover:bg-amber-100 group-hover:text-amber-800 transition-colors">
+                <i data-lucide="building-2" class="w-4 h-4 sm:w-5 sm:h-5"></i>
               </div>
-              <span class="font-bold text-slate-700 text-sm trans-target" data-en="Bank Payment" data-bn="ব্যাংক পেমেন্ট">Bank Payment</span>
-              <span class="text-[10px] text-amber-700 font-semibold trans-target" data-en="Temporarily On Hold" data-bn="সাময়িকভাবে স্থগিত">Temporarily On Hold</span>
+              <span class="font-bold text-slate-700 text-xs sm:text-sm trans-target" data-en="Bank Payment" data-bn="ব্যাংক পেমেন্ট">Bank Payment</span>
+              <span class="text-[9px] sm:text-[10px] text-amber-700 font-semibold truncate max-w-full trans-target" data-en="Temporarily On Hold" data-bn="সাময়িকভাবে স্থগিত">Temporarily On Hold</span>
             </button>
 
           </div>
