@@ -32,12 +32,17 @@ db.sqlite3-journal
 # Environment variables
 .env
 
-# Windows
+# Windows & Scripts
 powershell.bat
+
 # IDEs
 .vscode/
 .idea/
 *.swp
 *.swo
+
+# Media uploads & local assets
+media/
+
 
 

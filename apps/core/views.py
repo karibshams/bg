@@ -2,6 +2,7 @@ import os
 import re
 import secrets
 import urllib.parse
+import logging
 import requests
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
@@ -12,6 +13,9 @@ from django.urls import reverse
 from django.conf import settings
 from django.core.mail import send_mail
 from .models import SiteSetting, Testimonial, FAQ, EmailVerification
+
+logger = logging.getLogger(__name__)
+
 
 
 # Dynamic imports from sibling apps with fallback
@@ -75,12 +79,14 @@ def contact_view(request):
 
 
 def send_verification_otp_email(user, email_ver, request=None):
-    """Sends 6-digit OTP code and direct link to user's Gmail for activation."""
+    """Sends 6-digit OTP code and direct link to user's email for activation with responsive HTML & plain-text fallback."""
     domain = request.get_host() if request else '127.0.0.1:8000'
     protocol = 'https' if request and request.is_secure() else 'http'
     verify_url = f"{protocol}://{domain}{reverse('core:verify_email')}?email={urllib.parse.quote(email_ver.email)}&token={email_ver.token}"
 
     subject = f"Your BhromonGhuri Verification Code: {email_ver.otp_code}"
+    
+    # Plain text fallback (ensures backward compatibility with test suites checking mail.outbox[0].body)
     message = f"""ভ্রমণঘুড়িতে স্বাগতম! Welcome to BhromonGhuri!
 
 আপনার ইমেইল ভেরিফিকেশন কোড:
@@ -99,18 +105,99 @@ If you did not request this, please ignore this email.
 
 — টিম ভ্রমণঘুড়ি (BhromonGhuri)
 """
-    send_mail(
-        subject=subject,
-        message=message,
-        from_email=settings.DEFAULT_FROM_EMAIL,
-        recipient_list=[email_ver.email],
-        fail_silently=True
-    )
+
+    html_message = f"""<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BhromonGhuri Email Verification</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #0f172a; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #f8fafc;">
+  <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #0f172a; padding: 40px 10px;">
+    <tr>
+      <td align="center">
+        <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 520px; background-color: #1e293b; border-radius: 16px; border: 1px solid #334155; overflow: hidden; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);">
+          <tr>
+            <td style="background: linear-gradient(135deg, #0ea5e9 0%, #10b981 100%); padding: 32px 24px; text-align: center;">
+              <h1 style="margin: 0; color: #ffffff; font-size: 24px; font-weight: 800; letter-spacing: 0.5px;">
+                🪁 ভ্রমণঘুড়ি (BhromonGhuri)
+              </h1>
+              <p style="margin: 6px 0 0 0; color: #e0f2fe; font-size: 13px; letter-spacing: 1px; text-transform: uppercase;">
+                Explore • Experience • Discover
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 32px 28px;">
+              <h2 style="margin: 0 0 10px 0; color: #ffffff; font-size: 20px; font-weight: 700; text-align: center;">
+                ইমেইল ভেরিফিকেশন ওটিপি / Verification OTP
+              </h2>
+              <p style="margin: 0 0 22px 0; color: #94a3b8; font-size: 14px; line-height: 1.6; text-align: center;">
+                ভ্রমণঘুড়িতে স্বাগতম! আপনার অ্যাকাউন্ট ভেরিফাই করতে নিচের ৬-সংখ্যার সিকিউরিটি কোডটি ব্যবহার করুন।
+              </p>
+
+              <div style="background-color: #0f172a; border: 2px dashed #0ea5e9; border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 24px;">
+                <div style="font-size: 11px; text-transform: uppercase; color: #38bdf8; font-weight: 700; letter-spacing: 1.5px; margin-bottom: 6px;">
+                  Your 6-Digit OTP Code
+                </div>
+                <div style="font-size: 34px; font-weight: 900; letter-spacing: 8px; color: #38bdf8; font-family: 'Courier New', Courier, monospace;">
+                  {email_ver.otp_code}
+                </div>
+                <div style="font-size: 12px; color: #64748b; margin-top: 8px;">
+                  ⏱ মেয়াদ: ১৫ মিনিট (Valid for 15 minutes)
+                </div>
+              </div>
+
+              <div style="text-align: center; margin-bottom: 24px;">
+                <a href="{verify_url}" style="background: linear-gradient(135deg, #10b981 0%, #0ea5e9 100%); color: #ffffff; text-decoration: none; font-weight: 700; font-size: 14px; padding: 12px 28px; border-radius: 8px; display: inline-block;">
+                  Verify Account Directly &rarr;
+                </a>
+              </div>
+
+              <div style="border-top: 1px solid #334155; padding-top: 20px; color: #64748b; font-size: 12px; line-height: 1.5; text-align: center;">
+                যদি আপনি এই অনুরোধ না করে থাকেন, তবে বার্তাটি উপেক্ষা করুন।<br>
+                If you did not request this, please safely ignore this email.
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td style="background-color: #0f172a; padding: 16px; text-align: center; color: #475569; font-size: 11px; border-top: 1px solid #334155;">
+              © 2026 BhromonGhuri. All rights reserved. | Dhaka, Bangladesh
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>"""
+
+    try:
+        send_mail(
+            subject=subject,
+            message=message,
+            html_message=html_message,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[email_ver.email],
+            fail_silently=False
+        )
+        logger.info(f"Verification OTP email sent successfully to {email_ver.email}")
+        return True
+    except Exception as e:
+        logger.error(f"Failed to send verification OTP email to {email_ver.email}: {e}")
+        return False
 
 
 def send_password_reset_otp_email(user, email_ver, request=None):
-    """Sends 6-digit OTP code for password recovery to user's Gmail."""
+    """Sends 6-digit OTP code for password recovery to user's email with responsive HTML & plain-text fallback."""
+    domain = request.get_host() if request else '127.0.0.1:8000'
+    protocol = 'https' if request and request.is_secure() else 'http'
+    reset_url = f"{protocol}://{domain}{reverse('core:reset_password')}?email={urllib.parse.quote(email_ver.email)}"
+
     subject = f"BhromonGhuri Password Reset Code: {email_ver.otp_code}"
+    
+    # Plain text fallback
     message = f"""ভ্রমণঘুড়ি পাসওয়ার্ড রিসেট রিকোয়েস্ট / BhromonGhuri Password Reset Request
 
 আপনার পাসওয়ার্ড রিসেট করার জন্য ৬-সংখ্যার সিকিউরিটি কোড:
@@ -120,18 +207,98 @@ Your 6-digit Password Reset Code is:
 =========================
 এই কোডটি আগামী ১৫ মিনিট পর্যন্ত কার্যকর থাকবে।
 
+রিসেট পেজে প্রবেশ করুন:
+Go to password reset page:
+{reset_url}
+
 যদি আপনি পাসওয়ার্ড রিসেটের অনুরোধ না করে থাকেন, তবে দ্রুত আপনার একাউন্টের নিরাপত্তা নিশ্চিত করুন।
 If you did not request this, please ignore this email.
 
 — টিম ভ্রমণঘুড়ি (BhromonGhuri)
 """
-    send_mail(
-        subject=subject,
-        message=message,
-        from_email=settings.DEFAULT_FROM_EMAIL,
-        recipient_list=[email_ver.email],
-        fail_silently=True
-    )
+
+    html_message = f"""<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BhromonGhuri Password Reset</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #0f172a; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #f8fafc;">
+  <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #0f172a; padding: 40px 10px;">
+    <tr>
+      <td align="center">
+        <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 520px; background-color: #1e293b; border-radius: 16px; border: 1px solid #334155; overflow: hidden; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);">
+          <tr>
+            <td style="background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%); padding: 32px 24px; text-align: center;">
+              <h1 style="margin: 0; color: #ffffff; font-size: 24px; font-weight: 800; letter-spacing: 0.5px;">
+                🪁 ভ্রমণঘুড়ি (BhromonGhuri)
+              </h1>
+              <p style="margin: 6px 0 0 0; color: #fef3c7; font-size: 13px; letter-spacing: 1px; text-transform: uppercase;">
+                Account Security & Password Recovery
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 32px 28px;">
+              <h2 style="margin: 0 0 10px 0; color: #ffffff; font-size: 20px; font-weight: 700; text-align: center;">
+                পাসওয়ার্ড রিসেট কোড / Password Reset Code
+              </h2>
+              <p style="margin: 0 0 22px 0; color: #94a3b8; font-size: 14px; line-height: 1.6; text-align: center;">
+                আপনার অ্যাকাউন্টের পাসওয়ার্ড পরিবর্তন করার জন্য নিচের ৬-সংখ্যার সিকিউরিটি কোডটি ব্যবহার করুন।
+              </p>
+
+              <div style="background-color: #0f172a; border: 2px dashed #f59e0b; border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 24px;">
+                <div style="font-size: 11px; text-transform: uppercase; color: #fbbf24; font-weight: 700; letter-spacing: 1.5px; margin-bottom: 6px;">
+                  Your Password Reset Code
+                </div>
+                <div style="font-size: 34px; font-weight: 900; letter-spacing: 8px; color: #fbbf24; font-family: 'Courier New', Courier, monospace;">
+                  {email_ver.otp_code}
+                </div>
+                <div style="font-size: 12px; color: #64748b; margin-top: 8px;">
+                  ⏱ মেয়াদ: ১৫ মিনিট (Valid for 15 minutes)
+                </div>
+              </div>
+
+              <div style="text-align: center; margin-bottom: 24px;">
+                <a href="{reset_url}" style="background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%); color: #ffffff; text-decoration: none; font-weight: 700; font-size: 14px; padding: 12px 28px; border-radius: 8px; display: inline-block;">
+                  Reset Password Now &rarr;
+                </a>
+              </div>
+
+              <div style="border-top: 1px solid #334155; padding-top: 20px; color: #64748b; font-size: 12px; line-height: 1.5; text-align: center;">
+                যদি আপনি পাসওয়ার্ড রিসেটের অনুরোধ না করে থাকেন, তবে দ্রুত আপনার একাউন্টের নিরাপত্তা নিশ্চিত করুন।<br>
+                If you did not request this, please ensure your account credentials are secure.
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td style="background-color: #0f172a; padding: 16px; text-align: center; color: #475569; font-size: 11px; border-top: 1px solid #334155;">
+              © 2026 BhromonGhuri. All rights reserved. | Dhaka, Bangladesh
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>"""
+
+    try:
+        send_mail(
+            subject=subject,
+            message=message,
+            html_message=html_message,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[email_ver.email],
+            fail_silently=False
+        )
+        logger.info(f"Password reset OTP email sent successfully to {email_ver.email}")
+        return True
+    except Exception as e:
+        logger.error(f"Failed to send password reset OTP email to {email_ver.email}: {e}")
+        return False
+
 
 
 def login_view(request):
