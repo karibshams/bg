@@ -42,7 +42,6 @@ powershell.bat
 *.swo
 
 # Media uploads & local assets
-media/
 
 
 
