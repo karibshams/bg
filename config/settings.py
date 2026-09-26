@@ -4,6 +4,7 @@ Django settings for Bhromonghuri project.
 """
 
 import os
+import sys
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -108,6 +109,9 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 # Media files (User uploads, tour images)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+if 'test' in sys.argv:
+    import tempfile
+    MEDIA_ROOT = Path(tempfile.mkdtemp())
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 

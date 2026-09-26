@@ -41,6 +41,8 @@ powershell.bat
 *.swp
 *.swo
 
-
-
-
+# Test & temporary media artifacts
+test_*.jpg
+test*.jpg
+sitakunda_cover_*.jpg
+sitakunda_hero_*.jpg
