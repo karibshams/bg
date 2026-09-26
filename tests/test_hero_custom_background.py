@@ -1,36 +1,28 @@
-import os
-from pathlib import Path
 from django.test import TestCase, Client
 from django.urls import reverse
-from django.conf import settings
 
 
-class HeroCustomBackgroundTestCase(TestCase):
+class HeroNoBackgroundImageTestCase(TestCase):
     def setUp(self):
         self.client = Client()
 
-    def test_hero_background_asset_exists(self):
-        """hero-bg.jpg asset must exist in static and public assets directory."""
-        static_img = settings.BASE_DIR / 'static' / 'images' / 'hero-bg.jpg'
-        self.assertTrue(static_img.exists(), "hero-bg.jpg must exist in static/images/")
-        self.assertGreater(static_img.stat().st_size, 10000, "hero-bg.jpg should be valid non-empty image")
-
-    def test_hero_background_and_dark_contrast_overlay_rendered(self):
-        """Hero container must apply hero-bg.jpg with cover & center bottom, plus dark contrast gradient overlay."""
+    def test_hero_does_not_use_background_image(self):
+        """Hero container must not use any background image, maintaining atmospheric deep background."""
         resp = self.client.get(reverse('core:home'))
         self.assertEqual(resp.status_code, 200)
         content = resp.content.decode('utf-8')
 
-        # 1. Background image integration
-        self.assertIn('hero-bg.jpg', content)
-        self.assertIn('background-size: cover', content)
-        self.assertIn('background-position: center bottom', content)
+        # Hero section exists
+        self.assertIn('id="hero-section"', content)
 
-        # 2. Dark contrast gradient overlay
-        self.assertIn('rgba(5, 11, 24, 0.85)', content)
-        self.assertIn('rgba(2, 6, 17, 0.92)', content)
+        # No background image is applied to hero-section
+        self.assertNotIn('hero-bg.jpg', content)
 
-        # 3. Foreground UI elements in relative z-10
+        # Atmospheric ambient glow & grid texture background is active
+        self.assertIn('bg-slate-950', content)
+        self.assertIn('radial-gradient', content)
+
+        # Foreground UI elements are intact inside relative z-10
         self.assertIn('z-10', content)
         self.assertIn('id="hero-title"', content)
         self.assertIn('id="hero-subtitle"', content)
