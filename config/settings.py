@@ -21,7 +21,7 @@ SECRET_KEY = os.getenv(
 DEBUG = os.getenv('DEBUG', 'True').lower() in ('true', '1', 't')
 
 ALLOWED_HOSTS = [h.strip() for h in os.getenv('ALLOWED_HOSTS', '*').split(',') if h.strip()]
-MAP_API_KEY = os.getenv('MAP_API_KEY', 'AIzaSyCSMpRIrzL1cDoRi-WPzD99VrhIgK46Zt0')
+MAP_API_KEY = os.getenv('MAP_API_KEY', '')
 
 # Application definition
 INSTALLED_APPS = [

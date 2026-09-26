@@ -51,6 +51,7 @@ class Bug7CartoDBMapAndLocationSearchTestCase(TestCase):
         self.assertIn('map.flyTo', content)
 
     def test_map_api_key_configured(self):
+        import os
         from django.conf import settings
         self.assertTrue(hasattr(settings, 'MAP_API_KEY'))
-        self.assertEqual(settings.MAP_API_KEY, 'AIzaSyCSMpRIrzL1cDoRi-WPzD99VrhIgK46Zt0')
+        self.assertEqual(settings.MAP_API_KEY, os.getenv('MAP_API_KEY', ''))

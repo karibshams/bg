@@ -8,15 +8,18 @@
 <!-- ========================================== -->
 <!-- 1. HERO SECTION                            -->
 <!-- ========================================== -->
-<section class="relative min-h-[92vh] flex items-center justify-center overflow-hidden bg-slate-950 text-white pt-24 pb-16">
+<section id="hero-section" 
+         class="relative min-h-[92vh] flex items-center justify-center overflow-hidden bg-slate-950 text-white pt-24 pb-16 bg-cover bg-no-repeat"
+         style="background-image: url('{% static 'images/hero-bg.jpg' %}'); background-size: cover; background-position: center bottom;">
   
-  <!-- Atmospheric Deep Background with Ambient Glows -->
-  <div class="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(14,165,233,0.3),rgba(255,255,255,0))]"></div>
-  <div class="absolute -top-40 -right-40 w-96 h-96 bg-sky-500/20 rounded-full blur-3xl pointer-events-none"></div>
-  <div class="absolute -bottom-40 -left-40 w-96 h-96 bg-emerald-500/15 rounded-full blur-3xl pointer-events-none"></div>
+  <!-- Dark Contrast Gradient Overlay for Readability (softens bright upper area, mutes background patterns) -->
+  <div class="absolute inset-0 pointer-events-none bg-slate-950/80" 
+       style="background: linear-gradient(to bottom, rgba(5, 11, 24, 0.85), rgba(2, 6, 17, 0.92));"></div>
 
-  <!-- Background Grid Texture -->
-  <div class="absolute inset-0 bg-[linear-gradient(to_right,#1e293b15_1px,transparent_1px),linear-gradient(to_bottom,#1e293b15_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] pointer-events-none"></div>
+  <!-- Atmospheric Ambient Glow Accents -->
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(14,165,233,0.18),rgba(255,255,255,0))] pointer-events-none"></div>
+  <div class="absolute -top-40 -right-40 w-96 h-96 bg-sky-500/15 rounded-full blur-3xl pointer-events-none"></div>
+  <div class="absolute -bottom-40 -left-40 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
   <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full z-10">
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
@@ -72,7 +75,7 @@
 
         <!-- Quick Search Bar with Smart Date Picker (HTMX ready) -->
         <div class="pt-4 max-w-xl mx-auto lg:mx-0 w-full">
-          <form action="{% url 'tours:list' %}" method="GET" class="glass-dark p-2 sm:p-2.5 rounded-2xl flex flex-col sm:flex-row items-stretch sm:items-center gap-2 border border-slate-700/80 shadow-2xl">
+          <form id="hero-search-form" action="{% url 'tours:list' %}" method="GET" class="glass-dark p-2 sm:p-2.5 rounded-2xl flex flex-col sm:flex-row items-stretch sm:items-center gap-2 border border-slate-700/80 shadow-2xl">
             <div class="flex items-center flex-1 min-w-0 pl-2">
               <i data-lucide="search" class="w-4 h-4 text-sky-400 mr-2 flex-shrink-0"></i>
               <input type="text" name="q" placeholder="Where do you want to travel? e.g. Sajek..." 
