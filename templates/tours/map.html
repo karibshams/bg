@@ -307,8 +307,13 @@ document.addEventListener('DOMContentLoaded', function() {
     scrollWheelZoom: true
   });
 
-  // Switch to CartoDB Voyager tiles with subdomain support 'abcd' (eliminates 403 access blocked error permanently with zero API costs)
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+  // CartoDB Voyager tiles with CARTO Basemaps API key integration to eliminate watermark permanently
+  const mapApiKey = "{{ map_api_key|default:'' }}";
+  const tileUrl = mapApiKey 
+    ? `https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png?key=${encodeURIComponent(mapApiKey)}`
+    : 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
+
+  L.tileLayer(tileUrl, {
     subdomains: 'abcd',
     maxZoom: 19,
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'

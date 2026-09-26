@@ -55,3 +55,11 @@ class Bug7CartoDBMapAndLocationSearchTestCase(TestCase):
         from django.conf import settings
         self.assertTrue(hasattr(settings, 'MAP_API_KEY'))
         self.assertEqual(settings.MAP_API_KEY, os.getenv('MAP_API_KEY', ''))
+
+    def test_map_renders_with_api_key_when_configured(self):
+        with self.settings(MAP_API_KEY='test-key-123'):
+            resp = self.client.get(reverse('tours:interactive_map'))
+            self.assertEqual(resp.status_code, 200)
+            content = resp.content.decode('utf-8')
+            self.assertIn('const mapApiKey = "test-key-123";', content)
+            self.assertIn('?key=', content)
