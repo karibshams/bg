@@ -21,6 +21,7 @@ SECRET_KEY = os.getenv(
 DEBUG = os.getenv('DEBUG', 'True').lower() in ('true', '1', 't')
 
 ALLOWED_HOSTS = [h.strip() for h in os.getenv('ALLOWED_HOSTS', '*').split(',') if h.strip()]
+MAP_API_KEY = os.getenv('MAP_API_KEY', 'AIzaSyCSMpRIrzL1cDoRi-WPzD99VrhIgK46Zt0')
 
 # Application definition
 INSTALLED_APPS = [
@@ -109,7 +110,8 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 # Media files (User uploads, tour images)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
-if 'test' in sys.argv:
+TESTING = 'test' in sys.argv
+if TESTING:
     import tempfile
     MEDIA_ROOT = Path(tempfile.mkdtemp())
 

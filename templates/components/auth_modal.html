@@ -1,0 +1,198 @@
+{% load static %}
+<!-- Guest Booking Auth Wall Modal (Google SSO + Manual Login/Register) -->
+<div x-data="{
+       isOpen: false,
+       activeTab: 'login',
+       nextUrl: '{% url 'core:home' %}',
+       showPassword: false,
+       openModal(tab, next) {
+         this.activeTab = tab || 'login';
+         this.nextUrl = next || window.location.pathname + window.location.search || '{% url 'core:home' %}';
+         this.isOpen = true;
+         document.body.classList.add('overflow-hidden');
+         this.$nextTick(() => { if (window.lucide) lucide.createIcons(); });
+       },
+       closeModal() {
+         this.isOpen = false;
+         document.body.classList.remove('overflow-hidden');
+       }
+     }"
+     @open-auth-modal.window="openModal($event.detail?.tab, $event.detail?.next)"
+     @keydown.escape.window="closeModal()"
+     x-show="isOpen"
+     x-cloak
+     class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md transition-all duration-300 font-sans"
+     style="display: none;">
+
+  <!-- Modal Backdrop Click Dismiss -->
+  <div class="fixed inset-0" @click="closeModal()"></div>
+
+  <!-- Modal Box -->
+  <div class="relative w-full max-w-md bg-slate-900/95 border border-white/15 rounded-3xl shadow-2xl p-6 sm:p-8 z-10 text-white backdrop-blur-xl animate-in fade-in zoom-in-95 duration-200"
+       @click.stop>
+    
+    <!-- Close Button -->
+    <button @click="closeModal()" 
+            type="button" 
+            class="absolute top-5 right-5 w-8 h-8 rounded-full bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition-colors focus:outline-none"
+            aria-label="Close modal">
+      <i data-lucide="x" class="w-4 h-4"></i>
+    </button>
+
+    <!-- Header & Badge -->
+    <div class="text-center space-y-2 mb-6">
+      <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-sky-500/20 to-emerald-500/20 border border-sky-400/30 flex items-center justify-center mx-auto text-sky-400 shadow-lg shadow-sky-500/10">
+        <i data-lucide="shield-check" class="w-6 h-6"></i>
+      </div>
+      <h2 class="text-xl sm:text-2xl font-black text-white font-bengali trans-target"
+          data-en="Sign In to Complete Booking"
+          data-bn="ট্যুর বুকিং সম্পন্ন করতে সাইন ইন করুন">
+        Sign In to Complete Booking
+      </h2>
+      <p class="text-xs text-slate-300 leading-relaxed font-sans trans-target"
+         data-en="Authenticate securely with Google or your BhromonGhuri account to confirm seat reservation and proceed to payment verification."
+         data-bn="আসন নিশ্চিতকরণ ও পেমেন্ট ভেরিফিকেশনের জন্য গুগল অথবা আপনার অ্যাকাউন্ট দিয়ে সাইন ইন করুন।">
+        Authenticate securely with Google or your account to confirm seat reservation and proceed to payment verification.
+      </p>
+    </div>
+
+    <!-- 1. Google OAuth 2.0 SSO CTA -->
+    <div class="mb-5">
+      <a :href="'{% url 'core:google_login' %}?next=' + encodeURIComponent(nextUrl)"
+         class="w-full py-3 px-4 rounded-xl bg-white hover:bg-slate-100 text-slate-900 font-bold text-xs sm:text-sm shadow-md flex items-center justify-center space-x-3 transition-all duration-200 transform hover:-translate-y-0.5">
+        <svg class="w-4 h-4" viewBox="0 0 24 24">
+          <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/>
+          <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.34 24 12 24z"/>
+          <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 10.03 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
+          <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+        </svg>
+        <span class="trans-target font-sans" data-en="Continue with Google" data-bn="গুগল দিয়ে দ্রুত সাইন ইন">Continue with Google</span>
+      </a>
+    </div>
+
+    <!-- Divider -->
+    <div class="relative flex py-2 items-center mb-5">
+      <div class="flex-grow border-t border-slate-700/80"></div>
+      <span class="flex-shrink mx-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest trans-target"
+            data-en="OR USE EMAIL / PASSWORD"
+            data-bn="অথবা ইমেইল / পাসওয়ার্ড">
+        OR USE EMAIL / PASSWORD
+      </span>
+      <div class="flex-grow border-t border-slate-700/80"></div>
+    </div>
+
+    <!-- Tab Selector (Sign In vs Register) -->
+    <div class="flex p-1 bg-slate-800/80 rounded-xl mb-4 border border-white/10">
+      <button type="button" 
+              @click="activeTab = 'login'" 
+              :class="activeTab === 'login' ? 'bg-sky-500 text-white font-bold shadow' : 'text-slate-400 hover:text-slate-200'"
+              class="flex-1 py-1.5 rounded-lg text-xs transition-all font-sans trans-target"
+              data-en="Sign In" data-bn="সাইন ইন">
+        Sign In
+      </button>
+      <button type="button" 
+              @click="activeTab = 'register'" 
+              :class="activeTab === 'register' ? 'bg-emerald-500 text-white font-bold shadow' : 'text-slate-400 hover:text-slate-200'"
+              class="flex-1 py-1.5 rounded-lg text-xs transition-all font-sans trans-target"
+              data-en="Register" data-bn="রেজিস্ট্রেশন">
+        Register
+      </button>
+    </div>
+
+    <!-- 2. Manual Sign In Form -->
+    <div x-show="activeTab === 'login'" class="space-y-3.5">
+      <form method="POST" action="{% url 'core:login' %}" class="space-y-3.5 text-left">
+        {% csrf_token %}
+        <input type="hidden" name="next" :value="nextUrl">
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1 trans-target" data-en="Username or Email" data-bn="ইউজারনেম অথবা ইমেইল">
+            Username or Email
+          </label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400 pointer-events-none">
+              <i data-lucide="mail" class="w-4 h-4"></i>
+            </span>
+            <input type="text" name="login_id" required placeholder="user@gmail.com"
+                   class="w-full pl-9 pr-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-white text-xs placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500 transition-all font-sans">
+          </div>
+        </div>
+
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <label class="block text-xs font-semibold text-slate-300 trans-target" data-en="Password" data-bn="পাসওয়ার্ড">
+              Password
+            </label>
+            <a href="{% url 'core:forgot_password' %}" class="text-[11px] text-sky-400 hover:underline trans-target" data-en="Forgot?" data-bn="ভুলে গেছেন?">
+              Forgot?
+            </a>
+          </div>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400 pointer-events-none">
+              <i data-lucide="lock" class="w-4 h-4"></i>
+            </span>
+            <input :type="showPassword ? 'text' : 'password'" name="password" required placeholder="••••••••"
+                   class="w-full pl-9 pr-9 py-2 bg-slate-800 border border-slate-700 rounded-xl text-white text-xs placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500 transition-all font-sans">
+            <button type="button" @click="showPassword = !showPassword" class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-200">
+              <i :data-lucide="showPassword ? 'eye-off' : 'eye'" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" 
+                class="w-full mt-2 py-2.5 px-4 rounded-xl bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-400 hover:to-cyan-400 text-white font-bold text-xs shadow-lg shadow-sky-500/20 flex items-center justify-center space-x-2 transition-all">
+          <i data-lucide="log-in" class="w-3.5 h-3.5"></i>
+          <span class="trans-target font-sans" data-en="Sign In & Proceed to Booking" data-bn="সাইন ইন করুন ও বুকিংয়ে এগিয়ে যান">Sign In & Proceed to Booking</span>
+        </button>
+      </form>
+    </div>
+
+    <!-- 3. Manual Registration Form -->
+    <div x-show="activeTab === 'register'" style="display: none;" class="space-y-3.5">
+      <form method="POST" action="{% url 'core:register' %}" class="space-y-3 text-left">
+        {% csrf_token %}
+        <input type="hidden" name="next" :value="nextUrl">
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1 trans-target" data-en="Username" data-bn="ইউজারনেম">
+            Username
+          </label>
+          <input type="text" name="username" required placeholder="traveler123"
+                 class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-white text-xs placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all font-sans">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1 trans-target" data-en="Gmail / Email Address" data-bn="জিমেইল / ইমেইল ঠিকানা">
+            Gmail / Email Address
+          </label>
+          <input type="email" name="email" required placeholder="your.name@gmail.com"
+                 class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-white text-xs placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all font-sans">
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1 trans-target" data-en="Password" data-bn="পাসওয়ার্ড">
+              Password
+            </label>
+            <input type="password" name="password" required placeholder="••••••••"
+                   class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-white text-xs placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all font-sans">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1 trans-target" data-en="Confirm" data-bn="নিশ্চিত করুন">
+              Confirm
+            </label>
+            <input type="password" name="confirm_password" required placeholder="••••••••"
+                   class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-white text-xs placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all font-sans">
+          </div>
+        </div>
+
+        <button type="submit" 
+                class="w-full mt-2 py-2.5 px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white font-bold text-xs shadow-lg shadow-emerald-500/20 flex items-center justify-center space-x-2 transition-all">
+          <i data-lucide="user-plus" class="w-3.5 h-3.5"></i>
+          <span class="trans-target font-sans" data-en="Register & Receive OTP" data-bn="রেজিস্ট্রেশন করুন ও ওটিপি নিন">Register & Receive OTP</span>
+        </button>
+      </form>
+    </div>
+
+  </div>
+</div>

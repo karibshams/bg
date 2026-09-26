@@ -82,6 +82,7 @@
           <span class="trans-target" data-en="Details" data-bn="বিস্তারিত">Details</span>
         </a>
         <a href="{% url 'bookings:create' %}?tour={{ item.tour.slug }}&date={{ item.tour_date.id }}" 
+           onclick="return window.requireAuthForBooking(event, '{% url 'bookings:create' %}?tour={{ item.tour.slug }}&date={{ item.tour_date.id }}')"
            class="px-3.5 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold transition-all shadow-sm flex items-center space-x-1">
           <span class="trans-target" data-en="Book Date" data-bn="বুক করুন">Book Date</span>
           <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>

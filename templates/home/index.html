@@ -97,15 +97,48 @@
 
       </div>
 
-      <!-- Hero Right: Cinematic Destination Visual Showcase with Official Logo Emblem -->
-      <div id="hero-showcase" class="lg:col-span-5 flex items-center justify-center relative w-full px-2 sm:px-0">
+      <!-- Hero Right: Dynamic Auto-Rotating Destination Visual Carousel -->
+      <div id="hero-showcase" 
+           class="lg:col-span-5 flex items-center justify-center relative w-full px-2 sm:px-0"
+           x-data="{
+             totalSlides: {{ hero_carousel_items|length|default:1 }},
+             current: 0,
+             paused: false,
+             timer: null,
+             init() {
+               this.$nextTick(() => { if (window.lucide) lucide.createIcons(); });
+               if (this.totalSlides > 1) {
+                 this.startAutoRotate();
+               }
+             },
+             startAutoRotate() {
+               clearInterval(this.timer);
+               this.timer = setInterval(() => {
+                 if (!this.paused) {
+                   this.next();
+                 }
+               }, 3500);
+             },
+             next() {
+               this.current = (this.current + 1) % this.totalSlides;
+             },
+             prev() {
+               this.current = (this.current - 1 + this.totalSlides) % this.totalSlides;
+             },
+             goTo(idx) {
+               this.current = idx;
+             }
+           }"
+           @mouseenter="paused = true"
+           @mouseleave="paused = false">
+        
         <div class="relative w-full max-w-md aspect-[4/3] sm:aspect-square flex items-center justify-center">
           
           <!-- Outer glowing ambient aura -->
-          <div class="absolute -inset-2 rounded-3xl bg-gradient-to-tr from-sky-500/30 via-cyan-400/20 to-emerald-500/20 blur-xl opacity-80"></div>
+          <div class="absolute -inset-2 rounded-3xl bg-gradient-to-tr from-sky-500/30 via-cyan-400/20 to-emerald-500/20 blur-xl opacity-80 pointer-events-none"></div>
 
           <!-- Floating Official Brand Emblem -->
-          <div class="absolute -top-4 -left-2 sm:-left-3 px-3 py-2 sm:px-4 sm:py-2.5 rounded-2xl glass-dark border border-sky-400/40 text-white shadow-2xl flex items-center space-x-2 sm:space-x-3 backdrop-blur-xl animate-float z-20">
+          <div class="absolute -top-4 -left-2 sm:-left-3 px-3 py-2 sm:px-4 sm:py-2.5 rounded-2xl glass-dark border border-sky-400/40 text-white shadow-2xl flex items-center space-x-2 sm:space-x-3 backdrop-blur-xl animate-float z-30 pointer-events-none">
             <img src="{% static 'images/logo.png' %}" alt="ভ্রমণঘুড়ি" class="h-8 sm:h-10 w-auto object-contain drop-shadow-[0_2px_12px_rgba(56,189,248,0.7)]">
             <div class="font-bengali text-left">
               <span class="block text-xs font-black text-white leading-tight">ভ্রমণঘুড়ি</span>
@@ -113,38 +146,124 @@
             </div>
           </div>
 
-          <!-- Glassmorphic Image Frame -->
-          <div class="relative w-full h-full rounded-3xl overflow-hidden border border-white/20 shadow-2xl p-2 bg-slate-900/60 backdrop-blur-md">
-            <div class="relative w-full h-full rounded-2xl overflow-hidden group">
-              <img src="{% static 'images/hero-sajek.jpg' %}" 
-                   alt="Sajek Valley Clouds - BhromonGhuri" 
-                   class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700">
-              
-              <!-- Gradient vignette overlay -->
-              <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-black/20 pointer-events-none"></div>
-
-              <!-- Bottom Destination Tag inside photo -->
-              <div class="absolute bottom-4 left-4 right-4 flex items-center justify-between text-white pointer-events-none">
-                <div>
-                  <span class="text-[11px] font-bold tracking-wider text-sky-300 uppercase trans-target" data-en="FEATURED DESTINATION" data-bn="জনপ্রিয় গন্তব্য">FEATURED DESTINATION</span>
-                  <h3 class="text-base font-bold trans-target" data-en="Sajek Valley — Kingdom of Clouds" data-bn="সাজেক ভ্যালি — মেঘের রাজ্য">Sajek Valley — Kingdom of Clouds</h3>
-                </div>
-                <div class="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30 p-1">
-                  <img src="{% static 'images/logo.png' %}" alt="ভ্রমণঘুড়ি" class="w-full h-full object-contain">
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Floating badge indicators -->
-          <div class="absolute -top-3 -right-2 px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-2xl glass-dark border border-white/15 text-xs font-semibold text-white shadow-xl flex items-center space-x-1.5 sm:space-x-2 animate-float">
+          <!-- Floating Traveler Rating badge -->
+          <div class="absolute -top-3 -right-2 px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-2xl glass-dark border border-white/15 text-xs font-semibold text-white shadow-xl flex items-center space-x-1.5 sm:space-x-2 animate-float z-30 pointer-events-none">
             <span class="text-amber-400">★ 4.9</span>
             <span class="text-slate-200 trans-target" data-en="Traveler Rating" data-bn="ভ্রমণকারীদের রেটিং">Traveler Rating</span>
           </div>
 
-          <div class="absolute -bottom-4 -left-2 px-3 py-2 sm:px-4 sm:py-2.5 rounded-2xl glass-dark border border-white/15 text-xs font-semibold text-white shadow-xl flex items-center space-x-1.5 sm:space-x-2 animate-float" style="animation-delay: 1.5s;">
+          <!-- Floating Verified & Safe badge -->
+          <div class="absolute -bottom-4 -left-2 px-3 py-2 sm:px-4 sm:py-2.5 rounded-2xl glass-dark border border-white/15 text-xs font-semibold text-white shadow-xl flex items-center space-x-1.5 sm:space-x-2 animate-float z-30 pointer-events-none" style="animation-delay: 1.5s;">
             <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i>
             <span class="text-slate-200 trans-target" data-en="100% Verified & Safe" data-bn="১০০% নিরাপদ ভ্রমণ">100% Verified & Safe</span>
+          </div>
+
+          <!-- Glassmorphic Carousel Frame -->
+          <div class="relative w-full h-full rounded-3xl overflow-hidden border border-white/20 shadow-2xl p-2 bg-slate-900/60 backdrop-blur-md">
+            <div class="relative w-full h-full rounded-2xl overflow-hidden bg-slate-950">
+
+              {% for item in hero_carousel_items %}
+              <!-- Slide {{ forloop.counter }} -->
+              <div x-show="current === {{ forloop.counter0 }}"
+                   x-transition:enter="transition-all ease-out duration-700"
+                   x-transition:enter-start="opacity-0 scale-95"
+                   x-transition:enter-end="opacity-100 scale-100"
+                   x-transition:leave="transition-all ease-in duration-500"
+                   x-transition:leave-start="opacity-100 scale-100"
+                   x-transition:leave-end="opacity-0 scale-105"
+                   class="absolute inset-0 w-full h-full group"
+                   style="{% if not forloop.first %}display: none;{% endif %}">
+                
+                <a href="{% url 'tours:detail' item.slug %}" class="block w-full h-full relative cursor-pointer" title="{{ item.title }}">
+                  <img src="{{ item.image_url }}" 
+                       alt="{{ item.title }}" 
+                       class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700">
+                  
+                  <!-- Gradient vignette overlay for readability -->
+                  <div class="absolute inset-0 bg-gradient-to-t from-slate-950/95 via-slate-950/40 to-black/25 pointer-events-none"></div>
+
+                  <!-- Top Right Live Status & Price Pill -->
+                  <div class="absolute top-3 right-3 sm:top-4 sm:right-4 flex flex-col items-end space-y-1.5 z-20">
+                    <span class="inline-flex items-center px-2.5 py-1 rounded-full bg-emerald-500/90 text-white font-black text-xs sm:text-sm shadow-lg backdrop-blur-md border border-emerald-400/40">
+                      ৳{{ item.price }}
+                    </span>
+                    <span class="inline-flex items-center space-x-1 px-2 py-0.5 rounded-lg bg-slate-900/80 text-sky-300 font-semibold text-[10px] border border-sky-400/30 backdrop-blur-md">
+                      <i data-lucide="calendar" class="w-2.5 h-2.5"></i>
+                      <span>{{ item.departure_date }}</span>
+                    </span>
+                  </div>
+
+                  <!-- Bottom Synchronized Metadata inside slide -->
+                  <div class="absolute bottom-6 left-3 right-3 sm:left-4 sm:right-4 flex items-end justify-between text-white z-20">
+                    <div class="pr-2 max-w-[75%]">
+                      <div class="flex items-center space-x-1.5 mb-1">
+                        <span class="w-1.5 h-1.5 rounded-full bg-sky-400 animate-ping"></span>
+                        <span class="text-[10px] sm:text-[11px] font-bold tracking-wider text-sky-300 uppercase trans-target" 
+                              data-en="UPCOMING TOUR" 
+                              data-bn="আসন্ন ট্যুর">UPCOMING TOUR</span>
+                        <span class="text-[10px] text-slate-400">•</span>
+                        <span class="text-[10px] text-emerald-300 font-medium">{{ item.duration }}</span>
+                      </div>
+                      <h3 class="text-sm sm:text-base font-bold leading-snug drop-shadow-md line-clamp-1 trans-target"
+                          data-en="{{ item.destination_name }} — {{ item.destination_tagline }}"
+                          data-bn="{{ item.destination_bangla }}">{{ item.destination_name }} — {{ item.destination_tagline }}</h3>
+                      <p class="text-[11px] sm:text-xs text-slate-300 line-clamp-1 mt-0.5 drop-shadow trans-target"
+                         data-en="{{ item.title }}"
+                         data-bn="{{ item.bangla_title }}">{{ item.title }}</p>
+                    </div>
+
+                    <!-- Detail CTA button pill -->
+                    <div class="flex-shrink-0">
+                      <span class="px-2.5 py-1.5 sm:px-3 sm:py-1.5 rounded-xl bg-white/20 hover:bg-white/30 backdrop-blur-md text-[11px] font-bold text-white border border-white/30 transition-all flex items-center space-x-1 shadow-md group-hover:bg-sky-500 group-hover:border-sky-400">
+                        <span class="trans-target" data-en="View" data-bn="দেখুন">View</span>
+                        <i data-lucide="arrow-right" class="w-3 h-3 group-hover:translate-x-0.5 transition-transform"></i>
+                      </span>
+                    </div>
+                  </div>
+                </a>
+              </div>
+              {% empty %}
+              <!-- Fallback slide if no items -->
+              <div class="absolute inset-0 w-full h-full">
+                <img src="{% static 'images/hero-sajek.jpg' %}" alt="Sajek Valley" class="w-full h-full object-cover">
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-black/20"></div>
+                <div class="absolute bottom-4 left-4 right-4 flex items-center justify-between text-white">
+                  <div>
+                    <span class="text-[11px] font-bold tracking-wider text-sky-300 uppercase trans-target" data-en="FEATURED DESTINATION" data-bn="জনপ্রিয় গন্তব্য">FEATURED DESTINATION</span>
+                    <h3 class="text-base font-bold trans-target" data-en="Sajek Valley — Kingdom of Clouds" data-bn="সাজেক ভ্যালি — মেঘের রাজ্য">Sajek Valley — Kingdom of Clouds</h3>
+                  </div>
+                </div>
+              </div>
+              {% endfor %}
+
+              <!-- Prev / Next Navigation Arrows -->
+              {% if hero_carousel_items|length > 1 %}
+              <button type="button" 
+                      @click.prevent.stop="prev()" 
+                      class="absolute left-2.5 top-1/2 -translate-y-1/2 z-30 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-slate-950/60 hover:bg-sky-500 text-white flex items-center justify-center backdrop-blur-md border border-white/20 transition-all shadow-lg opacity-75 hover:opacity-100"
+                      aria-label="Previous Slide">
+                <i data-lucide="chevron-left" class="w-4 h-4"></i>
+              </button>
+              <button type="button" 
+                      @click.prevent.stop="next()" 
+                      class="absolute right-2.5 top-1/2 -translate-y-1/2 z-30 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-slate-950/60 hover:bg-sky-500 text-white flex items-center justify-center backdrop-blur-md border border-white/20 transition-all shadow-lg opacity-75 hover:opacity-100"
+                      aria-label="Next Slide">
+                <i data-lucide="chevron-right" class="w-4 h-4"></i>
+              </button>
+
+              <!-- Bottom Indicator Dots / Progress Bar -->
+              <div class="absolute bottom-2 left-1/2 -translate-x-1/2 z-30 flex items-center space-x-1.5">
+                {% for item in hero_carousel_items %}
+                <button type="button" 
+                        @click.prevent.stop="goTo({{ forloop.counter0 }})" 
+                        class="h-1.5 rounded-full transition-all duration-300"
+                        :class="current === {{ forloop.counter0 }} ? 'w-5 bg-sky-400' : 'w-1.5 bg-white/40 hover:bg-white/80'"
+                        aria-label="Go to slide {{ forloop.counter }}"></button>
+                {% endfor %}
+              </div>
+              {% endif %}
+
+            </div>
           </div>
 
         </div>
@@ -319,6 +438,7 @@
         <div class="pt-3 border-t border-slate-800 flex items-center justify-between">
           <span class="text-lg font-bold text-sky-400">৳{{ dt.effective_price|floatformat:0 }}</span>
           <a href="{% url 'bookings:create' %}?tour={{ dt.tour.slug }}&date={{ dt.id }}" 
+             onclick="return window.requireAuthForBooking(event, '{% url 'bookings:create' %}?tour={{ dt.tour.slug }}&date={{ dt.id }}')"
              class="px-3.5 py-1.5 rounded-lg bg-sky-500 hover:bg-sky-400 text-white text-xs font-bold transition-colors">
             <span class="trans-target" data-en="Book Now" data-bn="বুক করুন">Book Now</span>
           </a>

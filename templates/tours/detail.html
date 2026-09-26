@@ -144,6 +144,7 @@
                 </div>
                 {% if dt.available_seats > 0 %}
                 <a href="{% url 'bookings:create' %}?tour={{ tour.slug }}&date={{ dt.id }}" 
+                   onclick="return window.requireAuthForBooking(event, '{% url 'bookings:create' %}?tour={{ tour.slug }}&date={{ dt.id }}')"
                    class="px-4 py-2 rounded-xl bg-gradient-to-r from-sky-500 to-sky-600 hover:from-sky-600 hover:to-sky-700 text-white text-xs font-bold transition-all shadow-sm flex items-center space-x-1.5">
                   <span class="trans-target" data-en="Book Seat" data-bn="সিট বুক করুন">Book Seat</span>
                   <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>

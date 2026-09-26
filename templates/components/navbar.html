@@ -134,7 +134,7 @@
       </a>
 
       <!-- User Auth Section -->
-      {% if user.is_authenticated %}
+      {% if user.is_authenticated and not user.is_staff or user.is_authenticated and request.session.customer_authenticated %}
       <div class="relative" x-data="{ userMenu: false }" @click.away="userMenu = false">
         <button @click="userMenu = !userMenu" type="button" 
                 class="flex items-center gap-1.5 py-1 px-2 xl:py-1.5 xl:px-2.5 rounded-full bg-slate-800/80 hover:bg-slate-700/80 border border-white/15 text-xs text-white focus:outline-none transition-all duration-200">
@@ -170,11 +170,21 @@
         </div>
       </div>
       {% else %}
-      <a href="{% url 'core:login' %}?next={{ request.path }}" 
-         class="px-2.5 py-1.5 xl:px-3 xl:py-2 rounded-full bg-slate-800/90 hover:bg-slate-700/90 border border-white/15 text-xs font-semibold text-white flex items-center gap-1.5 transition-all duration-200 shadow-sm whitespace-nowrap">
-        <i data-lucide="user" class="w-3.5 h-3.5 text-sky-400"></i>
-        <span class="trans-target" data-en="Sign In" data-bn="সাইন ইন">Sign In</span>
-      </a>
+      <!-- Standard Guest Public State: Sign In / Register CTAs -->
+      <div class="flex items-center gap-1.5">
+        <a href="{% url 'core:login' %}?next={{ request.path }}" 
+           onclick="window.dispatchEvent(new CustomEvent('open-auth-modal', { detail: { tab: 'login', next: '{{ request.path }}' } })); return false;"
+           class="px-2.5 py-1.5 xl:px-3 xl:py-2 rounded-full bg-slate-800/90 hover:bg-slate-700/90 border border-white/15 text-xs font-semibold text-white flex items-center gap-1.5 transition-all duration-200 shadow-sm whitespace-nowrap">
+          <i data-lucide="log-in" class="w-3.5 h-3.5 text-sky-400"></i>
+          <span class="trans-target" data-en="Sign In" data-bn="সাইন ইন">Sign In</span>
+        </a>
+        <a href="{% url 'core:register' %}?next={{ request.path }}" 
+           onclick="window.dispatchEvent(new CustomEvent('open-auth-modal', { detail: { tab: 'register', next: '{{ request.path }}' } })); return false;"
+           class="hidden sm:inline-flex px-2.5 py-1.5 xl:px-3 xl:py-2 rounded-full bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/30 text-xs font-semibold text-emerald-300 items-center gap-1.5 transition-all duration-200 shadow-sm whitespace-nowrap">
+          <i data-lucide="user-plus" class="w-3.5 h-3.5 text-emerald-400"></i>
+          <span class="trans-target" data-en="Register" data-bn="রেজিস্ট্রেশন">Register</span>
+        </a>
+      </div>
       {% endif %}
       
       <a href="{% url 'tours:list' %}" 
@@ -247,7 +257,7 @@
     </div>
 
     <!-- Mobile Auth -->
-    {% if user.is_authenticated %}
+    {% if user.is_authenticated and not user.is_staff or user.is_authenticated and request.session.customer_authenticated %}
     <div class="p-3 bg-slate-800/70 rounded-2xl border border-white/10 flex items-center justify-between text-xs font-sans">
       <div class="flex items-center space-x-2">
         <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-sky-500 to-emerald-500 text-white flex items-center justify-center font-bold text-xs uppercase">
@@ -263,6 +273,20 @@
       </a>
     </div>
     {% else %}
+    <div class="grid grid-cols-2 gap-2">
+      <a href="{% url 'core:login' %}?next={{ request.path }}" 
+         onclick="mobileOpen = false; window.dispatchEvent(new CustomEvent('open-auth-modal', { detail: { tab: 'login', next: '{{ request.path }}' } })); return false;"
+         class="py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs border border-white/10 shadow flex items-center justify-center space-x-1.5 font-sans">
+        <i data-lucide="log-in" class="w-3.5 h-3.5 text-sky-400"></i>
+        <span class="trans-target font-sans" data-en="Sign In" data-bn="সাইন ইন">Sign In</span>
+      </a>
+      <a href="{% url 'core:register' %}?next={{ request.path }}" 
+         onclick="mobileOpen = false; window.dispatchEvent(new CustomEvent('open-auth-modal', { detail: { tab: 'register', next: '{{ request.path }}' } })); return false;"
+         class="py-2.5 px-3 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 font-bold text-xs border border-emerald-500/30 shadow flex items-center justify-center space-x-1.5 font-sans">
+        <i data-lucide="user-plus" class="w-3.5 h-3.5 text-emerald-400"></i>
+        <span class="trans-target font-sans" data-en="Register" data-bn="রেজিস্ট্রেশন">Register</span>
+      </a>
+    </div>
     <a href="{% url 'core:google_login' %}?next={{ request.path }}" 
        class="w-full py-2.5 px-4 rounded-xl bg-white hover:bg-slate-100 text-slate-800 font-bold text-xs shadow flex items-center justify-center space-x-2 font-sans">
       <svg class="w-4 h-4" viewBox="0 0 24 24">

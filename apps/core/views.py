@@ -3,6 +3,7 @@ import re
 import secrets
 import urllib.parse
 import logging
+import datetime
 import requests
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
@@ -12,6 +13,7 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from django.conf import settings
 from django.core.mail import send_mail
+from django.utils import timezone
 from .models import SiteSetting, Testimonial, FAQ, EmailVerification
 
 logger = logging.getLogger(__name__)
@@ -36,6 +38,96 @@ def get_home_context():
     testimonials = Testimonial.objects.filter(is_featured=True)[:5]
     faqs = FAQ.objects.filter(is_published=True)[:6]
 
+    # Modification 3: Event-driven feed of active upcoming tours scheduled within the next 1–2 months (0-60 days)
+    today = timezone.now().date()
+    two_months_later = today + datetime.timedelta(days=60)
+    upcoming_carousel_dates = TourDate.objects.filter(
+        is_active=True,
+        tour__is_published=True,
+        start_date__gte=today,
+        start_date__lte=two_months_later
+    ).select_related('tour', 'tour__destination', 'tour__category').order_by('start_date')
+
+    seen_tours = set()
+    hero_carousel_items = []
+    for td in upcoming_carousel_dates:
+        if td.tour_id not in seen_tours:
+            seen_tours.add(td.tour_id)
+            tour = td.tour
+            dest = tour.destination
+            cover_url = tour.cover_image.url if tour.cover_image else '/static/images/hero-sajek.jpg'
+            hero_carousel_items.append({
+                'tour_id': tour.id,
+                'slug': tour.slug,
+                'title': tour.title,
+                'bangla_title': tour.bangla_title or tour.title,
+                'destination_name': dest.name if dest else 'Bangladesh',
+                'destination_bangla': dest.bangla_name if (dest and dest.bangla_name) else (dest.name if dest else 'বাংলাদেশ'),
+                'destination_tagline': getattr(dest, 'tagline', '') or 'Featured Destination',
+                'image_url': cover_url,
+                'price': int(tour.discount_price or tour.price),
+                'regular_price': int(tour.price) if tour.discount_price else None,
+                'departure_date': td.start_date.strftime('%d %b, %Y'),
+                'start_date': td.start_date,
+                'duration': tour.duration or f"{tour.duration_days} Days",
+                'seats_left': td.available_seats,
+            })
+            if len(hero_carousel_items) >= 6:
+                break
+
+    # Graceful fallback if no dates fall within next 60 days
+    if not hero_carousel_items:
+        fallback_dates = TourDate.objects.filter(
+            is_active=True,
+            tour__is_published=True
+        ).select_related('tour', 'tour__destination', 'tour__category').order_by('start_date')
+        for td in fallback_dates:
+            if td.tour_id not in seen_tours:
+                seen_tours.add(td.tour_id)
+                tour = td.tour
+                dest = tour.destination
+                cover_url = tour.cover_image.url if tour.cover_image else '/static/images/hero-sajek.jpg'
+                hero_carousel_items.append({
+                    'tour_id': tour.id,
+                    'slug': tour.slug,
+                    'title': tour.title,
+                    'bangla_title': tour.bangla_title or tour.title,
+                    'destination_name': dest.name if dest else 'Bangladesh',
+                    'destination_bangla': dest.bangla_name if (dest and dest.bangla_name) else (dest.name if dest else 'বাংলাদেশ'),
+                    'destination_tagline': getattr(dest, 'tagline', '') or 'Featured Destination',
+                    'image_url': cover_url,
+                    'price': int(tour.discount_price or tour.price),
+                    'regular_price': int(tour.price) if tour.discount_price else None,
+                    'departure_date': td.start_date.strftime('%d %b, %Y'),
+                    'start_date': td.start_date,
+                    'duration': tour.duration or f"{tour.duration_days} Days",
+                    'seats_left': td.available_seats,
+                })
+                if len(hero_carousel_items) >= 6:
+                    break
+
+    if not hero_carousel_items:
+        fallback_tours = Tour.objects.filter(is_published=True).select_related('destination')[:5]
+        for tour in fallback_tours:
+            dest = tour.destination
+            cover_url = tour.cover_image.url if tour.cover_image else '/static/images/hero-sajek.jpg'
+            hero_carousel_items.append({
+                'tour_id': tour.id,
+                'slug': tour.slug,
+                'title': tour.title,
+                'bangla_title': tour.bangla_title or tour.title,
+                'destination_name': dest.name if dest else 'Bangladesh',
+                'destination_bangla': dest.bangla_name if (dest and dest.bangla_name) else (dest.name if dest else 'বাংলাদেশ'),
+                'destination_tagline': getattr(dest, 'tagline', '') or 'Featured Destination',
+                'image_url': cover_url,
+                'price': int(tour.discount_price or tour.price),
+                'regular_price': int(tour.price) if tour.discount_price else None,
+                'departure_date': 'Upcoming',
+                'start_date': None,
+                'duration': tour.duration or f"{tour.duration_days} Days",
+                'seats_left': 20,
+            })
+
     return {
         'site_setting': site_setting,
         'featured_tours': featured_tours,
@@ -45,6 +137,7 @@ def get_home_context():
         'gallery_items': gallery_items,
         'testimonials': testimonials,
         'faqs': faqs,
+        'hero_carousel_items': hero_carousel_items,
     }
 
 
@@ -329,6 +422,7 @@ def login_view(request):
                 return redirect(f"{reverse('core:verify_email')}?email={urllib.parse.quote(user.email)}&next={urllib.parse.quote(next_url)}")
 
             login(request, user)
+            request.session['customer_authenticated'] = True
             messages.success(request, f"স্বাগতম, {user.first_name or user.username}! সফলভাবে লগইন হয়েছেন।")
             return redirect(next_url)
         else:
@@ -425,6 +519,7 @@ def verify_email_view(request):
             ver.is_used = True
             ver.save()
             login(request, user)
+            request.session['customer_authenticated'] = True
             messages.success(request, "আপনার ইমেইল সফলভাবে ভেরিফাই হয়েছে! ভ্রমণঘুড়িতে স্বাগতম।")
             return redirect(next_url)
         else:
@@ -450,6 +545,7 @@ def verify_email_view(request):
             ver.is_used = True
             ver.save()
             login(request, user)
+            request.session['customer_authenticated'] = True
             messages.success(request, "আপনার অ্যাকাউন্ট সফলভাবে ভেরিফাই ও সক্রিয় হয়েছে! স্বাগতম।")
             return redirect(next_url)
         else:
@@ -680,6 +776,7 @@ def google_callback_view(request):
             user.save()
 
         login(request, user)
+        request.session['customer_authenticated'] = True
         messages.success(request, f"Welcome, {user.first_name or user.username}! Successfully signed in with Google.")
         return redirect(next_url)
 
@@ -690,6 +787,7 @@ def google_callback_view(request):
 
 def logout_view(request):
     """Logs out user and redirects to homepage."""
+    request.session.pop('customer_authenticated', None)
     logout(request)
     messages.info(request, "আপনি সফলভাবে লগআউট হয়েছেন।")
     return redirect('core:home')

@@ -49,3 +49,8 @@ class Bug7CartoDBMapAndLocationSearchTestCase(TestCase):
 
         # 3. Smooth flyTo animation to coordinates
         self.assertIn('map.flyTo', content)
+
+    def test_map_api_key_configured(self):
+        from django.conf import settings
+        self.assertTrue(hasattr(settings, 'MAP_API_KEY'))
+        self.assertEqual(settings.MAP_API_KEY, 'AIzaSyCSMpRIrzL1cDoRi-WPzD99VrhIgK46Zt0')

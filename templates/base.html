@@ -143,6 +143,27 @@
       lucide.createIcons();
     });
   </script>
+
+  {% include 'components/auth_modal.html' %}
+
+  <script>
+    window.isUserAuthenticated = {% if user.is_authenticated and not user.is_staff or user.is_authenticated and request.session.customer_authenticated %}true{% else %}false{% endif %};
+    window.requireAuthForBooking = function(event, targetUrl) {
+      if (!window.isUserAuthenticated) {
+        if (event && event.preventDefault) {
+          event.preventDefault();
+        }
+        window.dispatchEvent(new CustomEvent('open-auth-modal', {
+          detail: {
+            tab: 'login',
+            next: targetUrl || window.location.pathname + window.location.search
+          }
+        }));
+        return false;
+      }
+      return true;
+    };
+  </script>
   {% block extra_js %}{% endblock %}
 </body>
 </html>

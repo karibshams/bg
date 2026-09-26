@@ -3,6 +3,7 @@ from datetime import datetime
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.http import HttpResponse, JsonResponse, Http404
+from django.conf import settings
 from django.db.models import Q
 from .models import Tour, Destination, TourCategory, TourDate, CorporateTour
 from .corporate_voucher import generate_corporate_voucher_pdf
@@ -367,6 +368,7 @@ def bangladesh_map_view(request):
         'destinations': destinations,
         'destinations_json': json.dumps(dest_list),
         'total_destinations': len(dest_list),
-        'total_tours': sum(d['tours_count'] for d in dest_list)
+        'total_tours': sum(d['tours_count'] for d in dest_list),
+        'map_api_key': getattr(settings, 'MAP_API_KEY', ''),
     })
 

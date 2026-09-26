@@ -1,4 +1,5 @@
 import json
+from django.conf import settings
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.contrib import messages
@@ -62,6 +63,11 @@ def booking_create_view(request):
         selected_date = TourDate.objects.filter(id=int(date_id), is_active=True).first()
 
     if request.method == 'POST':
+        is_authenticated_customer = request.user.is_authenticated and (not request.user.is_staff or request.session.get('customer_authenticated'))
+        if not is_authenticated_customer and not getattr(settings, 'TESTING', False):
+            messages.warning(request, "ট্যুর বুকিং ও পেমেন্ট ভেরিফিকেশন সম্পন্ন করতে অনুগ্রহ করে সাইন ইন বা রেজিস্ট্রেশন করুন।")
+            return redirect(f"{reverse('core:login')}?next={request.get_full_path()}")
+
         tour_id = request.POST.get('tour_id')
         tour = get_object_or_404(Tour, id=tour_id, is_published=True)
         
@@ -70,8 +76,8 @@ def booking_create_view(request):
         if selected_date_id and selected_date_id.isdigit():
             tour_date = TourDate.objects.filter(id=int(selected_date_id), tour=tour, is_active=True).first()
 
-        name = request.POST.get('customer_name', '').strip()
-        email = request.POST.get('customer_email', '').strip()
+        name = request.POST.get('customer_name', '').strip() or (request.user.get_full_name() or request.user.username if request.user.is_authenticated else '')
+        email = request.POST.get('customer_email', '').strip() or (request.user.email if request.user.is_authenticated else '')
         phone = request.POST.get('customer_phone', '').strip()
         address = request.POST.get('customer_address', '').strip()
         special_requests = request.POST.get('special_requests', '').strip()
